@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.cache/
+# server/src/secrets/
+
+# for server
+.env
+package-lock.json
+server/package-lock.json
