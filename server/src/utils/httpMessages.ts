@@ -1,6 +1,6 @@
 export default {
   userWasCreated: 'User was created',
   userAvailable: 'That user was created',
-  userIsNotCreated: 'That user is not created',
-  passwordNotCompare: 'Password is not correct'
-}
+  userOrPasswordIsNotCorrect: 'That user or password is not correct',
+  invalidToken: 'invalid token'
+};

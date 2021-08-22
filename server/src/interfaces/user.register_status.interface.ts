@@ -5,6 +5,6 @@ export interface IRegistrationStatus {
 }
 
 export interface ILoginAccess {
-  expiresIn: string;
-  accessToken: string; 
+  nickname: string;
+  accessToken: string;
 }
