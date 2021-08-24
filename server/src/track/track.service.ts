@@ -23,8 +23,10 @@ export class TrackService {
     const { name, artist, img, audio } = trackCreateDTO;
     const imgPath: string = this.filePathService.create(img);
     const audioPath: string = this.filePathService.create(audio);
-
-    await this.cloudinaryService.uploadImage(imgPath, 'music_app');
+    [imgPath, audioPath].forEach(async (path) => {
+      const resultimg = await this.cloudinaryService.uploadImage(path, 'music_app');
+      console.log('resultimg', resultimg);
+    });
     // const track = await this.trackEntity.findOne({ where: { name } });
     // if (track) {
     //   return new HttpException(httpMessages.trackHasBeenCreated, HttpStatus.BAD_REQUEST);

@@ -40,6 +40,7 @@
     "cloudinary": "^1.26.3",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "file-formats": "0.0.12",
     "http": "0.0.1-security",
     "https": "^1.0.0",
     "joi": "^17.4.2",
