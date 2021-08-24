@@ -24,7 +24,7 @@ export class TrackService {
     const imgPath: string = this.filePathService.create(img);
     const audioPath: string = this.filePathService.create(audio);
 
-    await this.cloudinaryService.uploadImage(audio);
+    await this.cloudinaryService.uploadImage(imgPath, 'music_app');
     // const track = await this.trackEntity.findOne({ where: { name } });
     // if (track) {
     //   return new HttpException(httpMessages.trackHasBeenCreated, HttpStatus.BAD_REQUEST);
