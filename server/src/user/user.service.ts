@@ -50,7 +50,6 @@ export class UserService {
     if (!passwordCompare) {
       throw new UnauthorizedException(httpMessages.userOrPasswordIsNotCorrect);
     }
-    // const expiresIn = process.env.EXPIRESIN;
     const accessToken: string = this.jwtService.sign(nickname);
     return { nickname, accessToken };
   }

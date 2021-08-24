@@ -11,7 +11,6 @@ import { JwtAuthGuard } from './JwtAuth.guard';
 @Controller('auth')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  @Post()
   // @Roles(Role.Admin)
   @Post('register')
   public async register(@Body() createUserDto: UserCreateDTO): Promise<IRegistrationStatus> {
