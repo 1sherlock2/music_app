@@ -20,6 +20,6 @@ export class TrackController {
     console.log('files', files); // undefined
     console.log('other', otherProperty);
     const { audio, img } = files;
-    return this.trackService.create({ ...otherProperty, img: img[0], audio: audio[0] });
+    return this.trackService.create({ ...otherProperty, img: img && img[0], audio: audio && audio[0] });
   }
 }
