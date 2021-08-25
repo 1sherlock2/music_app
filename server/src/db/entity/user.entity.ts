@@ -1,11 +1,18 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, BeforeInsert, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  BeforeInsert,
+  OneToMany
+} from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Track } from './track.entity';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: object | string | Buffer;
 
   @Column({ unique: true })
   nickname: string;
@@ -19,14 +26,14 @@ export class User {
   @Column('text', { array: true, default: ['user'] })
   roles: string[];
 
+  @OneToMany(() => Track, (track) => track.userId)
+  tracks: Track[];
+
   @CreateDateColumn()
   created: Date;
 
   @CreateDateColumn()
   updated: Date;
-
-  @OneToMany((type) => Track, (user) => user.userId)
-  tracks: Track[];
 
   @BeforeInsert()
   async hashPassword() {

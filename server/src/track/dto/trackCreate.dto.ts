@@ -4,5 +4,6 @@ export class TrackCreateDTO {
   @IsNotEmpty() name: string;
   artist?: string;
   img?: Express.Multer.File;
+  userId: string | number;
   @IsNotEmpty() audio: Express.Multer.File;
 }

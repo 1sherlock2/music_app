@@ -42,7 +42,7 @@ export class UserService {
   }
   async authenticate(loginDTO: LoginDTO): Promise<ILoginAccess> {
     const { nickname, password } = loginDTO;
-    const user = await this.userEntity.findOne({ where: { nickname } });
+    const user: User = await this.userEntity.findOne({ where: { nickname } });
     if (!user) {
       throw new UnauthorizedException(httpMessages.userOrPasswordIsNotCorrect);
     }
@@ -50,7 +50,7 @@ export class UserService {
     if (!passwordCompare) {
       throw new UnauthorizedException(httpMessages.userOrPasswordIsNotCorrect);
     }
-    const accessToken: string = this.jwtService.sign(nickname);
+    const accessToken: string = this.jwtService.sign(user.id);
     return { nickname, accessToken };
   }
 

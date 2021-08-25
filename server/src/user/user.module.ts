@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/db/entity/user.entity';
+import { JwtAuthGuard } from './JwtAuth.guard';
 import { JwtStrategy } from './jwtStrategy.service';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
@@ -20,7 +21,7 @@ import { UserService } from './user.service';
       inject: [ConfigService]
     })
   ],
-  providers: [UserService, JwtStrategy],
+  providers: [UserService, JwtStrategy, JwtAuthGuard],
   controllers: [UserController],
   exports: [PassportModule, JwtModule]
 })

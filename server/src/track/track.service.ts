@@ -25,7 +25,7 @@ export class TrackService {
     private readonly filePathService: FilePathService
   ) {}
   async create(trackCreateDTO: TrackCreateDTO): Promise<ITrackCreateStatus> {
-    const { name, artist, img, audio } = trackCreateDTO;
+    const { name, artist, img, audio, userId } = trackCreateDTO;
     const imgPath: string = img && this.filePathService.create(img);
     const audioPath: string = audio && this.filePathService.create(audio);
     const arrayPath = [imgPath, audioPath].filter(Boolean);
@@ -50,30 +50,11 @@ export class TrackService {
     const trackSave: Track = await this.trackEntity.create({
       name,
       artist,
+      userId,
       img: cloudinaryImg,
       audio: cloudinaryAudio
     });
     await this.trackEntity.save(trackSave);
-    // const reduceObj = await arrayPath.reduce(
-    //   async (acc: any, path: string): Promise<IUploadObjectReduce | HttpException> => {
-    //     const uploadStatus = await this.cloudinaryService.uploadFile(path, 'music_app');
-    //     const { success: uploadSuccess = false, urlImg, urlAudio } = uploadStatus;
-    //     if (!uploadSuccess) {
-    //       return new HttpException(httpMessages.errorUpladAudioInCloud, HttpStatus.BAD_REQUEST);
-    //     }
-    //     if (urlImg) acc.img = urlImg;
-    //     if (urlAudio) acc.audio = urlAudio;
-    //     return acc;
-    //   },
-    //   {}
-    // );
-
-    // const track = await this.trackEntity.findOne({ where: { name } });
-    // if (track) {
-    //   return new HttpException(httpMessages.trackHasBeenCreated, HttpStatus.BAD_REQUEST);
-    // }
-    // const trackSave: Track = await this.trackEntity.create({ name, artist, img, audio });
-    // await this.trackEntity.save(trackSave);
     return {
       success: true,
       message: httpMessages.trackWasCreated,

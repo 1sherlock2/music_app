@@ -21,6 +21,6 @@ export class Track {
   @Column()
   audio: string;
 
-  @ManyToOne((type) => User, (user) => user.tracks)
-  userId: User;
+  @ManyToOne(() => User, (user) => user.tracks)
+  userId: string | number;
 }

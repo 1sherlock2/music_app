@@ -1,19 +1,25 @@
-import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Observable } from 'rxjs';
+import httpMessages from 'src/utils/httpMessages';
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
-  canActivate(context: ExecutionContext) {
-    // Add your custom authentication logic here
-    // for example, call super.logIn(request) to establish a session.
-    return super.canActivate(context);
-  }
+export class JwtAuthGuard implements CanActivate {
+  constructor(private jwtServise: JwtService) {}
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    const req = context.switchToHttp().getRequest();
 
-  handleRequest(err, user, info) {
-    // You can throw an exception based on either "info" or "err" arguments
-    if (err || !user) {
-      throw err || new UnauthorizedException();
+    try {
+      const authHeader = req.headers.authorization;
+      const [bearer, token] = authHeader.split(' ');
+      if (bearer !== 'Bearer' || !token) {
+        throw new UnauthorizedException({ message: httpMessages.userIsNotAuthorithation });
+      }
+      const user = this.jwtServise.verify(token);
+      req.userId = user;
+      return true;
+    } catch (e) {
+      throw new UnauthorizedException(httpMessages.userIsNotAuthorithation);
     }
-    return user;
   }
 }

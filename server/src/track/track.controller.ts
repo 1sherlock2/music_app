@@ -1,7 +1,18 @@
-import { Body, Controller, Get, Post, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Request,
+  Response,
+  UploadedFiles,
+  UseGuards,
+  UseInterceptors
+} from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { FilePathService } from 'src/filePath/filePath.service';
 import { IRecieveTrack } from 'src/interfaces/track.interface';
+import { JwtAuthGuard } from 'src/user/JwtAuth.guard';
 import { TrackCreateDTO } from './dto/trackCreate.dto';
 import { TrackService } from './track.service';
 
@@ -9,6 +20,7 @@ import { TrackService } from './track.service';
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post('add')
   @UseInterceptors(
     FileFieldsInterceptor([
@@ -16,10 +28,18 @@ export class TrackController {
       { name: 'img', maxCount: 1 }
     ])
   )
-  recieveTrack(@UploadedFiles() files: IRecieveTrack, @Body() otherProperty: TrackCreateDTO) {
-    console.log('files', files); // undefined
-    console.log('other', otherProperty);
+  recieveTrack(
+    @UploadedFiles() files: IRecieveTrack,
+    @Body() otherProperty: TrackCreateDTO,
+    @Req() req
+  ) {
+    const { userId } = req;
     const { audio, img } = files;
-    return this.trackService.create({ ...otherProperty, img: img && img[0], audio: audio && audio[0] });
+    return this.trackService.create({
+      ...otherProperty,
+      userId,
+      img: img && img[0],
+      audio: audio && audio[0]
+    });
   }
 }

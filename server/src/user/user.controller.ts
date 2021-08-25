@@ -7,6 +7,7 @@ import { UserService } from './user.service';
 import { LoginDTO } from './dto/login.dto';
 import { errorMessage } from 'src/utils/httpErrorObject';
 import { JwtAuthGuard } from './JwtAuth.guard';
+import { request } from 'express';
 
 @Controller('auth')
 export class UserController {
@@ -21,8 +22,9 @@ export class UserController {
     }
   }
   @Post('login')
-  public async login(@Body() loginService: LoginDTO) {
+  public async login(@Body() loginService: LoginDTO, @Request() req) {
     try {
+      console.log(req.user);
       return await this.userService.authenticate(loginService);
     } catch (e) {
       return errorMessage(false, HttpStatus.INTERNAL_SERVER_ERROR, e);
