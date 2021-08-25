@@ -5,7 +5,12 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { Track } from 'src/db/entity/track.entity';
-import { ITrackCreateStatus, IUploadObjectReduce } from 'src/interfaces/track.interface';
+import {
+  IResultCloudinary,
+  ITrackCreateStatus,
+  IUploadObjectReduce,
+  IUploadStatus
+} from 'src/interfaces/track.interface';
 import httpMessages from 'src/utils/httpMessages';
 import { Repository } from 'typeorm';
 import { TrackCreateDTO } from './dto/trackCreate.dto';
@@ -23,27 +28,52 @@ export class TrackService {
     const { name, artist, img, audio } = trackCreateDTO;
     const imgPath: string = img && this.filePathService.create(img);
     const audioPath: string = audio && this.filePathService.create(audio);
+    const arrayPath = [imgPath, audioPath].filter(Boolean);
 
-    const reduceUpload = [imgPath, audioPath]
-      .reduce(async (acc: any, path): Promise<IUploadObjectReduce> => {
-        const uploadStatus = await this.cloudinaryService.uploadImage(path, 'music_app');
-        const { success: uploadSuccess, urlImg, urlAudio } = uploadStatus;
-        if (!uploadSuccess) {
-          return { status: HttpStatus.BAD_REQUEST, message: httpMessages.errorUpladAudioInCloud };
-          // return new HttpException(httpMessages.errorUpladAudioInCloud, HttpStatus.BAD_REQUEST);
+    const multipleUpload = arrayPath.map((path) => {
+      return this.cloudinaryService.uploadFile(path, 'music_app');
+    });
+    const resposeUploadFiles = await Promise.all(multipleUpload);
+    const reduceResult = resposeUploadFiles.reduce(
+      (acc: IResultCloudinary, response: IUploadObjectReduce) => {
+        const { success, urlImg, urlAudio } = response;
+        if (!success) {
+          throw new HttpException(httpMessages.errorUpladAudioInCloud, HttpStatus.BAD_GATEWAY);
         }
-        acc.img = urlImg;
-        acc.audio = urlAudio;
+        if (urlImg) acc.cloudinaryImg = urlImg;
+        if (urlAudio) acc.cloudinaryAudio = urlAudio;
         return acc;
-      }, {})
-      .then((result) => console.log(result));
+      },
+      {}
+    );
+    const { cloudinaryImg, cloudinaryAudio } = reduceResult;
+    const trackSave: Track = await this.trackEntity.create({
+      name,
+      artist,
+      img: cloudinaryImg,
+      audio: cloudinaryAudio
+    });
+    await this.trackEntity.save(trackSave);
+    // const reduceObj = await arrayPath.reduce(
+    //   async (acc: any, path: string): Promise<IUploadObjectReduce | HttpException> => {
+    //     const uploadStatus = await this.cloudinaryService.uploadFile(path, 'music_app');
+    //     const { success: uploadSuccess = false, urlImg, urlAudio } = uploadStatus;
+    //     if (!uploadSuccess) {
+    //       return new HttpException(httpMessages.errorUpladAudioInCloud, HttpStatus.BAD_REQUEST);
+    //     }
+    //     if (urlImg) acc.img = urlImg;
+    //     if (urlAudio) acc.audio = urlAudio;
+    //     return acc;
+    //   },
+    //   {}
+    // );
+
     // const track = await this.trackEntity.findOne({ where: { name } });
     // if (track) {
     //   return new HttpException(httpMessages.trackHasBeenCreated, HttpStatus.BAD_REQUEST);
     // }
     // const trackSave: Track = await this.trackEntity.create({ name, artist, img, audio });
     // await this.trackEntity.save(trackSave);
-    console.log('reduceUpload', reduceUpload);
     return {
       success: true,
       message: httpMessages.trackWasCreated,

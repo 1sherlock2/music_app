@@ -10,8 +10,21 @@ export interface IRecieveTrack {
 }
 
 export interface IUploadObjectReduce {
-  img?: string;
-  audio?: string;
+  urlImg?: string;
+  urlAudio?: string;
   status?: number;
   message?: string;
+  success: boolean;
+}
+
+export interface IUploadStatus {
+  urlImg?: string;
+  urlAudio?: string;
+  success?: boolean;
+  message?: string;
+}
+
+export interface IResultCloudinary {
+  cloudinaryImg?: string;
+  cloudinaryAudio?: string;
 }
