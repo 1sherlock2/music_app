@@ -1,14 +1,8 @@
-import React, {
-  MutableRefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import AudioPlayer from './AudioPlayer/AudioPlayer';
 import CurrentProgressTime from './CurrentProgressTime/CurrentProgressTime';
 import s from './AudioContainer.scss';
-import { IAppContainer, IintervalRef, IDurationTarget } from './AudioContainer.interface';
+import { IAppContainer, IDurationTarget } from './AudioContainer.interface';
 
 const AudioContainer: React.FC<IAppContainer> = ({ musics }) => {
   const [trackIndex, setTrackIndex] = useState(0);
@@ -21,14 +15,12 @@ const AudioContainer: React.FC<IAppContainer> = ({ musics }) => {
 
   // audio prepare
   const audioRef = useRef<HTMLAudioElement>(new Audio(audio));
-  const intervalRef = useRef<NodeJS.Timer>();
+  const intervalRef = useRef<any>();
   const isReady = useRef(false);
 
-  const currentPercent = duration
-    ? `${(trackProgress / duration) * 100}%`
-    : '0%';
+  const currentPercent = duration ? `${(trackProgress / duration) * 100}%` : '0%';
   const trackStyling = {
-    backgroundImage: `linear-gradient(to top, #fdcbf1 ${currentPercent}, #fdcbf1 1%, #e6dee9 100%)`,
+    backgroundImage: `linear-gradient(to top, #fdcbf1 ${currentPercent}, #fdcbf1 1%, #e6dee9 100%)`
   };
 
   const startTimer = (): void => {
@@ -108,27 +100,21 @@ const AudioContainer: React.FC<IAppContainer> = ({ musics }) => {
 
   //  Действия с текущей музыкой при переключении
   useEffect(() => {
-    const loadMetaDataHandler = (e: IDurationTarget) => {
-        setDuration(e.target.duration);
-      };
+    const loadMetaDataHandler = (e: IDurationTarget): void => {
+      setDuration(e.target.duration);
+    };
     audioRef.current.addEventListener('loadedmetadata', loadMetaDataHandler);
     return () => {
       audioRef.current.pause();
       clearInterval(intervalRef.current);
-      audioRef.current.removeEventListener(
-        'loadedmetadata',
-        loadMetaDataHandler
-      );
+      audioRef.current.removeEventListener('loadedmetadata', loadMetaDataHandler);
     };
   }, [audioRef, trackIndex]);
   return (
     <div className={s.container}>
       <div className={s.container_wrapper}>
         <div className={s.container_wrapper_title}>{title}</div>
-        <div
-          className={s.container_wrapper_image}
-          style={{ backgroundColor: color }}
-        >
+        <div className={s.container_wrapper_image} style={{ backgroundColor: color }}>
           <div className={s.image_title}>
             <img src={img} alt={`${title}_${artist}`} />
           </div>
