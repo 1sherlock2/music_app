@@ -1,6 +1,3 @@
-import * as uuid from 'uuid';
-import * as path from 'path';
-import * as fs from 'fs';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
@@ -8,8 +5,7 @@ import { Track } from 'src/db/entity/track.entity';
 import {
   IResultCloudinary,
   ITrackCreateStatus,
-  IUploadObjectReduce,
-  IUploadStatus
+  IUploadObjectReduce
 } from 'src/interfaces/track.interface';
 import httpMessages from 'src/utils/httpMessages';
 import { Repository } from 'typeorm';
@@ -34,7 +30,7 @@ export class TrackService {
       return this.cloudinaryService.uploadFile(path, 'music_app');
     });
     const resposeUploadFiles = await Promise.all(multipleUpload);
-    const reduceResult = resposeUploadFiles.reduce(
+    const objectResult = resposeUploadFiles.reduce(
       (acc: IResultCloudinary, response: IUploadObjectReduce) => {
         const { success, urlImg, urlAudio } = response;
         if (!success) {
@@ -46,7 +42,7 @@ export class TrackService {
       },
       {}
     );
-    const { cloudinaryImg, cloudinaryAudio } = reduceResult;
+    const { cloudinaryImg, cloudinaryAudio } = objectResult;
     const trackSave: Track = await this.trackEntity.create({
       name,
       artist,
@@ -59,6 +55,25 @@ export class TrackService {
       success: true,
       message: httpMessages.trackWasCreated,
       status: HttpStatus.OK
+    };
+  }
+
+  async getAll({ userId }) {
+    return await this.trackEntity.find({ where: { userId } });
+  }
+
+  async deleteTrack(id, userId) {
+    const track = await this.trackEntity.findOne({
+      where: { id: Number(id) }
+    });
+    if (!track) {
+      return new HttpException(httpMessages.trackIsNotFound, HttpStatus.BAD_REQUEST);
+    }
+    await this.trackEntity.delete(track.id);
+    return {
+      success: true,
+      status: HttpStatus.OK,
+      message: httpMessages.trackDeleted
     };
   }
 }

@@ -1,11 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
+  Query,
   Req,
-  Request,
-  Response,
   UploadedFiles,
   UseGuards,
   UseInterceptors
@@ -19,6 +20,13 @@ import { TrackService } from './track.service';
 @Controller('track')
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  getAllTrack(@Req() req) {
+    const { userId } = req;
+    return this.trackService.getAll({ userId });
+  }
 
   @UseGuards(JwtAuthGuard)
   @Post('add')
@@ -41,5 +49,12 @@ export class TrackController {
       img: img && img[0],
       audio: audio && audio[0]
     });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('delete')
+  deleteTrack(@Query('id') id: string, @Req() req) {
+    const { userId } = req;
+    return this.trackService.deleteTrack(id, userId);
   }
 }
