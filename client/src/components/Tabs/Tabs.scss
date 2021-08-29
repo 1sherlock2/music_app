@@ -1,0 +1,33 @@
+@import '../../styles/variables.scss';
+
+.tabs {
+  position: relative;
+  display: flex;
+  .tabItem {
+    transition: all 0.5s;
+  }
+}
+
+.s {
+  padding: $size-10 $size-10;
+  font-size: $font-size-14;
+}
+
+.m {
+  padding: $size-20 $size-14;
+  font-size: $font-size-16;
+}
+
+.l {
+  padding: $size-30 $size-20;
+  font-size: $font-size-24;
+}
+
+.pink {
+  color: $gray-800;
+}
+
+.underline {
+  border-bottom: 1px solid red;
+  border-top: 1px solid red;
+}

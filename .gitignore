@@ -1,12 +1,13 @@
+.vscode/
+
 client/node_modules/
-client/.cache
-client/dist
+client/.cache/
+client/dist/
 client/package-lock.json
-client/
 
 
 server/node_modules/
 server/.env
 server/package-lock.json
-server/dist
-server/.vscode
+server/dist/
+server/.vscode/

@@ -4,21 +4,38 @@ $font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Ubuntu,
 // font-size
 $font-size-14: 14px;
 $font-size-16: 16px;
-$font-size-25: 25px;
+$font-size-20: 20px;
+$font-size-24: 24px;
+
+// line-height
+$line-height-14: 14px;
+$line-height-16: 16px;
+$line-height-20: 20px;
+$line-height-24: 24px;
+$line-height-28: 28px;
+$line-height-32: 32px;
 
 // box-shadow
 $box_shadow_5: 0 5px 10px rgba(51, 51, 51, 0.398);
 $neomorphizm_white: 10px 10px 21px #d3d3d6, -10px -10px 21px #fff;
 
 // size
-$size-6: 5px;
+$size-2: 2px;
+$size-4: 4px;
+$size-6: 6px;
 $size-10: 10px;
 $size-12: 12px;
 $size-14: 14px;
 $size-20: 20px;
+$size-24: 24px;
 $size-30: 30px;
 $size-40: 40px;
+$size-44: 44px;
+$size-46: 46px;
+$size-48: 48px;
 $size-50: 50px;
+$size-54: 54px;
+$size-58: 58px;
 
 // pink
 $pink-100: #ffe4e1;
@@ -35,3 +52,15 @@ $gray-500: #808080;
 $gray-600: #696969;
 $gray-700: #708090;
 $gray-800: #333;
+
+$white-100: #fff;
+
+@mixin font($size, $line-height: false, $color: false) {
+  @if ($color) {
+    color: $color;
+  }
+  @if ($line-height) {
+    line-height: $line-height;
+  }
+  font-size: $size;
+}

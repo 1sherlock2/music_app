@@ -1,0 +1,79 @@
+@import '../../styles/variables.scss';
+
+.container {
+  position: relative;
+  display: flex;
+  height: $size-40;
+  font-size: $font-size-24;
+
+  &_input {
+    width: 80%;
+    padding-right: 60px;
+    padding-left: 10px;
+    border-radius: $size-20;
+    border: 1px solid $gray-300;
+
+    &:focus-visible {
+      outline: none;
+    }
+
+    &:-moz-focusring {
+      background-color: $gray-300;
+    }
+    &:focus {
+      background-color: $white-100;
+    }
+  }
+}
+
+.icon {
+  position: absolute;
+  top: $size-2;
+  right: $size-4;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
+  opacity: 0.5;
+
+  &:active {
+    opacity: 1;
+    background-color: $gray-100;
+  }
+}
+
+.s {
+  @include font($font-size-16, $line-height-20);
+  height: $size-40;
+}
+.m {
+  @include font($size-20, $line-height-24);
+  height: $size-48;
+}
+.l {
+  @include font($size-24, $line-height-28);
+  height: $size-58;
+}
+
+.pink {
+  background-color: $pink-400;
+  color: $gray-100;
+}
+
+.white {
+  background-color: $gray-100;
+  color: $pink-500;
+}
+
+.submitClass {
+  width: 30%;
+  border: 1px solid $gray-100;
+  border-radius: $size-10;
+  margin: 0 auto;
+}

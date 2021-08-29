@@ -1,0 +1,22 @@
+@import '../../../styles/variables.scss';
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: $size-50;
+  &_form {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 300px;
+
+    @media screen and (max-width: 320px) {
+      width: 250px;
+    }
+
+    & > div {
+      margin-bottom: $size-30;
+    }
+  }
+}
