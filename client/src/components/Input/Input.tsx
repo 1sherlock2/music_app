@@ -1,10 +1,16 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import Close from '../Icons/Close';
-import { IInput, IInputStyle, ITypeInput } from './Input.interface';
+import {
+  IErrorInput,
+  IInput,
+  IInputStyle,
+  ITypeInput
+} from './Input.interface';
 import classnames from 'classnames';
 import s from './Input.scss';
 import IconVisibilityOff from '../Icons/Visibility/VisibilityOff';
 import IconVisibility from '../Icons/Visibility/Visibility';
+import { errorStatus, validateOptions } from './validateOptions';
 
 const Input: React.FC<IInput> = ({
   type,
@@ -12,10 +18,28 @@ const Input: React.FC<IInput> = ({
   onChange,
   value,
   size = 'm',
-  style= 'white'
-  closeSize
+  style = 'white',
+  closeSize,
+  disabled
 }) => {
   const [typeInput, setTypeInput] = useState(type);
+  const [disabledInput, setDisabled] = useState(true);
+
+  const errorInput: IErrorInput = useMemo(() => {
+    const {
+      email,
+      password: { length }
+    } = validateOptions;
+    const search: boolean = email.test(value);
+    const passwordLength: boolean = length <= value.length;
+    if (type === 'text' && !search) {
+      return errorStatus(true, 'email is not correct');
+    }
+    if (type === 'password' && !passwordLength) {
+      return errorStatus(true, `this password must no less ${length} symbols`);
+    }
+    return !!(search && passwordLength);
+  }, [value]);
 
   const IconSize: any = {
     s: '28px',
@@ -54,17 +78,24 @@ const Input: React.FC<IInput> = ({
 
   const inputStyle: IInputStyle = {
     white: s.white,
-    pink: s.pink,
-  }
+    pink: s.pink
+  };
 
   const inputClass = classnames(
     type !== 'submit' ? s.container_input : s.submitClass,
-    s[size], inputStyle[style]
+    s[size],
+    inputStyle[style],
+    { [s.disabled]: disabled }
   );
   return (
     <div className={s.container}>
       {type === 'submit' && (
-        <input type={type} value={value} className={inputClass} />
+        <input
+          type={type}
+          value={value}
+          className={inputClass}
+          disabled={disabledInput || disabled}
+        />
       )}
       {type !== 'submit' && (
         <input
@@ -76,22 +107,33 @@ const Input: React.FC<IInput> = ({
         />
       )}
       {type !== 'password' && closeSize && value && (
-        <button
-          aria-label="clear textfield"
-          className={s.icon}
-          onClick={closeHandler}
-        >
-          <Close {...iconsSize} />
-        </button>
+        <>
+          <button
+            aria-label="clear textfield"
+            className={s.icon}
+            onClick={closeHandler}
+            disabled={disabled}
+          >
+            <Close {...iconsSize} />
+          </button>
+          {errorInput.status && value && (
+            <div className={s.error}> {errorInput.message} </div>
+          )}
+        </>
       )}
       {type === 'password' && (
-        <button
-          className={s.icon}
-          onClick={showPassword}
-          aria-label="toggle password visibility"
-        >
-          <VisibleIcon {...iconsSize} />
-        </button>
+        <>
+          <button
+            className={s.icon}
+            onClick={showPassword}
+            aria-label="toggle password visibility"
+          >
+            <VisibleIcon {...iconsSize} />
+          </button>
+          {errorInput.status && value && (
+            <div className={s.error}> {errorInput.message} </div>
+          )}
+        </>
       )}
     </div>
   );
