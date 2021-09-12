@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  SetStateAction
+} from 'react';
 import Close from '../Icons/Close';
 import {
   IErrorInput,
@@ -10,35 +16,34 @@ import classnames from 'classnames';
 import s from './Input.scss';
 import IconVisibilityOff from '../Icons/Visibility/VisibilityOff';
 import IconVisibility from '../Icons/Visibility/Visibility';
-import { errorStatus, validateOptions } from './validateOptions';
+import {
+  emailValidation,
+  passwordValidation,
+  validateOptions
+} from './validation/validateOptions';
 
 const Input: React.FC<IInput> = ({
-  type,
+  type = 'text',
   placeholder,
   onChange,
   value,
   size = 'm',
   style = 'white',
   closeSize,
-  disabled
+  disabled,
+  validate
 }) => {
   const [typeInput, setTypeInput] = useState(type);
-  const [disabledInput, setDisabled] = useState(true);
+  const [errorData, setErrorData] =
+    useState<SetStateAction<boolean | object>>(false);
 
-  const errorInput: IErrorInput = useMemo(() => {
-    const {
-      email,
-      password: { length }
-    } = validateOptions;
-    const search: boolean = email.test(value);
-    const passwordLength: boolean = length <= value.length;
-    if (type === 'text' && !search) {
-      return errorStatus(true, 'email is not correct');
-    }
-    if (type === 'password' && !passwordLength) {
-      return errorStatus(true, `this password must no less ${length} symbols`);
-    }
-    return !!(search && passwordLength);
+  useEffect(() => {
+    const validationData = { type, value };
+    const errorInput = {
+      email: emailValidation(validationData),
+      password: passwordValidation(validationData)
+    };
+    setErrorData(errorInput);
   }, [value]);
 
   const IconSize: any = {
@@ -94,7 +99,7 @@ const Input: React.FC<IInput> = ({
           type={type}
           value={value}
           className={inputClass}
-          disabled={disabledInput || disabled}
+          disabled={disabled}
         />
       )}
       {type !== 'submit' && (
@@ -116,8 +121,8 @@ const Input: React.FC<IInput> = ({
           >
             <Close {...iconsSize} />
           </button>
-          {errorInput.status && value && (
-            <div className={s.error}> {errorInput.message} </div>
+          {errorData[validate]?.status && value && (
+            <div className={s.error}> {errorData[validate]?.message} </div>
           )}
         </>
       )}
@@ -130,8 +135,8 @@ const Input: React.FC<IInput> = ({
           >
             <VisibleIcon {...iconsSize} />
           </button>
-          {errorInput.status && value && (
-            <div className={s.error}> {errorInput.message} </div>
+          {errorData[validate]?.status && value && (
+            <div className={s.error}> {errorData[validate]?.message} </div>
           )}
         </>
       )}

@@ -25,3 +25,9 @@
     position: relative;
   }
 }
+
+.errorAuth {
+  display: flex;
+  @include font($size-16, $line-height-20, $pink-500);
+  text-align: center;
+}

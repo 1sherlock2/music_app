@@ -1,5 +1,6 @@
 export interface ILoginDTO {
-  data: {
-    success: boolean;
-  };
+  success?: boolean;
+  nickname?: string;
+  accessToken?: string;
+  token?: string;
 }

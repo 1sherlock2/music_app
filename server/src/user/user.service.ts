@@ -1,9 +1,17 @@
-import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare } from 'bcrypt';
 import { User } from 'src/db/entity/user.entity';
-import { ILoginAccess, IRegistrationStatus } from 'src/interfaces/user.register_status.interface';
+import {
+  ILoginAccess,
+  IRegistrationStatus
+} from 'src/interfaces/user.register_status.interface';
 import { UserCreateDTO } from 'src/user/dto/userCreate.dto';
 import httpMessages from 'src/utils/httpMessages';
 import { Repository } from 'typeorm';
@@ -22,7 +30,10 @@ export class UserService {
     const { nickname, password, email, roles } = userDTO;
     const userHasInDb = await this.userEntity.findOne({ where: { nickname } });
     if (userHasInDb) {
-      throw new HttpException(httpMessages.userAvailable, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        httpMessages.userAvailable,
+        HttpStatus.BAD_REQUEST
+      );
     }
     const userSave: User = await this.userEntity.create({
       nickname,
@@ -51,7 +62,7 @@ export class UserService {
       throw new UnauthorizedException(httpMessages.userOrPasswordIsNotCorrect);
     }
     const accessToken: string = this.jwtService.sign(user.id);
-    return { nickname, accessToken };
+    return { nickname, accessToken, success: true };
   }
 
   async validateUserByPayload({ nickname }: IJwtValidate) {

@@ -19,6 +19,13 @@ export interface IErrorStatus {
 
 export type IErrorInput = IErrorStatus | boolean;
 
+export interface IValidationIptions {
+  email: RegExp;
+  password: {
+    length: number;
+  };
+}
+
 export interface ITypeInput {
   text?: string;
   password?: string;
@@ -26,4 +33,8 @@ export interface ITypeInput {
 
 export interface IInputStyle {
   [x: string]: string;
+}
+export interface IValidationInput {
+  value: string;
+  type?: string;
 }

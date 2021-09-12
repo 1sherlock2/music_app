@@ -7,4 +7,5 @@ export interface IRegistrationStatus {
 export interface ILoginAccess {
   nickname?: string;
   accessToken?: string;
+  success: boolean;
 }
