@@ -1,6 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { loginPassword, loginText, responseAuth } from '../../../store/index';
+import React, { SetStateAction, Suspense, useEffect, useState } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  loginPassword,
+  loginText,
+  responseAuth,
+  setAuthData,
+  stateQuery
+} from '../../../store/index';
 import Button from '../../../components/Button/Button';
 import Input from '../../../components/Input/Input';
 import s from './Login.scss';
@@ -13,32 +19,31 @@ import { authLocalStorage } from '../../../utils/localStorage';
 const Login = () => {
   const [nicknameInput, setNicknameInput] = useRecoilState(loginText);
   const [password, setPassword] = useRecoilState(loginPassword);
-  const [responseData, setResponseData] = useRecoilState(responseAuth);
-  const [errorAuth, setErrorAuth] = useState(false);
+  const authDatas = useSetRecoilState(setAuthData);
+  const responseAuth = useRecoilValue(stateQuery);
+  const [errorAuth, setErrorAuth] =
+    useState<SetStateAction<boolean | string>>(false);
   const [loginLoading, setloginLoading] = useState(false);
-  console.log('errorAuth', errorAuth);
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setloginLoading(true);
-    const {
-      success,
-      nickname,
-      accessToken: token
-    }: ILoginDTO = await loginDataDB({
-      nickname: nicknameInput,
-      password
-    });
-    setResponseData({ success, nickname, token });
+    await authDatas({ nickname: nicknameInput, password });
+    setloginLoading(false);
+    return;
   };
 
   useEffect(() => {
-    const { success, token, nickname } = responseData;
-    if (!success) {
-      setloginLoading(false);
+    if (nicknameInput && password) {
+      const { success, message } = responseAuth;
+      console.log('responseAuth', responseAuth);
+      if (!success) {
+        setErrorAuth(message);
+      } else if (success) {
+        return <Redirect to="/" />;
+      }
     }
-    setloginLoading(false);
-    authLocalStorage.setStorage(token, nickname);
-  }, [responseData]);
+  }, [responseAuth]);
 
   return (
     <div className={s.loginForm}>
@@ -64,12 +69,7 @@ const Login = () => {
           <Input type="submit" value="Entry" size="m" style="pink" />
           {loginLoading && <Loader_1 />}
         </div>
-        {errorAuth && (
-          <div className={s.errorAuth}>
-            This login or password is not correct. Please repeat user data or
-            switch to register form
-          </div>
-        )}
+        {errorAuth && <div className={s.errorAuth}>{errorAuth}</div>}
       </form>
     </div>
   );

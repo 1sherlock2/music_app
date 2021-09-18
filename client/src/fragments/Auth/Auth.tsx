@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect, useState } from 'react';
+import React, { SetStateAction, Suspense, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { loginText } from '../../store';
 import Tabs from '../../components/Tabs/Tabs';
@@ -16,7 +16,11 @@ const Auth: React.FC = () => {
     setTabs(['Login', 'Registration']);
   }, []);
 
-  const componentByTabs: React.ReactElement<{}>[] = [<Login />].filter(Boolean);
+  const componentByTabs: React.ReactElement<{}>[] = [
+    <Suspense fallback={<div> loading</div>}>
+      <Login />
+    </Suspense>
+  ].filter(Boolean);
 
   return (
     <div className={s.authModal}>
