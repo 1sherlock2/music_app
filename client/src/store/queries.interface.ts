@@ -1,4 +1,4 @@
-export interface IloginDataDB {
-  nickname: string,
-  password: string,
-} 
+export interface ILoginDataDB {
+  nickname: string;
+  password: string;
+}

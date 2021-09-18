@@ -1,46 +1,56 @@
-import React, { SetStateAction, Suspense, useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import React, { SetStateAction, useEffect, useState } from 'react';
 import {
+  useRecoilState,
+  useRecoilValue,
+  useRecoilValueLoadable,
+  useSetRecoilState
+} from 'recoil';
+import {
+  authResponse,
+  isAuthentication,
   loginPassword,
   loginText,
-  responseAuth,
   setAuthData,
   stateQuery
 } from '../../../store/index';
-import Button from '../../../components/Button/Button';
 import Input from '../../../components/Input/Input';
 import s from './Login.scss';
-import { loginDataDB } from '../../../store/queries';
-import { ILoginDTO } from './Login.interface';
+import { IResponseAuth } from './Login.interface';
 import { Loader_1 } from '../../../loader/Loader_1';
-import { Redirect } from 'react-router';
-import { authLocalStorage } from '../../../utils/localStorage';
+import { Redirect, useHistory } from 'react-router';
 
 const Login = () => {
+  const history = useHistory();
   const [nicknameInput, setNicknameInput] = useRecoilState(loginText);
   const [password, setPassword] = useRecoilState(loginPassword);
   const authDatas = useSetRecoilState(setAuthData);
   const responseAuth = useRecoilValue(stateQuery);
+  // const responseAuth = useRecoilValueLoadable(authResponse);
+  const [isAuth, setIsAuth] = useRecoilState(isAuthentication);
   const [errorAuth, setErrorAuth] =
     useState<SetStateAction<boolean | string>>(false);
   const [loginLoading, setloginLoading] = useState(false);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     setloginLoading(true);
-    await authDatas({ nickname: nicknameInput, password });
+    authDatas({ nickname: nicknameInput, password });
     setloginLoading(false);
-    return;
   };
 
-  useEffect(() => {
+  useEffect((): void => {
     if (nicknameInput && password) {
-      const { success, message } = responseAuth;
-      console.log('responseAuth', responseAuth);
-      if (!success) {
-        setErrorAuth(message);
-      } else if (success) {
-        return <Redirect to="/" />;
+      const { success, message }: IResponseAuth = responseAuth;
+      switch (success) {
+        case true:
+          setIsAuth(true);
+          break;
+        case false:
+          setErrorAuth(message);
+          setIsAuth(false);
+          break;
+        default:
+          return;
       }
     }
   }, [responseAuth]);

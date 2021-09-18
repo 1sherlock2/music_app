@@ -1,6 +1,4 @@
 import React, { SetStateAction, Suspense, useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { loginText } from '../../store';
 import Tabs from '../../components/Tabs/Tabs';
 import s from './Auth.scss';
 import Login from './Login/Login';

@@ -1,6 +1,12 @@
+export interface IResponseAuth {
+  success: boolean;
+  message: string;
+}
+
 export interface ILoginDTO {
-  success?: boolean;
-  nickname?: string;
-  accessToken?: string;
-  token?: string;
+  data: {
+    success: boolean;
+    token?: string;
+    nickname?: string;
+  };
 }
