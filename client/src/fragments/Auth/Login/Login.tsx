@@ -20,12 +20,10 @@ import { Loader_1 } from '../../../loader/Loader_1';
 import { Redirect, useHistory } from 'react-router';
 
 const Login = () => {
-  const history = useHistory();
   const [nicknameInput, setNicknameInput] = useRecoilState(loginText);
   const [password, setPassword] = useRecoilState(loginPassword);
   const authDatas = useSetRecoilState(setAuthData);
-  const responseAuth = useRecoilValue(stateQuery);
-  // const responseAuth = useRecoilValueLoadable(authResponse);
+  const responseAuth = useRecoilValueLoadable(authResponse);
   const [isAuth, setIsAuth] = useRecoilState(isAuthentication);
   const [errorAuth, setErrorAuth] =
     useState<SetStateAction<boolean | string>>(false);
@@ -35,19 +33,25 @@ const Login = () => {
     e.preventDefault();
     setloginLoading(true);
     authDatas({ nickname: nicknameInput, password });
-    setloginLoading(false);
   };
 
   useEffect((): void => {
     if (nicknameInput && password) {
-      const { success, message }: IResponseAuth = responseAuth;
-      switch (success) {
-        case true:
-          setIsAuth(true);
+      console.log(responseAuth);
+      const { contents, state } = responseAuth;
+      switch (state) {
+        case 'loading':
+          setloginLoading(true);
           break;
-        case false:
-          setErrorAuth(message);
-          setIsAuth(false);
+        case 'hasValue':
+          const { success, message } = contents;
+          if (!success) {
+            setErrorAuth(message);
+            setIsAuth(false);
+            setloginLoading(false);
+          }
+          setIsAuth(true);
+          setloginLoading(false);
           break;
         default:
           return;
