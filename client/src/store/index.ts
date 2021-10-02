@@ -29,7 +29,6 @@ const stateQuery = selector({
   }
 });
 
-const authResponse = atom({ key: 'authResponse', default: stateQuery });
 
 export {
   loginText,
@@ -37,5 +36,4 @@ export {
   isAuthentication,
   stateQuery,
   setAuthData,
-  authResponse
 };

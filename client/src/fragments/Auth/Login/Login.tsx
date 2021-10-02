@@ -6,7 +6,6 @@ import {
   useSetRecoilState
 } from 'recoil';
 import {
-  authResponse,
   isAuthentication,
   loginPassword,
   loginText,
@@ -15,7 +14,6 @@ import {
 } from '../../../store/index';
 import Input from '../../../components/Input/Input';
 import s from './Login.scss';
-import { IResponseAuth } from './Login.interface';
 import { Loader_1 } from '../../../loader/Loader_1';
 import { Redirect, useHistory } from 'react-router';
 
@@ -23,8 +21,8 @@ const Login = () => {
   const [nicknameInput, setNicknameInput] = useRecoilState(loginText);
   const [password, setPassword] = useRecoilState(loginPassword);
   const authDatas = useSetRecoilState(setAuthData);
-  const responseAuth = useRecoilValueLoadable(authResponse);
-  const [isAuth, setIsAuth] = useRecoilState(isAuthentication);
+  const responseAuth = useRecoilValue(stateQuery);
+  const setIsAuth = useSetRecoilState(isAuthentication);
   const [errorAuth, setErrorAuth] =
     useState<SetStateAction<boolean | string>>(false);
   const [loginLoading, setloginLoading] = useState(false);
@@ -37,24 +35,16 @@ const Login = () => {
 
   useEffect((): void => {
     if (nicknameInput && password) {
-      console.log(responseAuth);
-      const { contents, state } = responseAuth;
-      switch (state) {
-        case 'loading':
-          setloginLoading(true);
-          break;
-        case 'hasValue':
-          const { success, message } = contents;
-          if (!success) {
-            setErrorAuth(message);
-            setIsAuth(false);
-            setloginLoading(false);
-          }
-          setIsAuth(true);
-          setloginLoading(false);
-          break;
-        default:
-          return;
+      const { success, message } = responseAuth;
+      if (!success) {
+        setErrorAuth(message);
+        setIsAuth(false);
+        console.log('setAush', false)
+        setloginLoading(false);
+      } else {
+        setIsAuth(true);
+        console.log('setAush', true)
+        setloginLoading(false);
       }
     }
   }, [responseAuth]);
