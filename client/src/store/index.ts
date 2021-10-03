@@ -1,6 +1,6 @@
 import { atom, selector } from 'recoil';
 import { authLocalStorage } from '../utils/localStorage';
-import { loginDataDB } from './queries';
+import { checkAuthDB, loginDataDB } from './queries';
 
 const loginText = atom({ key: 'loginText', default: '' });
 const loginPassword = atom({ key: 'loginPassword', default: '' });
@@ -16,7 +16,11 @@ const stateQuery = selector({
   get: async ({ get }) => {
     const { nickname, password } = get(setAuthData);
     const response = await loginDataDB({ nickname, password });
-    const { success, token, nickname: responseNick } = response.data;
+    const {
+      success,
+      accessToken: token,
+      nickname: responseNick
+    } = response.data;
     if (!success) {
       return {
         success,
@@ -29,6 +33,10 @@ const stateQuery = selector({
   }
 });
 
+const checkAuth = selector({
+  key: 'checkAuth',
+  get: async () => await checkAuthDB()
+});
 
 export {
   loginText,
@@ -36,4 +44,5 @@ export {
   isAuthentication,
   stateQuery,
   setAuthData,
+  checkAuth
 };

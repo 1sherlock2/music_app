@@ -1,10 +1,10 @@
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
-import AudioPlayer from './AudioPlayer/AudioPlayer';
-import CurrentProgressTime from './CurrentProgressTime/CurrentProgressTime';
-import s from './AudioContainer.scss';
-import { IAppContainer, IDurationTarget } from './AudioContainer.interface';
+import React, { useEffect, useRef, useState } from 'react';
+import AudioPlayer from '../AudioPlayer/AudioPlayer';
+import CurrentProgressTime from '../CurrentProgressTime/CurrentProgressTime';
+import s from './AudioPayload.scss';
+import { IAppContainer, IDurationTarget } from './AudioPayload.interface';
 
-const AudioContainer: React.FC<IAppContainer> = ({ musics }) => {
+const AudioPayload: React.FC<IAppContainer> = ({ musics }) => {
   const [trackIndex, setTrackIndex] = useState(0);
   const [trackProgress, setTrackProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -18,7 +18,9 @@ const AudioContainer: React.FC<IAppContainer> = ({ musics }) => {
   const intervalRef = useRef<any>();
   const isReady = useRef(false);
 
-  const currentPercent = duration ? `${(trackProgress / duration) * 100}%` : '0%';
+  const currentPercent = duration
+    ? `${(trackProgress / duration) * 100}%`
+    : '0%';
   const trackStyling = {
     backgroundImage: `linear-gradient(to top, #fdcbf1 ${currentPercent}, #fdcbf1 1%, #e6dee9 100%)`
   };
@@ -107,14 +109,20 @@ const AudioContainer: React.FC<IAppContainer> = ({ musics }) => {
     return () => {
       audioRef.current.pause();
       clearInterval(intervalRef.current);
-      audioRef.current.removeEventListener('loadedmetadata', loadMetaDataHandler);
+      audioRef.current.removeEventListener(
+        'loadedmetadata',
+        loadMetaDataHandler
+      );
     };
   }, [audioRef, trackIndex]);
   return (
     <div className={s.container}>
       <div className={s.container_wrapper}>
         <div className={s.container_wrapper_title}>{title}</div>
-        <div className={s.container_wrapper_image} style={{ backgroundColor: color }}>
+        <div
+          className={s.container_wrapper_image}
+          style={{ backgroundColor: color }}
+        >
           <div className={s.image_title}>
             <img src={img} alt={`${title}_${artist}`} />
           </div>
@@ -140,4 +148,4 @@ const AudioContainer: React.FC<IAppContainer> = ({ musics }) => {
   );
 };
 
-export default AudioContainer;
+export default AudioPayload;

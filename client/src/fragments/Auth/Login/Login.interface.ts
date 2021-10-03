@@ -6,7 +6,7 @@ export interface IResponseAuth {
 export interface ILoginDTO {
   data: {
     success: boolean;
-    token?: string;
+    accessToken?: string;
     nickname?: string;
   };
 }

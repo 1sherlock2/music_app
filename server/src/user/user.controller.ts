@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Request,
+  UseGuards
+} from '@nestjs/common';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UserCreateDTO } from 'src/user/dto/userCreate.dto';
 import { Role } from 'src/enums/role.enum';
@@ -14,7 +22,9 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
   // @Roles(Role.Admin)
   @Post('register')
-  public async register(@Body() createUserDto: UserCreateDTO): Promise<IRegistrationStatus> {
+  public async register(
+    @Body() createUserDto: UserCreateDTO
+  ): Promise<IRegistrationStatus> {
     try {
       return await this.userService.create(createUserDto);
     } catch (e) {
@@ -32,7 +42,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
+  @Get('check')
   getProfile(@Request() req) {
     return req.user;
   }

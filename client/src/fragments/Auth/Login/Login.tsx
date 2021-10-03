@@ -1,11 +1,7 @@
 import React, { SetStateAction, useEffect, useState } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  useRecoilState,
-  useRecoilValue,
-  useRecoilValueLoadable,
-  useSetRecoilState
-} from 'recoil';
-import {
+  checkAuth,
   isAuthentication,
   loginPassword,
   loginText,
@@ -15,17 +11,18 @@ import {
 import Input from '../../../components/Input/Input';
 import s from './Login.scss';
 import { Loader_1 } from '../../../loader/Loader_1';
-import { Redirect, useHistory } from 'react-router';
+import { useHistory } from 'react-router';
 
 const Login = () => {
   const [nicknameInput, setNicknameInput] = useRecoilState(loginText);
   const [password, setPassword] = useRecoilState(loginPassword);
   const authDatas = useSetRecoilState(setAuthData);
   const responseAuth = useRecoilValue(stateQuery);
-  const setIsAuth = useSetRecoilState(isAuthentication);
+  const [isAuth, setIsAuth] = useRecoilState(isAuthentication);
   const [errorAuth, setErrorAuth] =
     useState<SetStateAction<boolean | string>>(false);
   const [loginLoading, setloginLoading] = useState(false);
+  const history = useHistory();
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -33,17 +30,21 @@ const Login = () => {
     authDatas({ nickname: nicknameInput, password });
   };
 
+  useEffect(() => {
+    if (isAuth) {
+      history.push('/');
+    }
+  }, [isAuth]);
+
   useEffect((): void => {
     if (nicknameInput && password) {
       const { success, message } = responseAuth;
       if (!success) {
         setErrorAuth(message);
         setIsAuth(false);
-        console.log('setAush', false)
         setloginLoading(false);
       } else {
         setIsAuth(true);
-        console.log('setAush', true)
         setloginLoading(false);
       }
     }

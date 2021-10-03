@@ -48,7 +48,6 @@ export class UserService {
       message: httpMessages.userWasCreated,
       status: HttpStatus.OK
     };
-    console.log(result);
     return result;
   }
   async authenticate(loginDTO: LoginDTO): Promise<ILoginAccess> {
