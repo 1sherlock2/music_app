@@ -15,7 +15,7 @@ const Auth: React.FC = () => {
   }, []);
 
   const componentByTabs: React.ReactElement<{}>[] = [
-    <Suspense fallback={<div> loading</div>}>
+    <Suspense fallback={<div> ...loading</div>}>
       <Login />
     </Suspense>
   ].filter(Boolean);

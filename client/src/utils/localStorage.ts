@@ -7,7 +7,10 @@ export const authLocalStorage = {
   removeStorage: () => localStorage.removeItem(localAuth),
   getToken: () => {
     const storage: any = localStorage.getItem(localAuth);
-    const { token } = JSON.parse(storage);
-    return token;
+    if (storage) {
+      const { token } = JSON.parse(storage);
+      return `Bearer ${token}`;
+    }
+    return null;
   }
 };

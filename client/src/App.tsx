@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import { useRouter } from './hoc/useRouter';
 import s from './App.scss';
 
@@ -10,7 +10,11 @@ const App: React.FC = () => {
     body.classList.add(s.app);
   }, []);
 
-  return <div className={s.app}>{routes}</div>;
+  return(
+    <Suspense fallback={<div> app loading </div>}>
+      <div className={s.app}>{routes}</div>;
+    </Suspense>
+  ) 
 };
 
 export default App;

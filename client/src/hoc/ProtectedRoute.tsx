@@ -9,14 +9,12 @@ const ProtectedRoute = ({
   ...restProps
 }: IProtectedRouteProps) => {
   const isAuth = useRecoilValue(isAuthentication);
-  const checkAuthentication = useRecoilValue(checkAuth);
+  const checkAuthentication = !isAuth && !!String(useRecoilValue(checkAuth));
 
   return (
     <Route path={restProps.path}>
       {isAuth || checkAuthentication ? (
-        <Suspense fallback={<div> loading </div>}>
-          <Component />
-        </Suspense>
+        <Component />
       ) : (
         <Redirect to="/login" />
       )}
