@@ -54,7 +54,7 @@ type IallTraksByUser = {
 const allTraksByUser = selector({
   key: 'allTraksByUser',
   get: async () => {
-      const { data } : AxiosResponse<IallTraksByUser> = await allTracksByUserDB();
+      const { data } : AxiosResponse<IallTraksByUser[]> = await allTracksByUserDB();
       return data
   }
 })

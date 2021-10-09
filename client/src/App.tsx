@@ -12,7 +12,7 @@ const App: React.FC = () => {
 
   return(
     <Suspense fallback={<div> app loading </div>}>
-      <div className={s.app}>{routes}</div>;
+      <div className={s.app}>{routes}</div>
     </Suspense>
   ) 
 };
