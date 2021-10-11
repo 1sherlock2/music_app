@@ -1,21 +1,36 @@
 import React, { useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import Visibility from '../../components/Icons/Visibility/Visibility';
-import DefaultTrackImg from '../../components/Icons/DefaultTrackImg/DefaultTrackImg';
-import { allTraksByUser } from '../../store/index';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import PlaylistPopup from '../PlaylistPopup/PlaylistPopup';
+import { allTraksByUser, getTrackBySrc, trackInfo } from '../../store/index';
 import s from './Playlist.scss';
 import Img from '../../components/Img/Img';
 
 const Playlist = () => {
   const allTracks = useRecoilValue(allTraksByUser);
-  const [imgLoad, setImgLoad] = useState(false);
+  const trackRefs: any = useRef(allTracks?.map(() => React.createRef()));
+  const [generalIndexTrack, setTrackIndex] = useState<number>(0);
+  const [open, setOpen] = useState<boolean>(false);
+  console.log('allTracks', allTracks);
+  const setTrackInfo = useSetRecoilState(trackInfo);
 
+  const handleClick = (index: number, audio: string) => {
+    setTrackIndex(index);
+    setOpen(true);
+    setTrackInfo({ audioSrc: audio });
+  };
+
+  console.log('trackRefs', trackRefs);
   return (
     <div className={s.playList}>
       {allTracks?.map((track, index) => {
-        const { id, img, artist, name } = track;
+        const { id, img, artist, name, audio } = track;
         return (
-          <div key={`${id}_${index}`} className={s.container}>
+          <div
+            key={`${id}_${index}`}
+            ref={trackRefs.current[index]}
+            className={s.container}
+            onClick={() => handleClick(index, audio)}
+          >
             <div className={s.container_img}>
               <Img
                 src={img}
@@ -29,6 +44,14 @@ const Playlist = () => {
           </div>
         );
       })}
+      {open && (
+        <PlaylistPopup
+          allTracks={allTracks}
+          generalIndexTrack={generalIndexTrack}
+          setOpen={setOpen}
+          open={open}
+        />
+      )}
     </div>
   );
 };
