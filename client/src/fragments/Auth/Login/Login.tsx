@@ -1,7 +1,6 @@
 import React, { SetStateAction, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  checkAuth,
   isAuthentication,
   loginPassword,
   loginText,

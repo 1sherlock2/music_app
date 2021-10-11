@@ -10,6 +10,7 @@ const PlaylistPopup: React.FC<IAudioPayload> = ({
   open
 }) => {
   const [trackIndex, setTrackIndex] = useState(generalIndexTrack || 0);
+  const currentTrack = allTracks[trackIndex];
 
   // Следующий трек
   const goToNextTrack = useCallback(() => {
@@ -29,10 +30,10 @@ const PlaylistPopup: React.FC<IAudioPayload> = ({
     }
   }, [generalIndexTrack]);
 
-  if (audioResponse) {
+  if (currentTrack.audio) {
     return createPortal(
       <AudioPayload
-        audio={audioResponse}
+        currentTrack={currentTrack}
         setOpen={setOpen}
         open={open}
         trackIndex={trackIndex}

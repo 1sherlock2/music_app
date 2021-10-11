@@ -10,8 +10,6 @@ import {
 } from './AudioPayload.interface';
 import Img from '../../components/Img/Img';
 import useClickOutside from '../../hooks/useClickOutside';
-import { useRecoilValue } from 'recoil';
-import { getTrackBySrc } from '../../store/index';
 
 const AudioPayload: React.FC<IAudioPayload> = ({
   setOpen,
@@ -19,13 +17,18 @@ const AudioPayload: React.FC<IAudioPayload> = ({
   trackIndex,
   goToPreviousTrack,
   goToNextTrack,
-  audio
+  currentTrack
 }) => {
   const [trackProgress, setTrackProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [repeatAudioRef, setRepeatAudioRef] = useState(false);
   const [touchY, setTouchY] = useState<ITouchY>({});
+
+  const { artist, name, audio, img } = useMemo(
+    () => currentTrack,
+    [currentTrack]
+  );
 
   // audio prepare
   const audioRef = useRef<HTMLAudioElement>(new Audio(audio));
@@ -72,7 +75,7 @@ const AudioPayload: React.FC<IAudioPayload> = ({
       } else {
         setTrackProgress(audioRef.current.currentTime);
       }
-    }, [1000]);
+    }, 1000);
   };
 
   const changeCurrentTime = (value: number) => {

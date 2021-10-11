@@ -1,12 +1,7 @@
 import { AxiosResponse } from 'axios';
 import { atom, selector } from 'recoil';
 import { authLocalStorage } from '../utils/localStorage';
-import {
-  allTracksByUserDB,
-  checkAuthDB,
-  getTrackBySrcDB,
-  loginDataDB
-} from './queries';
+import { allTracksByUserDB, checkAuthDB, loginDataDB } from './queries';
 
 const loginText = atom({ key: 'loginText', default: '' });
 const loginPassword = atom({ key: 'loginPassword', default: '' });
@@ -39,13 +34,16 @@ const stateQuery = selector({
   }
 });
 
-export type IcheckAuth = number | null;
 const checkAuth = selector({
   key: 'checkAuth',
   get: async () => {
     const response = await checkAuthDB();
-    const { userId } = response?.data;
-    return userId || null;
+    const { success, userId } = response?.data;
+    if (success) {
+      return String(userId);
+    } else if (!success) {
+      return null;
+    }
   }
 });
 
@@ -72,7 +70,5 @@ export {
   stateQuery,
   setAuthData,
   checkAuth,
-  allTraksByUser,
-  getTrackBySrc,
-  trackInfo
+  allTraksByUser
 };

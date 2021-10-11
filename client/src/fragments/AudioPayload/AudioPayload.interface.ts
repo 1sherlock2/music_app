@@ -10,9 +10,17 @@ export interface IDurationTarget {
 }
 export interface IAudioPayload {
   allTracks: IallTraksByUser[];
-  generalIndexTrack: number;
   setOpen: (value: boolean) => void;
   open: boolean;
+  goToNextTrack: () => void;
+  goToPreviousTrack: () => void;
+  trackIndex: number;
+  currentTrack: {
+    artist?: string;
+    name: string;
+    audio: string;
+    img?: string;
+  };
 }
 
 export interface ITouchY {

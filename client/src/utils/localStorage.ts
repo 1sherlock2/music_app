@@ -6,7 +6,7 @@ export const authLocalStorage = {
   getStorage: (): string | null => localStorage.getItem(localAuth),
   removeStorage: () => localStorage.removeItem(localAuth),
   getToken: () => {
-    const storage: any = localStorage.getItem(localAuth);
+    const storage: string | null = localStorage.getItem(localAuth);
     if (storage) {
       const { token } = JSON.parse(storage);
       return `Bearer ${token}`;

@@ -6,6 +6,7 @@ export interface ILoginDataDB {
 export interface ICheckLoginQuery {
   data: {
     userId: number;
+    success: boolean;
   };
 }
 export interface IGetTrackInfoSrc {

@@ -11,25 +11,23 @@ const Playlist = () => {
   const [generalIndexTrack, setTrackIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
   console.log('allTracks', allTracks);
-  const setTrackInfo = useSetRecoilState(trackInfo);
 
-  const handleClick = (index: number, audio: string) => {
+  const handleClick = (index: number) => {
     setTrackIndex(index);
     setOpen(true);
-    setTrackInfo({ audioSrc: audio });
   };
 
   console.log('trackRefs', trackRefs);
   return (
     <div className={s.playList}>
       {allTracks?.map((track, index) => {
-        const { id, img, artist, name, audio } = track;
+        const { id, img, artist, name } = track;
         return (
           <div
             key={`${id}_${index}`}
             ref={trackRefs.current[index]}
             className={s.container}
-            onClick={() => handleClick(index, audio)}
+            onClick={() => handleClick(index)}
           >
             <div className={s.container_img}>
               <Img
