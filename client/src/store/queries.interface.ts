@@ -6,5 +6,9 @@ export interface ILoginDataDB {
 export interface ICheckLoginQuery {
   data: {
     userId: number;
-  }
+  };
+}
+export interface IGetTrackInfoSrc {
+  audioSrc: string;
+  imgSrc?: string;
 }

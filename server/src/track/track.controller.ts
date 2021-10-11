@@ -52,7 +52,7 @@ export class TrackController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('delete')
+  @Delete('delete')
   deleteTrack(@Query('id') id: string, @Req() req) {
     const { userId } = req;
     return this.trackService.deleteTrack(id, userId);

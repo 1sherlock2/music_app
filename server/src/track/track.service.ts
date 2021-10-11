@@ -34,7 +34,10 @@ export class TrackService {
       (acc: IResultCloudinary, response: IUploadObjectReduce) => {
         const { success, urlImg, urlAudio } = response;
         if (!success) {
-          throw new HttpException(httpMessages.errorUpladAudioInCloud, HttpStatus.BAD_GATEWAY);
+          throw new HttpException(
+            httpMessages.errorUpladAudioInCloud,
+            HttpStatus.BAD_GATEWAY
+          );
         }
         if (urlImg) acc.cloudinaryImg = urlImg;
         if (urlAudio) acc.cloudinaryAudio = urlAudio;
@@ -64,10 +67,13 @@ export class TrackService {
 
   async deleteTrack(id, userId) {
     const track = await this.trackEntity.findOne({
-      where: { id: Number(id) }
+      where: { id: Number(id), userId }
     });
     if (!track) {
-      return new HttpException(httpMessages.trackIsNotFound, HttpStatus.BAD_REQUEST);
+      return new HttpException(
+        httpMessages.trackIsNotFound,
+        HttpStatus.BAD_REQUEST
+      );
     }
     await this.trackEntity.delete(track.id);
     return {

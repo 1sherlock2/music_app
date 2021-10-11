@@ -1,22 +1,38 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { TouchEvent, useEffect, useMemo, useRef, useState } from 'react';
 import AudioPlayer from '../AudioPlayer/AudioPlayer';
 import CurrentProgressTime from '../CurrentProgressTime/CurrentProgressTime';
 import s from './AudioPayload.scss';
-import { IAppContainer, IDurationTarget } from './AudioPayload.interface';
+import classnames from 'classnames';
+import {
+  IAudioPayload,
+  IDurationTarget,
+  ITouchY
+} from './AudioPayload.interface';
+import Img from '../../components/Img/Img';
+import useClickOutside from '../../hooks/useClickOutside';
+import { useRecoilValue } from 'recoil';
+import { getTrackBySrc } from '../../store/index';
 
-const AudioPayload: React.FC<IAppContainer> = ({ musics }) => {
-  const [trackIndex, setTrackIndex] = useState(0);
+const AudioPayload: React.FC<IAudioPayload> = ({
+  setOpen,
+  open,
+  trackIndex,
+  goToPreviousTrack,
+  goToNextTrack,
+  audio
+}) => {
   const [trackProgress, setTrackProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [repeatAudioRef, setRepeatAudioRef] = useState(false);
-
-  const { title, audio, artist, img, color } = musics[trackIndex];
+  const [touchY, setTouchY] = useState<ITouchY>({});
 
   // audio prepare
   const audioRef = useRef<HTMLAudioElement>(new Audio(audio));
   const intervalRef = useRef<any>();
   const isReady = useRef(false);
+
+  const containerRef = useClickOutside((): any => setOpen(false));
 
   const currentPercent = duration
     ? `${(trackProgress / duration) * 100}%`
@@ -24,6 +40,29 @@ const AudioPayload: React.FC<IAppContainer> = ({ musics }) => {
   const trackStyling = {
     backgroundImage: `linear-gradient(to top, #fdcbf1 ${currentPercent}, #fdcbf1 1%, #e6dee9 100%)`
   };
+
+  // события свертывания плеера
+  const handleTouchStart = (ev: TouchEvent) => {
+    const { clientY } = ev.touches[0];
+    setTouchY({ ...touchY, startY: clientY });
+  };
+
+  const handleTouchEnd = (ev: TouchEvent) => {
+    const { clientY } = ev.changedTouches[0];
+    setTouchY({ ...touchY, endY: clientY });
+  };
+
+  useEffect(() => {
+    const { startY, endY } = touchY;
+    if (!startY || !endY) {
+      return undefined;
+    }
+    const changePosY = endY - startY;
+    if (changePosY >= 40) {
+      setOpen(false);
+    }
+    return () => setTouchY({});
+  }, [touchY]);
 
   const startTimer = (): void => {
     clearInterval(intervalRef.current);
@@ -57,22 +96,6 @@ const AudioPayload: React.FC<IAppContainer> = ({ musics }) => {
     }
     startTimer();
   };
-  // Следующий трек
-  const goToNextTrack = () => {
-    if (trackIndex >= musics.length - 1) {
-      setTrackIndex(0);
-    } else {
-      setTrackIndex(trackIndex + 1);
-    }
-  };
-  // Предыдущий трек
-  const goToPreviousTrack = () => {
-    if (trackIndex - 1 < 0) {
-      setTrackIndex(musics.length - 1);
-    } else {
-      setTrackIndex(trackIndex - 1);
-    }
-  };
 
   // Действия при проигрывании
   useEffect(() => {
@@ -100,6 +123,8 @@ const AudioPayload: React.FC<IAppContainer> = ({ musics }) => {
     }
   }, [trackIndex]);
 
+  console.log('audioRef', audioRef);
+
   //  Действия с текущей музыкой при переключении
   useEffect(() => {
     const loadMetaDataHandler = (e: IDurationTarget): void => {
@@ -116,33 +141,43 @@ const AudioPayload: React.FC<IAppContainer> = ({ musics }) => {
     };
   }, [audioRef, trackIndex]);
   return (
-    <div className={s.container}>
-      <div className={s.container_wrapper}>
-        <div className={s.container_wrapper_title}>{title}</div>
-        <div
-          className={s.container_wrapper_image}
-          style={{ backgroundColor: color }}
-        >
-          <div className={s.image_title}>
-            <img src={img} alt={`${title}_${artist}`} />
+    <div className={classnames({ [s.outside]: open })}>
+      <div
+        className={s.container}
+        ref={containerRef}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className={s.container_wrapper}>
+          <div className={s.container_line} />
+          <div
+            className={s.container_wrapper_title}
+          >{`${name} - ${artist}`}</div>
+          <div className={s.container_wrapper_image}>
+            <div className={s.image_title}>
+              <Img
+                src={img}
+                altSrc="https://res.cloudinary.com/drypohi9s/image/upload/v1633723468/music_app/alt_src_img/audio-wave-svgrepo-com_trpgkx.svg"
+              />
+            </div>
           </div>
+          <AudioPlayer
+            setIsPlaying={setIsPlaying}
+            isPlaying={isPlaying}
+            goToNextTrack={goToNextTrack}
+            goToPreviousTrack={goToPreviousTrack}
+            setRepeatAudioRef={setRepeatAudioRef}
+            repeatAudioRef={repeatAudioRef}
+            ref={audioRef}
+          />
+          <CurrentProgressTime
+            onScrubEnd={onScrubEnd}
+            trackProgress={trackProgress}
+            trackStyling={trackStyling}
+            changeCurrentTime={changeCurrentTime}
+            duration={duration}
+          />
         </div>
-        <AudioPlayer
-          setIsPlaying={setIsPlaying}
-          isPlaying={isPlaying}
-          goToNextTrack={goToNextTrack}
-          goToPreviousTrack={goToPreviousTrack}
-          setRepeatAudioRef={setRepeatAudioRef}
-          repeatAudioRef={repeatAudioRef}
-          ref={audioRef}
-        />
-        <CurrentProgressTime
-          onScrubEnd={onScrubEnd}
-          trackProgress={trackProgress}
-          trackStyling={trackStyling}
-          changeCurrentTime={changeCurrentTime}
-          duration={duration}
-        />
       </div>
     </div>
   );
