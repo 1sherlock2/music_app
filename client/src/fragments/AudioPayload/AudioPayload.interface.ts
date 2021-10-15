@@ -8,10 +8,14 @@ export interface IDurationTarget {
     duration: React.SetStateAction<number>;
   };
 }
-export interface IAudioPayload {
-  allTracks: IallTraksByUser[];
+
+export interface IPlaylistPopup {
+  allTracks?: IallTraksByUser[] | undefined;
+  generalIndexTrack?: number,
   setOpen: (value: boolean) => void;
   open: boolean;
+}
+export interface IAudioPayload {
   goToNextTrack: () => void;
   goToPreviousTrack: () => void;
   trackIndex: number;

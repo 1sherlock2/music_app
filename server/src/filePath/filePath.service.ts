@@ -14,7 +14,6 @@ export class FilePathService {
         fs.mkdirSync(filePath, { recursive: true });
       }
       const fileExistion: string = path.resolve(filePath, fileName);
-      console.log(fileExistion);
       fs.writeFileSync(fileExistion, Buffer.from(new Uint8Array(file.buffer)));
       return fileExistion;
     } catch (e) {

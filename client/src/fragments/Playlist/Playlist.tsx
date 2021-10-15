@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import PlaylistPopup from '../PlaylistPopup/PlaylistPopup';
-import { allTraksByUser, getTrackBySrc, trackInfo } from '../../store/index';
+import { allTraksByUser } from '../../store/index';
 import s from './Playlist.scss';
 import Img from '../../components/Img/Img';
 
@@ -42,7 +42,7 @@ const Playlist = () => {
           </div>
         );
       })}
-      {open && (
+      {open && !!allTracks.length && (
         <PlaylistPopup
           allTracks={allTracks}
           generalIndexTrack={generalIndexTrack}

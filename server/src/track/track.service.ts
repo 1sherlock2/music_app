@@ -56,13 +56,22 @@ export class TrackService {
     await this.trackEntity.save(trackSave);
     return {
       success: true,
-      message: httpMessages.trackWasCreated,
+      message: httpMessages.trackWasCreated, 
       status: HttpStatus.OK
     };
   }
 
   async getAll({ userId }) {
-    return await this.trackEntity.find({ where: { userId } });
+    const allTracks = await this.trackEntity.find({ where: { userId } });
+    const trackWithoutAudioSrc = allTracks.map(trackInfo => {
+      delete trackInfo.audio
+      return trackInfo;
+    })
+    return trackWithoutAudioSrc;
+  }
+  
+  async getTrackById({ id }) {
+    
   }
 
   async deleteTrack(id, userId) {

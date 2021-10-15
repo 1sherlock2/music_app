@@ -1,4 +1,11 @@
-import React, { TouchEvent, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  SetStateAction,
+  TouchEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import AudioPlayer from '../AudioPlayer/AudioPlayer';
 import CurrentProgressTime from '../CurrentProgressTime/CurrentProgressTime';
 import s from './AudioPayload.scss';
@@ -6,17 +13,18 @@ import classnames from 'classnames';
 import {
   IAudioPayload,
   IDurationTarget,
+  IPlaylistPopup,
   ITouchY
 } from './AudioPayload.interface';
 import Img from '../../components/Img/Img';
 import useClickOutside from '../../hooks/useClickOutside';
 
-const AudioPayload: React.FC<IAudioPayload> = ({
+const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   setOpen,
   open,
-  trackIndex,
   goToPreviousTrack,
   goToNextTrack,
+  trackIndex,
   currentTrack
 }) => {
   const [trackProgress, setTrackProgress] = useState(0);
@@ -24,6 +32,11 @@ const AudioPayload: React.FC<IAudioPayload> = ({
   const [duration, setDuration] = useState<number>(0);
   const [repeatAudioRef, setRepeatAudioRef] = useState(false);
   const [touchY, setTouchY] = useState<ITouchY>({});
+  const [touchMoveX, setTouchMoveX] =
+    useState<SetStateAction<number | null>>(null);
+  const [touchMoveY, setTouchMoveY] =
+    useState<SetStateAction<number | null>>(null);
+  const [moveStyle, setMoveStyle] = useState(null);
 
   const { artist, name, audio, img } = useMemo(
     () => currentTrack,
@@ -54,6 +67,21 @@ const AudioPayload: React.FC<IAudioPayload> = ({
     const { clientY } = ev.changedTouches[0];
     setTouchY({ ...touchY, endY: clientY });
   };
+
+  const handleTouchEvent = (ev: TouchEvent) => {
+    const { clientX, clientY } = ev.touches[0];
+    setTouchMoveX(clientX);
+    setTouchMoveY(clientY);
+  };
+  console.log('touchMoveX', touchMoveX);
+  console.log('touchMoveY', touchMoveY);
+
+  useEffect(() => {
+    if (!touchMoveX || !touchMoveY) {
+      return
+    }
+    containerRef.current.style
+  }, [touchMoveX, touchMoveY])
 
   useEffect(() => {
     const { startY, endY } = touchY;
@@ -150,6 +178,7 @@ const AudioPayload: React.FC<IAudioPayload> = ({
         ref={containerRef}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchEvent}
       >
         <div className={s.container_wrapper}>
           <div className={s.container_line} />
