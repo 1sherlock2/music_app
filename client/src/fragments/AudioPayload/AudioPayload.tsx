@@ -26,10 +26,13 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   const [duration, setDuration] = useState<number>(0);
   const [repeatAudioRef, setRepeatAudioRef] = useState(false);
   const [topPosition, setTopPosition] = useState(60);
-  const intervalValueByClose = useRef<number>(0);
-  const [transformByClose, setTransormByClose] = useState(false);
+  const [leftPosition, setLeftPosition] = useState(0);
+  const intervalValueByClose = useRef<number>(0.2);
+  const [transformByCloseY, setTranformByCloseY] = useState(false);
+  const [transformByCloseX, setTranformByCloseX] = useState(false);
   const touchY = useRef<number>(0);
-  const changePosY = useRef<number>(0);
+  const touchX = useRef<number>(0);
+  const changePos = useRef({ x: 0, y: 0 });
   const differentValue = useRef<number>(150);
 
   const { artist, name, audio, img } = useMemo(
@@ -52,30 +55,48 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
     backgroundImage: `linear-gradient(to top, #fdcbf1 ${currentPercent}, #fdcbf1 1%, #e6dee9 100%)`
   };
 
-  // события свертывания плеера
   const handleTouchStart = (ev: TouchEvent) => {
     const { clientY, clientX } = ev.touches[0];
     touchY.current = clientY;
+    touchX.current = clientX;
   };
-
   const handleTouchEnd = (ev: TouchEvent) => {
-    const { clientY } = ev.changedTouches[0];
-    changePosY.current = clientY - touchY.current;
-
-    if (changePosY.current >= differentValue.current) {
-      setTransormByClose(true);
+    const { clientY, clientX } = ev.changedTouches[0];
+    changePos.current.y = clientY - touchY.current;
+    changePos.current.x = clientX - touchX.current;
+    if (changePos.current.y >= differentValue.current) {
+      setTranformByCloseY(true);
       setTimeout(() => {
         setOpen(false);
-      }, intervalValueByClose.current);
+      }, intervalValueByClose.current * 1000);
+    } else if (changePos.current.x <= -differentValue.current) {
+      setTranformByCloseX(true);
+      setTimeout(() => {
+        setOpen(false);
+        // goToNextTrack();
+      }, intervalValueByClose.current * 1000);
+    } else if (
+      changePos.current.x >= differentValue.current &&
+      changePos.current.x !== 0
+    ) {
+      setTranformByCloseX(true);
+      setTimeout(() => {
+        setOpen(false);
+        // goToPreviousTrack();
+      }, intervalValueByClose.current * 1000);
     } else {
       setTopPosition(60);
+      setLeftPosition(0);
     }
   };
 
+  console.log('changePos', changePos.current.x);
   const handleTouchEvent = (ev: TouchEvent) => {
     const { clientX, clientY } = ev.touches[0];
-    changePosY.current = clientY - touchY.current;
-    setTopPosition(changePosY.current);
+    changePos.current.y = clientY - touchY.current;
+    changePos.current.x = clientX - touchX.current;
+    setTopPosition(changePos.current.y);
+    setLeftPosition(changePos.current.x);
   };
 
   const startTimer = (): void => {
@@ -150,16 +171,24 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
         'loadedmetadata',
         loadMetaDataHandler
       );
+      setTopPosition;
     };
   }, [audioRef, trackIndex]);
-  console.log('render');
+
   return (
     <div className={classnames({ [s.outside]: open })}>
       <div
         className={s.container}
         style={{
           top: `${topPosition}px`,
-          transform: `${transformByClose && 'translateY(700px)'}`,
+          left: `${leftPosition}px`,
+          transform: `translate(${
+            transformByCloseX
+              ? changePos.current.x < 0
+                ? '-700px'
+                : '700px'
+              : 0
+          }, ${transformByCloseY ? '700px' : 0})`,
           transition: `transform ${intervalValueByClose.current}s`
         }}
         ref={useCombinedRef(containerRef, audioContainerRef)}
@@ -201,5 +230,5 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
     </div>
   );
 };
-
-export default AudioPayload;
+const memoAudioPayload = React.memo(AudioPayload);
+export default memoAudioPayload;
