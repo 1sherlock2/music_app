@@ -28,3 +28,8 @@ export interface IResultCloudinary {
   cloudinaryImg?: string;
   cloudinaryAudio?: string;
 }
+
+export interface TrackRecieveParam {
+  id: string;
+  audioUrl: string;
+}

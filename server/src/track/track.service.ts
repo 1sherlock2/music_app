@@ -1,16 +1,25 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  StreamableFile
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { Track } from 'src/db/entity/track.entity';
+import * as fs from 'fs';
+import * as path from 'path';
 import {
   IResultCloudinary,
   ITrackCreateStatus,
-  IUploadObjectReduce
+  IUploadObjectReduce,
+  TrackRecieveParam
 } from 'src/interfaces/track.interface';
 import httpMessages from 'src/utils/httpMessages';
 import { Repository } from 'typeorm';
 import { TrackCreateDTO } from './dto/trackCreate.dto';
 import { FilePathService } from 'src/filePath/filePath.service';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class TrackService {
@@ -18,7 +27,8 @@ export class TrackService {
     @InjectRepository(Track)
     private readonly trackEntity: Repository<Track>,
     private readonly cloudinaryService: CloudinaryService,
-    private readonly filePathService: FilePathService
+    private readonly filePathService: FilePathService,
+    private httpService: HttpService
   ) {}
   async create(trackCreateDTO: TrackCreateDTO): Promise<ITrackCreateStatus> {
     const { name, artist, img, audio, userId } = trackCreateDTO;
@@ -56,22 +66,29 @@ export class TrackService {
     await this.trackEntity.save(trackSave);
     return {
       success: true,
-      message: httpMessages.trackWasCreated, 
+      message: httpMessages.trackWasCreated,
       status: HttpStatus.OK
     };
   }
 
   async getAll({ userId }) {
-    const allTracks = await this.trackEntity.find({ where: { userId } });
-    const trackWithoutAudioSrc = allTracks.map(trackInfo => {
-      delete trackInfo.audio
-      return trackInfo;
-    })
-    return trackWithoutAudioSrc;
+    return await this.trackEntity.find({ where: { userId } });
   }
-  
-  async getTrackById({ id }) {
-    
+
+  async recieve({
+    id,
+    audioUrl
+  }: TrackRecieveParam): Promise<StreamableFile | void> {
+    const { data: audioFile } = await this.httpService
+      .get(audioUrl)
+      .toPromise();
+    // const audioBuffer = Buffer.from(audioFile);
+    const stream = new StreamableFile(audioFile).getStream();
+    const buff = Buffer.from(audioFile, 'utf8');
+    console.log('path', path.resolve('../server/assets/audio/track.mp3'));
+    // const createStream = fs.createReadStream(path);
+    // fs.writeFileSync(path.resolve('../server/assets/audio/track.mp3'), buff);
+    // console.log('aaa', aaa);
   }
 
   async deleteTrack(id, userId) {

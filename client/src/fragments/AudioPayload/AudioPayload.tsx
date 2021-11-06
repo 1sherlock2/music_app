@@ -1,11 +1,4 @@
-import React, {
-  SetStateAction,
-  TouchEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import React, { TouchEvent, useEffect, useMemo, useRef, useState } from 'react';
 import AudioPlayer from '../AudioPlayer/AudioPlayer';
 import CurrentProgressTime from '../CurrentProgressTime/CurrentProgressTime';
 import s from './AudioPayload.scss';
@@ -18,6 +11,7 @@ import {
 } from './AudioPayload.interface';
 import Img from '../../components/Img/Img';
 import useClickOutside from '../../hooks/useClickOutside';
+import useCombinedRef from '../../hooks/useCombinedRef';
 
 const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   setOpen,
@@ -31,12 +25,12 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [repeatAudioRef, setRepeatAudioRef] = useState(false);
-  const [touchY, setTouchY] = useState<ITouchY>({});
-  const [touchMoveX, setTouchMoveX] =
-    useState<SetStateAction<number | null>>(null);
-  const [touchMoveY, setTouchMoveY] =
-    useState<SetStateAction<number | null>>(null);
-  const [moveStyle, setMoveStyle] = useState(null);
+  const [topPosition, setTopPosition] = useState(60);
+  const intervalValueByClose = useRef<number>(0);
+  const [transformByClose, setTransormByClose] = useState(false);
+  const touchY = useRef<number>(0);
+  const changePosY = useRef<number>(0);
+  const differentValue = useRef<number>(150);
 
   const { artist, name, audio, img } = useMemo(
     () => currentTrack,
@@ -49,6 +43,7 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   const isReady = useRef(false);
 
   const containerRef = useClickOutside((): any => setOpen(false));
+  const audioContainerRef = useRef(null);
 
   const currentPercent = duration
     ? `${(trackProgress / duration) * 100}%`
@@ -59,41 +54,29 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
 
   // события свертывания плеера
   const handleTouchStart = (ev: TouchEvent) => {
-    const { clientY } = ev.touches[0];
-    setTouchY({ ...touchY, startY: clientY });
+    const { clientY, clientX } = ev.touches[0];
+    touchY.current = clientY;
   };
 
   const handleTouchEnd = (ev: TouchEvent) => {
     const { clientY } = ev.changedTouches[0];
-    setTouchY({ ...touchY, endY: clientY });
+    changePosY.current = clientY - touchY.current;
+
+    if (changePosY.current >= differentValue.current) {
+      setTransormByClose(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, intervalValueByClose.current);
+    } else {
+      setTopPosition(60);
+    }
   };
 
   const handleTouchEvent = (ev: TouchEvent) => {
     const { clientX, clientY } = ev.touches[0];
-    setTouchMoveX(clientX);
-    setTouchMoveY(clientY);
+    changePosY.current = clientY - touchY.current;
+    setTopPosition(changePosY.current);
   };
-  console.log('touchMoveX', touchMoveX);
-  console.log('touchMoveY', touchMoveY);
-
-  useEffect(() => {
-    if (!touchMoveX || !touchMoveY) {
-      return
-    }
-    containerRef.current.style
-  }, [touchMoveX, touchMoveY])
-
-  useEffect(() => {
-    const { startY, endY } = touchY;
-    if (!startY || !endY) {
-      return undefined;
-    }
-    const changePosY = endY - startY;
-    if (changePosY >= 40) {
-      setOpen(false);
-    }
-    return () => setTouchY({});
-  }, [touchY]);
 
   const startTimer = (): void => {
     clearInterval(intervalRef.current);
@@ -154,8 +137,6 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
     }
   }, [trackIndex]);
 
-  console.log('audioRef', audioRef);
-
   //  Действия с текущей музыкой при переключении
   useEffect(() => {
     const loadMetaDataHandler = (e: IDurationTarget): void => {
@@ -171,11 +152,17 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
       );
     };
   }, [audioRef, trackIndex]);
+  console.log('render');
   return (
     <div className={classnames({ [s.outside]: open })}>
       <div
         className={s.container}
-        ref={containerRef}
+        style={{
+          top: `${topPosition}px`,
+          transform: `${transformByClose && 'translateY(700px)'}`,
+          transition: `transform ${intervalValueByClose.current}s`
+        }}
+        ref={useCombinedRef(containerRef, audioContainerRef)}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchEvent}

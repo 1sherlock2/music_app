@@ -7,14 +7,14 @@ const CurrentProgressTime = ({
   duration,
   trackProgress,
   trackStyling,
-  changeCurrentTime,
+  changeCurrentTime
 }) => {
   const longTimer = useMemo(() => formatTimer(duration), [duration]);
   const progressTimer = useMemo(
     () => formatTimer(trackProgress),
     [trackProgress]
   );
-  
+
   return (
     <div className={s.currentTime}>
       <div className={s.currentTime_timer}>{`${progressTimer}-${

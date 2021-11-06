@@ -36,7 +36,7 @@ export class TrackController {
       { name: 'img', maxCount: 1 }
     ])
   )
-  recieveTrack(
+  createTrack(
     @UploadedFiles() files: IRecieveTrack,
     @Body() otherProperty: TrackCreateDTO,
     @Req() req
@@ -49,6 +49,16 @@ export class TrackController {
       img: img && img[0],
       audio: audio && audio[0]
     });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id')
+  recieveTrack(
+    @Param('id') id: string,
+    @Body() otherProperty: { audioUrl: string }
+  ) {
+    const { audioUrl } = otherProperty;
+    this.trackService.recieve({ id, audioUrl });
   }
 
   @UseGuards(JwtAuthGuard)
