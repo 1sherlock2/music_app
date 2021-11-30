@@ -19,7 +19,7 @@ import httpMessages from 'src/utils/httpMessages';
 import { Repository } from 'typeorm';
 import { TrackCreateDTO } from './dto/trackCreate.dto';
 import { FilePathService } from 'src/filePath/filePath.service';
-import { HttpService } from '@nestjs/axios';
+// import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class TrackService {
@@ -27,8 +27,7 @@ export class TrackService {
     @InjectRepository(Track)
     private readonly trackEntity: Repository<Track>,
     private readonly cloudinaryService: CloudinaryService,
-    private readonly filePathService: FilePathService,
-    private httpService: HttpService
+    private readonly filePathService: FilePathService // private httpService: HttpService
   ) {}
   async create(trackCreateDTO: TrackCreateDTO): Promise<ITrackCreateStatus> {
     const { name, artist, img, audio, userId } = trackCreateDTO;
@@ -75,21 +74,21 @@ export class TrackService {
     return await this.trackEntity.find({ where: { userId } });
   }
 
-  async recieve({
-    id,
-    audioUrl
-  }: TrackRecieveParam): Promise<StreamableFile | void> {
-    const { data: audioFile } = await this.httpService
-      .get(audioUrl)
-      .toPromise();
-    // const audioBuffer = Buffer.from(audioFile);
-    const stream = new StreamableFile(audioFile).getStream();
-    const buff = Buffer.from(audioFile, 'utf8');
-    console.log('path', path.resolve('../server/assets/audio/track.mp3'));
-    // const createStream = fs.createReadStream(path);
-    // fs.writeFileSync(path.resolve('../server/assets/audio/track.mp3'), buff);
-    // console.log('aaa', aaa);
-  }
+  // async recieve({
+  //   id,
+  //   audioUrl
+  // }: TrackRecieveParam): Promise<StreamableFile | void> {
+  //   const { data: audioFile } = await this.httpService
+  //     .get(audioUrl)
+  //     .toPromise();
+  //   // const audioBuffer = Buffer.from(audioFile);
+  //   const stream = new StreamableFile(audioFile).getStream();
+  //   const buff = Buffer.from(audioFile, 'utf8');
+  //   console.log('path', path.resolve('../server/assets/audio/track.mp3'));
+  //   // const createStream = fs.createReadStream(path);
+  //   // fs.writeFileSync(path.resolve('../server/assets/audio/track.mp3'), buff);
+  //   // console.log('aaa', aaa);
+  // }
 
   async deleteTrack(id, userId) {
     const track = await this.trackEntity.findOne({
@@ -107,5 +106,10 @@ export class TrackService {
       status: HttpStatus.OK,
       message: httpMessages.trackDeleted
     };
+  }
+  async getUrlStream(id) {
+    const { audio: audioUrl } = await this.trackEntity.findOne({ id });
+    const aaa = 1;
+    const preparedUrlForStream = this.cloudinaryService.urlStream(audioUrl);
   }
 }

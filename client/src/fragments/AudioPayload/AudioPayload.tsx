@@ -7,11 +7,13 @@ import {
   IAudioPayload,
   IDurationTarget,
   IPlaylistPopup,
-  ITouchY
 } from './AudioPayload.interface';
 import Img from '../../components/Img/Img';
 import useClickOutside from '../../hooks/useClickOutside';
 import useCombinedRef from '../../hooks/useCombinedRef';
+import useGetAudioUrl from '../../hooks/useGetAudioUrl';
+import { useRecoilValue } from 'recoil';
+import { getUrlTrackStream } from '../../store/index';
 
 const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   setOpen,
@@ -21,12 +23,14 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   trackIndex,
   currentTrack
 }) => {
+  const urlStream = useRecoilValue(getUrlTrackStream(currentTrack.id))
   const [trackProgress, setTrackProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState<number>(0);
   const [repeatAudioRef, setRepeatAudioRef] = useState(false);
   const [topPosition, setTopPosition] = useState(60);
   const [leftPosition, setLeftPosition] = useState(0);
+  const [borderStyle, setBorderStyle] = useState(false);
   const intervalValueByClose = useRef<number>(0.2);
   const [transformByCloseY, setTranformByCloseY] = useState(false);
   const [transformByCloseX, setTranformByCloseX] = useState(false);
@@ -34,6 +38,11 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   const touchX = useRef<number>(0);
   const changePos = useRef({ x: 0, y: 0 });
   const differentValue = useRef<number>(150);
+  const urlAudio = useRef<string>(null);
+
+  // useEffect(() => {
+  //   urlAudio.current = useGetAudioUrl();
+  // }, [])
 
   const { artist, name, audio, img } = useMemo(
     () => currentTrack,
@@ -56,11 +65,13 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   };
 
   const handleTouchStart = (ev: TouchEvent) => {
+    setBorderStyle(true);
     const { clientY, clientX } = ev.touches[0];
     touchY.current = clientY;
     touchX.current = clientX;
   };
   const handleTouchEnd = (ev: TouchEvent) => {
+    setBorderStyle(false)
     const { clientY, clientX } = ev.changedTouches[0];
     changePos.current.y = clientY - touchY.current;
     changePos.current.x = clientX - touchX.current;
@@ -189,7 +200,11 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
                 : '700px'
               : 0
           }, ${transformByCloseY ? '700px' : 0})`,
-          transition: `transform ${intervalValueByClose.current}s`
+          transition: `transform ${intervalValueByClose.current}s`,
+          ...(borderStyle && {
+            'border-bottom-left-radius': '7%',
+            'border-bottom-right-radius': '7%',
+          })
         }}
         ref={useCombinedRef(containerRef, audioContainerRef)}
         onTouchStart={handleTouchStart}

@@ -38,7 +38,7 @@ const start = async () => {
     app.enableCors();
     await app.init();
     http.createServer(server).listen(ports.http, () => {
-      console.log(`https server was started on ${ports.http}`);
+      console.log(`http server was started on ${ports.http}`);
     });
     console.log(server);
     https

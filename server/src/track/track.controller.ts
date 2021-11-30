@@ -51,20 +51,27 @@ export class TrackController {
     });
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post(':id')
-  recieveTrack(
-    @Param('id') id: string,
-    @Body() otherProperty: { audioUrl: string }
-  ) {
-    const { audioUrl } = otherProperty;
-    this.trackService.recieve({ id, audioUrl });
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Post(':id')
+  // recieveTrack(
+  //   @Param('id') id: string,
+  //   @Body() otherProperty: { audioUrl: string }
+  // ) {
+  //   const { audioUrl } = otherProperty;
+  //   this.trackService.recieve({ id, audioUrl });
+  // }
 
   @UseGuards(JwtAuthGuard)
   @Delete('delete')
   deleteTrack(@Query('id') id: string, @Req() req) {
     const { userId } = req;
     return this.trackService.deleteTrack(id, userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('url')
+  getUrlStream(@Body() otherProperty: { trackId: number }) {
+    const { trackId } = otherProperty;
+    return this.trackService.getUrlStream(trackId)
   }
 }

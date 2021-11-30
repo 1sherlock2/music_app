@@ -1,4 +1,4 @@
-import { IallTraksByUser } from '~/store';
+import { IallTraksByUser } from '../../store/index';
 
 export interface IintervalRef<T> {
   current: T;
