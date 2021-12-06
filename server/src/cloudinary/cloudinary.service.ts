@@ -41,23 +41,9 @@ export class CloudinaryService {
       [`${isAudioFormat ? 'urlAudio' : 'urlImg'}`]: url
     };
   }
-  async urlStream(audioUrl) {
+  async urlStream(urlByStream) {
     try {
-      // const splitUrl = audioUrl.split('/');
-      // const audioName = splitUrl[splitUrl.length - 1];
-      // const formatAudio = fileFormats.list().find((el) => {
-      //   const formatFromName = audioName.split('.')[1];
-      //   return el === `.${formatFromName}`;
-      // });
-      // const regExpFormatAudio = formatAudio && new RegExp(`${formatAudio}`);
-      // const audioUrlPublicId = splitUrl[splitUrl.length - 1].replace(
-      //   regExpFormatAudio,
-      //   ''
-      // );
-      // const result2 = await v2.search.expression(audioUrlPublicId).execute();
-      // const aaa = 1;
-      // const bbb = await v2.api.resources();
-      // const aaa = v2.url(audioName, { resource_type: 'video' });
+     return await v2.url(urlByStream, { streaming_profile: 'full_hd', resource_type: 'video'})
     } catch (e) {
       throw new Error(e);
     }

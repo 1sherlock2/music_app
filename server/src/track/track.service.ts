@@ -121,10 +121,9 @@ export class TrackService {
     };
   }
   async getUrlStream(id) {
-    const { audio: audioUrl } = await this.trackEntity.findOne({ id });
-    const preparedUrlForStream = await this.cloudinaryService.urlStream(
-      audioUrl
+    const { full_hd_audio } = await this.trackEntity.findOne({ id });
+    return await this.cloudinaryService.urlStream(
+      full_hd_audio
     );
-    return preparedUrlForStream;
   }
 }
