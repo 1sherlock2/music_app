@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import {
   IAudioPayload,
   IDurationTarget,
-  IPlaylistPopup,
+  IPlaylistPopup
 } from './AudioPayload.interface';
 import Img from '../../components/Img/Img';
 import useClickOutside from '../../hooks/useClickOutside';
@@ -23,7 +23,7 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   trackIndex,
   currentTrack
 }) => {
-  const urlStream = useRecoilValue(getUrlTrackStream(currentTrack.id))
+  const urlStream = useRecoilValue(getUrlTrackStream(currentTrack.id));
   const [trackProgress, setTrackProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState<number>(0);
@@ -50,7 +50,7 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   );
 
   // audio prepare
-  const audioRef = useRef<HTMLAudioElement>(new Audio(audio));
+  const audioRef = useRef<HTMLAudioElement>(new Audio(urlStream));
   const intervalRef = useRef<any>();
   const isReady = useRef(false);
 
@@ -71,7 +71,7 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
     touchX.current = clientX;
   };
   const handleTouchEnd = (ev: TouchEvent) => {
-    setBorderStyle(false)
+    setBorderStyle(false);
     const { clientY, clientX } = ev.changedTouches[0];
     changePos.current.y = clientY - touchY.current;
     changePos.current.x = clientX - touchX.current;
@@ -156,7 +156,7 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   //  Действия при смене музыки
   useEffect(() => {
     audioRef.current.pause();
-    audioRef.current = new Audio(audio);
+    audioRef.current = new Audio(urlStream);
     setTrackProgress(audioRef.current.currentTime);
 
     if (isReady.current) {
@@ -203,7 +203,7 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
           transition: `transform ${intervalValueByClose.current}s`,
           ...(borderStyle && {
             'border-bottom-left-radius': '7%',
-            'border-bottom-right-radius': '7%',
+            'border-bottom-right-radius': '7%'
           })
         }}
         ref={useCombinedRef(containerRef, audioContainerRef)}

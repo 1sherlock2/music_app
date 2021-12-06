@@ -15,12 +15,19 @@ export class Track {
   @Column({ nullable: true })
   img: string;
 
-  // @Column('int')
-  // views: number;
-
   @Column()
   audio: string;
 
+  @Column({ nullable: true })
+  full_hd_audio: string;
+
+  @Column({ nullable: true })
+  hd_audio: string;
+
   @ManyToOne(() => User, (user) => user.tracks)
   userId: string | number;
+
+
+  // @Column('int')
+  // views: number;
 }

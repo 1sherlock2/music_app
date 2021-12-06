@@ -12,7 +12,7 @@ import * as path from 'path';
 import {
   IResultCloudinary,
   ITrackCreateStatus,
-  IUploadObjectReduce,
+  IUploadStatus,
   TrackRecieveParam
 } from 'src/interfaces/track.interface';
 import httpMessages from 'src/utils/httpMessages';
@@ -40,13 +40,24 @@ export class TrackService {
     });
     const resposeUploadFiles = await Promise.all(multipleUpload);
     const objectResult = resposeUploadFiles.reduce(
-      (acc: IResultCloudinary, response: IUploadObjectReduce) => {
-        const { success, urlImg, urlAudio } = response;
+      (acc: IResultCloudinary, response: IUploadStatus) => {
+        const { success, urlImg, urlAudio, eager } = response;
         if (!success) {
           throw new HttpException(
             httpMessages.errorUpladAudioInCloud,
             HttpStatus.BAD_GATEWAY
           );
+        }
+        if (eager) {
+          const streamingFormats = ['full_hd', 'hd']
+          streamingFormats.forEach(el => {
+            const regExp = new RegExp(`\/(?:[A-Za-z0-9]*\_)${el}\/`)
+            eager.forEach(({ url }) => {
+              if (regExp.test(url)) {
+                acc[`${el}_audio`] = url;
+              }
+            })
+          })
         }
         if (urlImg) acc.cloudinaryImg = urlImg;
         if (urlAudio) acc.cloudinaryAudio = urlAudio;
@@ -54,13 +65,15 @@ export class TrackService {
       },
       {}
     );
-    const { cloudinaryImg, cloudinaryAudio } = objectResult;
+    const { cloudinaryImg, cloudinaryAudio, full_hd_audio, hd_audio } = objectResult;
     const trackSave: Track = await this.trackEntity.create({
       name,
       artist,
       userId,
       img: cloudinaryImg,
-      audio: cloudinaryAudio
+      audio: cloudinaryAudio,
+      full_hd_audio,
+      hd_audio
     });
     await this.trackEntity.save(trackSave);
     return {
@@ -109,7 +122,9 @@ export class TrackService {
   }
   async getUrlStream(id) {
     const { audio: audioUrl } = await this.trackEntity.findOne({ id });
-    const aaa = 1;
-    const preparedUrlForStream = this.cloudinaryService.urlStream(audioUrl);
+    const preparedUrlForStream = await this.cloudinaryService.urlStream(
+      audioUrl
+    );
+    return preparedUrlForStream;
   }
 }

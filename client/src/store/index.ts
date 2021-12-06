@@ -1,7 +1,12 @@
 import { AxiosResponse } from 'axios';
 import { atom, selector, selectorFamily } from 'recoil';
 import { authLocalStorage } from '../utils/localStorage';
-import { allTracksByUserDB, checkAuthDB, getUrlTrackStreamQuery, loginDataDB } from './queries';
+import {
+  allTracksByUserDB,
+  checkAuthDB,
+  getUrlTrackStreamQuery,
+  loginDataDB
+} from './queries';
 
 const loginText = atom({ key: 'loginText', default: '' });
 const loginPassword = atom({ key: 'loginPassword', default: '' });
@@ -63,12 +68,16 @@ const allTraksByUser = selector({
   }
 });
 
-  const getUrlTrackStream = selectorFamily({
-    key: 'getUrlTrackStream',
-    get: (id: number) => async () => {
-      const response = getUrlTrackStreamQuery(id)
+const getUrlTrackStream = selectorFamily({
+  key: 'getUrlTrackStream',
+  get: (id: number) => async () => {
+    const { data } = await getUrlTrackStreamQuery(id);
+    if (!data) {
+      throw new Error('track url is not obtained');
     }
-  })
+    return data;
+  }
+});
 
 export {
   loginText,
