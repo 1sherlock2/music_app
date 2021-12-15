@@ -20,4 +20,15 @@ export class FilePathService {
       console.log(e);
     }
   }
+  createFileStream(data: string): string {
+    const fileFormat = data.split('.').pop().replace(/\n/g, '');
+    const fileName = `${uuid.v4()}.${fileFormat}`;
+    const filePath = path.resolve(__dirname, '../..', 'assets', 'audio');
+    if (!fs.existsSync(filePath)) {
+      fs.mkdirSync(filePath, { recursive: true });
+    }
+    const fileExistion: string = path.resolve(filePath, fileName);
+    fs.writeFileSync(fileExistion, data);
+    return fileExistion;
+  }
 }

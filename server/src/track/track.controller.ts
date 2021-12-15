@@ -72,6 +72,7 @@ export class TrackController {
   @Post('url')
   getUrlStream(@Body() otherProperty: { trackId: number }) {
     const { trackId } = otherProperty;
-    return this.trackService.getUrlStream(trackId)
+    const result = this.trackService.getUrlStream(trackId)
+    return result;
   }
 }

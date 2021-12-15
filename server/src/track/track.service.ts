@@ -13,12 +13,17 @@ import {
   IResultCloudinary,
   ITrackCreateStatus,
   IUploadStatus,
+  Todo,
   TrackRecieveParam
 } from 'src/interfaces/track.interface';
 import httpMessages from 'src/utils/httpMessages';
 import { Repository } from 'typeorm';
 import { TrackCreateDTO } from './dto/trackCreate.dto';
 import { FilePathService } from 'src/filePath/filePath.service';
+import { HttpModule, HttpService } from '@nestjs/axios';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { AxiosResponse } from 'axios';
 // import { HttpService } from '@nestjs/axios';
 
 @Injectable()
@@ -27,7 +32,8 @@ export class TrackService {
     @InjectRepository(Track)
     private readonly trackEntity: Repository<Track>,
     private readonly cloudinaryService: CloudinaryService,
-    private readonly filePathService: FilePathService // private httpService: HttpService
+    private readonly filePathService: FilePathService,
+    private httpService: HttpService
   ) {}
   async create(trackCreateDTO: TrackCreateDTO): Promise<ITrackCreateStatus> {
     const { name, artist, img, audio, userId } = trackCreateDTO;
@@ -36,7 +42,7 @@ export class TrackService {
     const arrayPath = [imgPath, audioPath].filter(Boolean);
 
     const multipleUpload = arrayPath.map((path) => {
-      return this.cloudinaryService.uploadFile(path, 'music_app');
+      return this.cloudinaryService.uploadFile(path, process.env.FOLDER_NAME);
     });
     const resposeUploadFiles = await Promise.all(multipleUpload);
     const objectResult = resposeUploadFiles.reduce(
@@ -49,15 +55,15 @@ export class TrackService {
           );
         }
         if (eager) {
-          const streamingFormats = ['full_hd', 'hd']
-          streamingFormats.forEach(el => {
-            const regExp = new RegExp(`\/(?:[A-Za-z0-9]*\_)${el}\/`)
+          const streamingFormats = ['full_hd', 'hd'];
+          streamingFormats.forEach((el) => {
+            const regExp = new RegExp(`\/(?:[A-Za-z0-9]*\_)${el}\/`);
             eager.forEach(({ url }) => {
               if (regExp.test(url)) {
                 acc[`${el}_audio`] = url;
               }
-            })
-          })
+            });
+          });
         }
         if (urlImg) acc.cloudinaryImg = urlImg;
         if (urlAudio) acc.cloudinaryAudio = urlAudio;
@@ -65,7 +71,8 @@ export class TrackService {
       },
       {}
     );
-    const { cloudinaryImg, cloudinaryAudio, full_hd_audio, hd_audio } = objectResult;
+    const { cloudinaryImg, cloudinaryAudio, full_hd_audio, hd_audio } =
+      objectResult;
     const trackSave: Track = await this.trackEntity.create({
       name,
       artist,
@@ -121,9 +128,23 @@ export class TrackService {
     };
   }
   async getUrlStream(id) {
-    const { full_hd_audio } = await this.trackEntity.findOne({ id });
-    return await this.cloudinaryService.urlStream(
-      full_hd_audio
-    );
+    try {
+      const { full_hd_audio } = await this.trackEntity.findOne({ id });
+      const response = await this.httpService.get(full_hd_audio).toPromise();
+      if (response.status === HttpStatus.OK) {
+        const { data } = response;
+        const fileExtenstion = this.filePathService.createFileStream(data);
+        const audioStream = await this.cloudinaryService.urlStream(
+          full_hd_audio
+        );
+        const aaa = 1;
+      }
+
+      // const audioStream = await this.cloudinaryService.urlStream(result);
+      // return audioStream;
+      const aaa = 1;
+    } catch (e) {
+      console.log(e);
+    }
   }
 }

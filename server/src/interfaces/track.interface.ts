@@ -34,3 +34,6 @@ export interface TrackRecieveParam {
   id: string;
   audioUrl: string;
 }
+export interface Todo {
+  id?: number;
+}

@@ -6,15 +6,16 @@ import * as fileFormats from 'file-formats';
 import * as path from 'path';
 import { IUploadStatus } from 'src/interfaces/track.interface';
 
+const streamProfile = [
+  { streaming_profile: 'full_hd', format: 'm3u8' },
+  { streaming_profile: 'hd', format: 'm3u8' }
+];
 @Injectable()
 export class CloudinaryService {
   async uploadFile(filePath: string, folder?: string): Promise<IUploadStatus> {
     const formatFile = filePath && path.extname(filePath);
     const isAudioFormat = fileFormats.list().some((el) => el === formatFile);
-    const streamProfile = [
-      { streaming_profile: 'full_hd', format: 'm3u8' },
-      { streaming_profile: 'hd', format: 'm3u8' }
-    ]
+
     const result =
       filePath &&
       (await v2.uploader.upload(filePath, {
@@ -43,7 +44,8 @@ export class CloudinaryService {
   }
   async urlStream(urlByStream) {
     try {
-     return await v2.url(urlByStream, { streaming_profile: 'full_hd', resource_type: 'video'})
+      // return await v2.url(urlByStream, streamProfile);
+      return await v2.video(urlByStream, streamProfile);
     } catch (e) {
       throw new Error(e);
     }
