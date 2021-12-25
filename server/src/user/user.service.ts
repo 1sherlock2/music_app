@@ -64,9 +64,9 @@ export class UserService {
     return { nickname, accessToken, success: true };
   }
 
-  async validateUserByPayload({ nickname }: IJwtValidate) {
-    const user = await this.userEntity.findOne({ where: { nickname } });
-    if (!user) throw new UnauthorizedException(httpMessages.invalidToken);
-    return user;
-  }
+  // async validateUserByPayload({ nickname }: IJwtValidate) {
+  //   const user = await this.userEntity.findOne({ where: { nickname } });
+  //   if (!user) throw new UnauthorizedException(httpMessages.invalidToken);
+  //   return user;
+  // }
 }

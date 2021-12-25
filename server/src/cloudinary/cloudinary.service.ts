@@ -4,7 +4,9 @@ import { v2 } from 'cloudinary';
 import * as fs from 'fs';
 import * as fileFormats from 'file-formats';
 import * as path from 'path';
+import httpMessages from 'src/utils/httpMessages';
 import { IUploadStatus } from 'src/interfaces/track.interface';
+import { IResponseUpload } from './cloudinary.interface';
 
 const streamProfile = [
   { streaming_profile: 'full_hd', format: 'm3u8' },
@@ -16,7 +18,7 @@ export class CloudinaryService {
     const formatFile = filePath && path.extname(filePath);
     const isAudioFormat = fileFormats.list().some((el) => el === formatFile);
 
-    const result =
+    const response =
       filePath &&
       (await v2.uploader.upload(filePath, {
         folder: `${folder}/${isAudioFormat ? 'audio' : 'img'}`,
@@ -26,26 +28,28 @@ export class CloudinaryService {
         resource_type: isAudioFormat && 'video'
       }));
 
-    if (!result) {
+    if (!response.public_id) {
       fs.unlinkSync(filePath);
-      return {
-        success: false,
-        message: result.message
-      };
+      return { success: false };
     }
 
     fs.unlinkSync(filePath);
-    const { url, eager } = result;
+
     return {
       success: true,
-      eager,
-      [`${isAudioFormat ? 'urlAudio' : 'urlImg'}`]: url
+      [`${isAudioFormat ? 'audioHlsUrl' : 'imgUrl'}`]: isAudioFormat
+        ? response.eager[0].url
+        : response.url
     };
   }
   async urlStream(urlByStream) {
     try {
       // return await v2.url(urlByStream, streamProfile);
-      return await v2.video(urlByStream, streamProfile);
+      const aaa = await v2.url(urlByStream, [
+        { streaming_profile: 'full_hd', resource_type: 'video' },
+        { streaming_profile: 'hd', resource_type: 'video' }
+      ]);
+      return aaa;
     } catch (e) {
       throw new Error(e);
     }

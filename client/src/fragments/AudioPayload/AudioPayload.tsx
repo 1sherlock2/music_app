@@ -1,4 +1,11 @@
-import React, { TouchEvent, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  TouchEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import AudioPlayer from '../AudioPlayer/AudioPlayer';
 import CurrentProgressTime from '../CurrentProgressTime/CurrentProgressTime';
 import s from './AudioPayload.scss';
@@ -14,6 +21,11 @@ import useCombinedRef from '../../hooks/useCombinedRef';
 import useGetAudioUrl from '../../hooks/useGetAudioUrl';
 import { useRecoilValue } from 'recoil';
 import { getUrlTrackStream } from '../../store/index';
+import hlsConfig from './utils/hlsConfig';
+import Hls from 'hls.js';
+import usePrevious from '../../hooks/usePrevious';
+import useHlsLoad from '../../hooks/useHlsLoad';
+import { IHlsSetDuration } from '../../hooks/types/useHlsLoad.interface';
 
 const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   setOpen,
@@ -25,7 +37,7 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
 }) => {
   const urlStream = useRecoilValue(getUrlTrackStream(currentTrack.id));
   const [trackProgress, setTrackProgress] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
   const [repeatAudioRef, setRepeatAudioRef] = useState(false);
   const [topPosition, setTopPosition] = useState(60);
@@ -38,30 +50,29 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   const touchX = useRef<number>(0);
   const changePos = useRef({ x: 0, y: 0 });
   const differentValue = useRef<number>(150);
-  const urlAudio = useRef<string>(null);
 
-  // useEffect(() => {
-  //   urlAudio.current = useGetAudioUrl();
-  // }, [])
+  const audioRef = useRef<HTMLAudioElement>(new Audio());
 
-  const { artist, name, audio, img } = useMemo(
-    () => currentTrack,
-    [currentTrack]
+  const { artist, name, img } = useMemo(() => currentTrack, [currentTrack]);
+
+  // loading audio from cloudinary source
+  const hlsLoad = useHlsLoad(audioRef, urlStream);
+  const hlsSetDuration = useCallback(
+    (_e: any, { details: { totalduration } }: IHlsSetDuration) =>
+      setDuration(Math.floor((totalduration * 100) / 100)),
+    []
   );
+  const hlsSetIsPlay = useCallback(() => setIsPlaying(true), []);
+  const hlsLoadIsPlay = hlsLoad({ hlsSetDuration });
 
-  // audio prepare
-  const audioRef = useRef<HTMLAudioElement>(new Audio(urlStream));
   const intervalRef = useRef<any>();
   const isReady = useRef(false);
 
   const containerRef = useClickOutside((): any => setOpen(false));
   const audioContainerRef = useRef(null);
 
-  const currentPercent = duration
-    ? `${(trackProgress / duration) * 100}%`
-    : '0%';
   const trackStyling = {
-    backgroundImage: `linear-gradient(to top, #fdcbf1 ${currentPercent}, #fdcbf1 1%, #e6dee9 100%)`
+    backgroundImage: `linear-gradient(to top, #fdcbf1 50%, #fdcbf1 1%, #e6dee9 100%)`
   };
 
   const handleTouchStart = (ev: TouchEvent) => {
@@ -101,7 +112,6 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
     }
   };
 
-  console.log('changePos', changePos.current.x);
   const handleTouchEvent = (ev: TouchEvent) => {
     const { clientX, clientY } = ev.touches[0];
     changePos.current.y = clientY - touchY.current;
@@ -123,7 +133,6 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
 
   const changeCurrentTime = (value: number) => {
     if (isPlaying) {
-      // function clearInterval(intervalId: NodeJS.Timeout): void;
       clearInterval(intervalRef.current);
       audioRef.current.currentTime = value;
       startTimer();
@@ -156,7 +165,6 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   //  Действия при смене музыки
   useEffect(() => {
     audioRef.current.pause();
-    audioRef.current = new Audio(urlStream);
     setTrackProgress(audioRef.current.currentTime);
 
     if (isReady.current) {
@@ -167,24 +175,8 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
       // Установление isReady для след перехода и автоматического старта музыки
       isReady.current = true;
     }
-  }, [trackIndex]);
-
-  //  Действия с текущей музыкой при переключении
-  useEffect(() => {
-    const loadMetaDataHandler = (e: IDurationTarget): void => {
-      setDuration(e.target.duration);
-    };
-    audioRef.current.addEventListener('loadedmetadata', loadMetaDataHandler);
-    return () => {
-      audioRef.current.pause();
-      clearInterval(intervalRef.current);
-      audioRef.current.removeEventListener(
-        'loadedmetadata',
-        loadMetaDataHandler
-      );
-      setTopPosition;
-    };
-  }, [audioRef, trackIndex]);
+    return () => audioRef.current.pause();
+  }, [trackIndex, audioRef]);
 
   return (
     <div className={classnames({ [s.outside]: open })}>
@@ -202,8 +194,8 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
           }, ${transformByCloseY ? '700px' : 0})`,
           transition: `transform ${intervalValueByClose.current}s`,
           ...(borderStyle && {
-            'border-bottom-left-radius': '7%',
-            'border-bottom-right-radius': '7%'
+            borderBottomLeftRadius: '7%',
+            borderBottomRightRadius: '7%'
           })
         }}
         ref={useCombinedRef(containerRef, audioContainerRef)}
@@ -234,6 +226,8 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
             ref={audioRef}
           />
           <CurrentProgressTime
+            hlsLoad={hlsLoad}
+            urlStream={urlStream}
             onScrubEnd={onScrubEnd}
             trackProgress={trackProgress}
             trackStyling={trackStyling}

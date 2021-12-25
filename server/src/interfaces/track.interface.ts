@@ -9,25 +9,15 @@ export interface IRecieveTrack {
   img?: Express.Multer.File;
 }
 
-type Eager = {
-  batch_id: string,
-  secure_url: string,
-  status: string,
-  url: string,
-}
 export interface IUploadStatus {
-  urlImg?: string;
-  urlAudio?: string;
+  audioHlsUrl?: string;
+  imgUrl?: string;
   success?: boolean;
-  message?: string;
-  eager?: Eager[]
 }
 
 export interface IResultCloudinary {
   cloudinaryImg?: string;
   cloudinaryAudio?: string;
-  full_hd_audio?: string;
-  hd_audio?: string;
 }
 
 export interface TrackRecieveParam {

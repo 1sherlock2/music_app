@@ -1,19 +1,22 @@
-import React, { useMemo } from 'react';
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import formatTimer from '../../utils/formatTimer';
 import s from './CurrentProgressTime.scss';
+import FragDurations from './FragDurations/FragDurations';
 
 const CurrentProgressTime = ({
   onScrubEnd,
   duration,
   trackProgress,
-  trackStyling,
-  changeCurrentTime
+  changeCurrentTime,
+  hlsLoad
 }) => {
   const longTimer = useMemo(() => formatTimer(duration), [duration]);
   const progressTimer = useMemo(
     () => formatTimer(trackProgress),
     [trackProgress]
   );
+
+  const hlsFragLoader = hlsLoad();
 
   return (
     <div className={s.currentTime}>
@@ -28,8 +31,8 @@ const CurrentProgressTime = ({
           onMouseUp={onScrubEnd}
           max={duration ? duration : `${duration}`}
           value={trackProgress}
-          style={trackStyling}
         />
+        <FragDurations hlsFragLoader={hlsFragLoader} allDuration={duration} />
       </div>
     </div>
   );

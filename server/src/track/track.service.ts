@@ -47,40 +47,27 @@ export class TrackService {
     const resposeUploadFiles = await Promise.all(multipleUpload);
     const objectResult = resposeUploadFiles.reduce(
       (acc: IResultCloudinary, response: IUploadStatus) => {
-        const { success, urlImg, urlAudio, eager } = response;
+        const { success, audioHlsUrl, imgUrl } = response;
         if (!success) {
           throw new HttpException(
             httpMessages.errorUpladAudioInCloud,
             HttpStatus.BAD_GATEWAY
           );
         }
-        if (eager) {
-          const streamingFormats = ['full_hd', 'hd'];
-          streamingFormats.forEach((el) => {
-            const regExp = new RegExp(`\/(?:[A-Za-z0-9]*\_)${el}\/`);
-            eager.forEach(({ url }) => {
-              if (regExp.test(url)) {
-                acc[`${el}_audio`] = url;
-              }
-            });
-          });
-        }
-        if (urlImg) acc.cloudinaryImg = urlImg;
-        if (urlAudio) acc.cloudinaryAudio = urlAudio;
+
+        if (imgUrl) acc.cloudinaryImg = imgUrl;
+        if (audioHlsUrl) acc.cloudinaryAudio = audioHlsUrl;
         return acc;
       },
       {}
     );
-    const { cloudinaryImg, cloudinaryAudio, full_hd_audio, hd_audio } =
-      objectResult;
+    const { cloudinaryImg, cloudinaryAudio } = objectResult;
     const trackSave: Track = await this.trackEntity.create({
       name,
       artist,
       userId,
       img: cloudinaryImg,
-      audio: cloudinaryAudio,
-      full_hd_audio,
-      hd_audio
+      audio: cloudinaryAudio
     });
     await this.trackEntity.save(trackSave);
     return {
@@ -129,20 +116,10 @@ export class TrackService {
   }
   async getUrlStream(id) {
     try {
-      const { full_hd_audio } = await this.trackEntity.findOne({ id });
-      const response = await this.httpService.get(full_hd_audio).toPromise();
-      if (response.status === HttpStatus.OK) {
-        const { data } = response;
-        const fileExtenstion = this.filePathService.createFileStream(data);
-        const audioStream = await this.cloudinaryService.urlStream(
-          full_hd_audio
-        );
-        const aaa = 1;
-      }
+      const { audio } = await this.trackEntity.findOne({ id });
+      const audioStream = await this.cloudinaryService.urlStream(audio);
 
-      // const audioStream = await this.cloudinaryService.urlStream(result);
-      // return audioStream;
-      const aaa = 1;
+      return audioStream;
     } catch (e) {
       console.log(e);
     }

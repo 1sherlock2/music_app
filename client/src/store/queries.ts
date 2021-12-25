@@ -9,7 +9,7 @@ import {
 
 const instanceDB = axios.create({
   baseURL: 'http://localhost:7000',
-  // baseURL: 'http://192.168.0.104:7000',
+  // baseURL: 'http://192.168.0.105:7000',
   // baseURL: 'http://10.254.1.164:7000',
   headers: {
     Authorization: authLocalStorage.getToken()
@@ -27,4 +27,5 @@ export const checkAuthDB = async (): Promise<ICheckLoginQuery> =>
 
 export const allTracksByUserDB = async () => await instanceDB.get('/track');
 
-export const getUrlTrackStreamQuery = async (id: number) => await instanceDB.post('/track/url', { trackId:id })
+export const getUrlTrackStreamQuery = async (id: number) =>
+  await instanceDB.post('/track/url', { trackId: id });

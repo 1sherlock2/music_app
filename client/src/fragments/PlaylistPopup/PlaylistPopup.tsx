@@ -1,7 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 import AudioPayload from '../AudioPayload/AudioPayload';
-import { IAudioPayload, IPlaylistPopup } from '../AudioPayload/AudioPayload.interface';
+import {
+  IAudioPayload,
+  IPlaylistPopup
+} from '../AudioPayload/AudioPayload.interface';
 
 const PlaylistPopup: React.FC<IPlaylistPopup> = ({
   allTracks,
@@ -17,7 +20,7 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     if (trackIndex >= allTracks.length - 1) {
       setTrackIndex(0);
     } else {
-      setTrackIndex(trackIndex + 1);
+      setTrackIndex((prev) => prev + 1);
     }
   }, [generalIndexTrack]);
 
@@ -26,19 +29,19 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     if (trackIndex - 1 < 0) {
       setTrackIndex(allTracks.length - 1);
     } else {
-      setTrackIndex(trackIndex - 1);
+      setTrackIndex((prev) => prev - 1);
     }
   }, [generalIndexTrack]);
 
   if (currentTrack.audio) {
     return createPortal(
       <AudioPayload
-      setOpen={setOpen}
-      open={open}
-      goToNextTrack={goToNextTrack}
-      goToPreviousTrack={goToPreviousTrack}
-      trackIndex={trackIndex}
-      currentTrack={currentTrack}
+        setOpen={setOpen}
+        open={open}
+        goToNextTrack={goToNextTrack}
+        goToPreviousTrack={goToPreviousTrack}
+        trackIndex={trackIndex}
+        currentTrack={currentTrack}
       />,
       document.body
     );

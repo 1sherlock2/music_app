@@ -10,14 +10,12 @@ const Playlist = () => {
   const trackRefs: any = useRef(allTracks?.map(() => React.createRef()));
   const [generalIndexTrack, setTrackIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
-  console.log('allTracks', allTracks);
 
   const handleClick = (index: number) => {
     setTrackIndex(index);
     setOpen(true);
   };
 
-  console.log('trackRefs', trackRefs);
   return (
     <div className={s.playList}>
       {allTracks?.map((track, index) => {

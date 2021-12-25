@@ -14,9 +14,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       algorithms: 'RS256'
     });
   }
-  async validate(payLoad: IJwtValidate) {
-    const userWithPayload = await this.userService.validateUserByPayload(payLoad);
-    if (!userWithPayload) throw new UnauthorizedException(httpMessages.invalidToken);
-    return userWithPayload;
-  }
+  // async validate(payLoad: IJwtValidate) {
+  //   const userWithPayload = await this.userService.validateUserByPayload(payLoad);
+  //   if (!userWithPayload) throw new UnauthorizedException(httpMessages.invalidToken);
+  //   return userWithPayload;
+  // }
 }

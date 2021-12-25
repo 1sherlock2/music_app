@@ -34,7 +34,6 @@ export class UserController {
   @Post('login')
   public async login(@Body() loginService: LoginDTO, @Request() req) {
     try {
-      console.log(req.user);
       return await this.userService.authenticate(loginService);
     } catch (e) {
       return errorMessage(false, HttpStatus.INTERNAL_SERVER_ERROR, e);
@@ -46,8 +45,8 @@ export class UserController {
   getProfile(@Request() req) {
     const userId = req.userId;
     if (!userId) {
-      return { success: false }
+      return { success: false };
     }
-    return {success: true, userId: req.userId};
+    return { success: true, userId: req.userId };
   }
 }
