@@ -1,20 +1,18 @@
+import { Events, FragLoadingData } from 'hls.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { IHlsBufferDurations } from '../../../hooks/types/useHlsLoad.interface';
 import { FragDurationsProps } from './FragDurations.interface';
 import s from './FragDurations.scss';
 
-const FragDurations = ({ hlsFragLoader, allDuration }: FragDurationsProps) => {
+const FragDurations = ({ hlsLoad, allDuration }: FragDurationsProps) => {
   const [bufferDurations, setBufferDurations] = useState(0);
 
   const hlsBufferDurations = useCallback(
-    (_: any, { targetBufferTime }: IHlsBufferDurations) =>
-      setBufferDurations(Number(targetBufferTime.toFixed(1))),
+    (_e: Events.FRAG_LOADING, { targetBufferTime }: FragLoadingData) =>
+      setBufferDurations(Number(targetBufferTime?.toFixed(1))),
     []
   );
 
-  useEffect(() => {
-    hlsFragLoader({ fragLoading: hlsBufferDurations });
-  }, []);
+  hlsLoad.fragsLoad({ fragLoading: hlsBufferDurations });
 
   const durationForWith = useMemo(() => {
     const percentDuration = (bufferDurations * 100) / allDuration;

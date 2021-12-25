@@ -22,10 +22,8 @@ import useGetAudioUrl from '../../hooks/useGetAudioUrl';
 import { useRecoilValue } from 'recoil';
 import { getUrlTrackStream } from '../../store/index';
 import hlsConfig from './utils/hlsConfig';
-import Hls from 'hls.js';
-import usePrevious from '../../hooks/usePrevious';
+import Hls, { Events, LevelLoadedData } from 'hls.js';
 import useHlsLoad from '../../hooks/useHlsLoad';
-import { IHlsSetDuration } from '../../hooks/types/useHlsLoad.interface';
 
 const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   setOpen,
@@ -58,22 +56,19 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   // loading audio from cloudinary source
   const hlsLoad = useHlsLoad(audioRef, urlStream);
   const hlsSetDuration = useCallback(
-    (_e: any, { details: { totalduration } }: IHlsSetDuration) =>
-      setDuration(Math.floor((totalduration * 100) / 100)),
+    (
+      _e: Events.LEVEL_LOADED,
+      { details: { totalduration } }: LevelLoadedData
+    ) => setDuration(Math.floor((totalduration * 100) / 100)),
     []
   );
-  const hlsSetIsPlay = useCallback(() => setIsPlaying(true), []);
-  const hlsLoadIsPlay = hlsLoad({ hlsSetDuration });
+  hlsLoad.hlsSetDuration(hlsSetDuration);
 
   const intervalRef = useRef<any>();
   const isReady = useRef(false);
 
   const containerRef = useClickOutside((): any => setOpen(false));
   const audioContainerRef = useRef(null);
-
-  const trackStyling = {
-    backgroundImage: `linear-gradient(to top, #fdcbf1 50%, #fdcbf1 1%, #e6dee9 100%)`
-  };
 
   const handleTouchStart = (ev: TouchEvent) => {
     setBorderStyle(true);
@@ -151,6 +146,9 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
     }
     startTimer();
   };
+  const hlsStartPlayAudio = useCallback(() => setIsPlaying(true), []);
+
+  hlsLoad.startPlay(hlsStartPlayAudio);
 
   // Действия при проигрывании
   useEffect(() => {
@@ -175,7 +173,10 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
       // Установление isReady для след перехода и автоматического старта музыки
       isReady.current = true;
     }
-    return () => audioRef.current.pause();
+    return () => {
+      audioRef.current.pause();
+      hlsLoad.detachAudio();
+    };
   }, [trackIndex, audioRef]);
 
   return (
@@ -230,7 +231,6 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
             urlStream={urlStream}
             onScrubEnd={onScrubEnd}
             trackProgress={trackProgress}
-            trackStyling={trackStyling}
             changeCurrentTime={changeCurrentTime}
             duration={duration}
           />

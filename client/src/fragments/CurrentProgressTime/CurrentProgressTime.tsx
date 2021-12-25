@@ -16,8 +16,6 @@ const CurrentProgressTime = ({
     [trackProgress]
   );
 
-  const hlsFragLoader = hlsLoad();
-
   return (
     <div className={s.currentTime}>
       <div className={s.currentTime_timer}>{`${progressTimer}-${
@@ -32,7 +30,7 @@ const CurrentProgressTime = ({
           max={duration ? duration : `${duration}`}
           value={trackProgress}
         />
-        <FragDurations hlsFragLoader={hlsFragLoader} allDuration={duration} />
+        <FragDurations hlsLoad={hlsLoad} allDuration={duration} />
       </div>
     </div>
   );

@@ -55,10 +55,11 @@ const checkAuth = selector({
 export type IallTraksByUser = {
   id: number;
   name: string;
-  artist: string;
-  img: string;
+  artist?: string;
+  img?: string;
   audio: string;
 };
+
 const allTraksByUser = selector({
   key: 'allTraksByUser',
   get: async () => {

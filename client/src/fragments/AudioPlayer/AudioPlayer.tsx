@@ -13,11 +13,11 @@ const height = '50px';
 
 const AudioPlayer = forwardRef(
   ({ isPlaying, setIsPlaying, goToNextTrack, goToPreviousTrack }, ref) => {
-    // const [isRepeat, setIsRepeat] = useState(ref.current.loop);
+    const [isRepeat, setIsRepeat] = useState(ref?.current?.loop);
 
-    // useEffect(() => {
-    //   ref.current.loop = isRepeat;
-    // }, [isRepeat]);
+    useEffect(() => {
+      ref?.current?.loop = isRepeat;
+    }, [isRepeat]);
 
     const [nextTrackStyle, setNextTrackStyle] = useState(false);
     const nextClickStyle = nextTrackStyle ? s.nextStyleTrack : '';
@@ -30,13 +30,13 @@ const AudioPlayer = forwardRef(
 
     return (
       <div className={s.audio_player}>
-        {/* <div
+        <div
           className={s.audio_player_repeat}
           onClick={() => setIsRepeat(!isRepeat)}
         >
           <Repeat color="#333" width="30" height="30" />
           {isRepeat && <i className={s.audio_player_repeat_icon}> 1 </i>}
-        </div> */}
+        </div>
         <div
           className={classnames(s.audio_player_play, previuosClickStyle)}
           onClick={goToPreviousTrack}

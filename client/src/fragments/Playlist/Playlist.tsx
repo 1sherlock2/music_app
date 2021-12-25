@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import PlaylistPopup from '../PlaylistPopup/PlaylistPopup';
 import { allTraksByUser } from '../../store/index';
@@ -7,14 +7,14 @@ import Img from '../../components/Img/Img';
 
 const Playlist = () => {
   const allTracks = useRecoilValue(allTraksByUser);
-  const trackRefs: any = useRef(allTracks?.map(() => React.createRef()));
+  // const trackRefs: any = useRef(allTracks?.map(() => React.createRef()));
   const [generalIndexTrack, setTrackIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
 
-  const handleClick = (index: number) => {
+  const handleClick = useCallback((index: number) => {
     setTrackIndex(index);
     setOpen(true);
-  };
+  }, []);
 
   return (
     <div className={s.playList}>
@@ -23,7 +23,7 @@ const Playlist = () => {
         return (
           <div
             key={`${id}_${index}`}
-            ref={trackRefs.current[index]}
+            // ref={trackRefs.current[index]}
             className={s.container}
             onClick={() => handleClick(index)}
           >

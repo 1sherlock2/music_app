@@ -1,1 +1,1 @@
-export type FragDurationsProps = { hlsFragLoader: any; allDuration: number };
+export type FragDurationsProps = { hlsLoad: any; allDuration: number };

@@ -1,33 +1,45 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import Hls from 'hls.js';
+import { useCallback, useEffect, useRef } from 'react';
+import Hls, { Events, LevelLoadedData } from 'hls.js';
 import hlsConfig from '../fragments/AudioPayload/utils/hlsConfig';
-import { IGetDuration } from './types/useHlsLoad.interface';
 
 const useHlsLoad = (audioRef: any, urlStream: string) => {
   const hlsRef = useRef(new Hls(hlsConfig));
 
-  return (hlsOptions: IGetDuration) => {
-    useEffect(() => {
-      if (Hls.isSupported()) {
-        hlsRef.current.attachMedia(audioRef?.current);
-        hlsRef.current.on(Hls.Events.MEDIA_ATTACHED, (_e, data) => {
-          const { media } = data;
-          audioRef.current = media;
-          hlsRef.current.loadSource(urlStream);
-          if (hlsOptions?.hlsSetDuration) {
-            hlsRef.current.on(
-              Hls.Events.LEVEL_LOADED,
-              hlsOptions.hlsSetDuration
-            );
-          }
-          return;
-        });
-      }
-    }, [hlsOptions?.hlsSetDuration, urlStream]);
-    return useCallback(({ fragLoading }: { fragLoading: () => void }) => {
-      // if ()
-      hlsRef.current.on(Hls.Events.FRAG_LOADING, fragLoading);
-    }, []);
+  return {
+    hlsSetDuration: (
+      durationFunc: (event: Events.LEVEL_LOADED, data: LevelLoadedData) => void
+    ) => {
+      useEffect(() => {
+        if (Hls.isSupported()) {
+          hlsRef.current.attachMedia(audioRef?.current);
+          hlsRef.current.on(Hls.Events.MEDIA_ATTACHED, (_e, data) => {
+            const { media } = data;
+            audioRef.current = media;
+            hlsRef.current.loadSource(urlStream);
+            if (durationFunc) {
+              hlsRef.current.on(Hls.Events.LEVEL_LOADED, durationFunc);
+            }
+            return;
+          });
+        }
+      }, [durationFunc, urlStream]);
+    },
+    fragsLoad: useCallback(({ fragLoading }) => {
+      useEffect(() => {
+        if (fragLoading) {
+          hlsRef.current.on(Hls.Events.FRAG_LOADING, fragLoading);
+        }
+      }, []);
+    }, []),
+    startPlay: (hlsStartPlayAudio: () => any) => {
+      hlsRef.current.on(Hls.Events.BUFFER_CREATED, (_e, data) => {
+        const bufferExist = data.tracks?.audio?.buffer;
+        if (bufferExist) {
+          hlsStartPlayAudio();
+        }
+      });
+    },
+    detachAudio: () => hlsRef.current.detachMedia()
   };
 };
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import AudioPayload from '../AudioPayload/AudioPayload';
 import {
@@ -13,27 +13,36 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
   open
 }) => {
   const [trackIndex, setTrackIndex] = useState(generalIndexTrack || 0);
-  const currentTrack = allTracks[trackIndex];
+  const currentTrack = useMemo(
+    () => allTracks && allTracks[trackIndex],
+    [allTracks, trackIndex]
+  );
+  console.log('trackIndex', trackIndex);
 
   // Следующий трек
-  const goToNextTrack = useCallback(() => {
-    if (trackIndex >= allTracks.length - 1) {
-      setTrackIndex(0);
-    } else {
-      setTrackIndex((prev) => prev + 1);
-    }
-  }, [generalIndexTrack]);
+  const goToNextTrack = useCallback(
+    () => setTrackIndex((prev) => prev + 1),
+    []
+  );
 
   // Предыдущий трек
-  const goToPreviousTrack = useCallback(() => {
-    if (trackIndex - 1 < 0) {
-      setTrackIndex(allTracks.length - 1);
-    } else {
-      setTrackIndex((prev) => prev - 1);
-    }
-  }, [generalIndexTrack]);
+  const goToPreviousTrack = useCallback(
+    () => setTrackIndex((prev) => prev - 1),
+    []
+  );
 
-  if (currentTrack.audio) {
+  useEffect(() => {
+    if (allTracks) {
+      if (trackIndex > allTracks?.length - 1) {
+        setTrackIndex(0);
+      }
+      if (trackIndex < 0) {
+        setTrackIndex(allTracks?.length - 1);
+      }
+    }
+  }, [trackIndex]);
+
+  if (currentTrack?.audio) {
     return createPortal(
       <AudioPayload
         setOpen={setOpen}
