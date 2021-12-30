@@ -11,7 +11,7 @@ export interface IDurationTarget {
 
 export interface IPlaylistPopup {
   allTracks?: IallTraksByUser[] | undefined;
-  generalIndexTrack?: number,
+  generalIndexTrack?: number;
   setOpen: (value: boolean) => void;
   open: boolean;
 }
@@ -20,6 +20,7 @@ export interface IAudioPayload {
   goToPreviousTrack: () => void;
   trackIndex: number;
   currentTrack: {
+    id: number;
     artist?: string;
     name: string;
     audio: string;

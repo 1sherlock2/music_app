@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import AudioPayload from '../AudioPayload/AudioPayload';
-import {
-  IAudioPayload,
-  IPlaylistPopup
-} from '../AudioPayload/AudioPayload.interface';
+import { IPlaylistPopup } from '../AudioPayload/AudioPayload.interface';
+import s from './PlaylistPopup.scss';
 
 const PlaylistPopup: React.FC<IPlaylistPopup> = ({
   allTracks,
@@ -17,17 +15,19 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     () => allTracks && allTracks[trackIndex],
     [allTracks, trackIndex]
   );
-  console.log('trackIndex', trackIndex);
+
+  useEffect(() => {
+    const rootEl = document.getElementById('root');
+    const firstChild = rootEl?.firstElementChild;
+    firstChild?.classList.add(s.hidden);
+  }, []);
 
   // Следующий трек
-  const goToNextTrack = useCallback(
-    () => setTrackIndex((prev) => prev + 1),
-    []
-  );
+  const goToNextTrack = useCallback(() => setTrackIndex((prev) => ++prev), []);
 
   // Предыдущий трек
   const goToPreviousTrack = useCallback(
-    () => setTrackIndex((prev) => prev - 1),
+    () => setTrackIndex((prev) => --prev),
     []
   );
 
@@ -42,20 +42,20 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     }
   }, [trackIndex]);
 
-  if (currentTrack?.audio) {
-    return createPortal(
-      <AudioPayload
-        setOpen={setOpen}
-        open={open}
-        goToNextTrack={goToNextTrack}
-        goToPreviousTrack={goToPreviousTrack}
-        trackIndex={trackIndex}
-        currentTrack={currentTrack}
-      />,
-      document.body
-    );
+  if (!currentTrack?.audio) {
+    return null;
   }
-  return null;
+  return createPortal(
+    <AudioPayload
+      setOpen={setOpen}
+      open={open}
+      goToNextTrack={goToNextTrack}
+      goToPreviousTrack={goToPreviousTrack}
+      trackIndex={trackIndex}
+      currentTrack={currentTrack}
+    />,
+    document.body
+  );
 };
 
 export default PlaylistPopup;

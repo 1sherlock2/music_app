@@ -24,14 +24,14 @@ const useHlsLoad = (audioRef: any, urlStream: string) => {
         }
       }, [durationFunc, urlStream]);
     },
-    fragsLoad: useCallback(({ fragLoading }) => {
+    fragsLoad: (fragLoadingFunc: () => void) => {
       useEffect(() => {
-        if (fragLoading) {
-          hlsRef.current.on(Hls.Events.FRAG_LOADING, fragLoading);
+        if (fragLoadingFunc) {
+          hlsRef.current.on(Hls.Events.FRAG_LOADING, fragLoadingFunc);
         }
       }, []);
-    }, []),
-    startPlay: (hlsStartPlayAudio: () => any) => {
+    },
+    startPlay: (hlsStartPlayAudio: () => void) => {
       hlsRef.current.on(Hls.Events.BUFFER_CREATED, (_e, data) => {
         const bufferExist = data.tracks?.audio?.buffer;
         if (bufferExist) {

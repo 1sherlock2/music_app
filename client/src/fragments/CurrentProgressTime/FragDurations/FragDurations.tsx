@@ -11,8 +11,7 @@ const FragDurations = ({ hlsLoad, allDuration }: FragDurationsProps) => {
       setBufferDurations(Number(targetBufferTime?.toFixed(1))),
     []
   );
-
-  hlsLoad.fragsLoad({ fragLoading: hlsBufferDurations });
+  hlsLoad.fragsLoad(hlsBufferDurations);
 
   const durationForWith = useMemo(() => {
     const percentDuration = (bufferDurations * 100) / allDuration;
