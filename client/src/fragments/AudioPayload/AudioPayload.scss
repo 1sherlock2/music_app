@@ -1,5 +1,14 @@
 @import '../../styles/variables.scss';
 
+// @keyframes ani {
+//   0% {
+//     transform: translateX(100%);
+//   }
+//   100% {
+//     transform: translateX(0);
+//   }
+// }
+
 .outside {
   background-color: rgba(153, 152, 152, 0.5);
   position: fixed;
@@ -23,13 +32,9 @@
     box-shadow: 0 0 5px 5px $gray-300;
     margin-right: -2px;
     overflow: hidden;
-    &_line {
-      margin-top: $size-10;
-      width: $size-40;
-      border-bottom: solid 3.9px #333;
-      border-radius: $size-10;
-      opacity: 0.7;
-    }
+    transition: transform 0.2s;
+    // animation: ani 1s forwards;
+
     &_wrapper {
       display: flex;
       flex-direction: column;
@@ -39,9 +44,7 @@
       position: relative;
       width: 85%;
       height: 100vh;
-      &_title {
-        margin-top: $size-20;
-      }
+
       &_image {
         display: flex;
         flex: 1 1 15%;

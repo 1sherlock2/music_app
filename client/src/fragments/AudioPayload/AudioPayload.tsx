@@ -10,21 +10,16 @@ import AudioPlayer from '../AudioPlayer/AudioPlayer';
 import CurrentProgressTime from '../CurrentProgressTime/CurrentProgressTime';
 import s from './AudioPayload.scss';
 import classnames from 'classnames';
-import {
-  IAudioPayload,
-  IDurationTarget,
-  IPlaylistPopup
-} from './AudioPayload.interface';
+import { IAudioPayload, IPlaylistPopup } from './AudioPayload.interface';
 import Img from '../../components/Img/Img';
 import useClickOutside from '../../hooks/useClickOutside';
 import useCombinedRef from '../../hooks/useCombinedRef';
 import { useRecoilValue } from 'recoil';
 import { getUrlTrackStream } from '../../store/index';
-import hlsConfig from './utils/hlsConfig';
-import Hls, { Events, LevelLoadedData } from 'hls.js';
+import { Events, LevelLoadedData } from 'hls.js';
 import useHlsLoad from '../../hooks/useHlsLoad';
 import numToFix from '../../utils/numToFix';
-import usePrevious from '../../hooks/usePrevious';
+import LineAndNameAudio from './blocks/LineAndNameAudio/LineAndNameAudio';
 
 const defaultTopPosition = 20;
 const defaultLeftPosition = 0;
@@ -42,16 +37,14 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
   const [repeatAudioRef, setRepeatAudioRef] = useState(false);
-  const [topPosition, setTopPosition] = useState(defaultTopPosition);
-  const [leftPosition, setLeftPosition] = useState(defaultLeftPosition);
+  const [topPosition, setTopPosition] = useState<number>(defaultTopPosition);
+  const [leftPosition, setLeftPosition] = useState<number>(defaultLeftPosition);
   const [borderStyle, setBorderStyle] = useState(false);
 
   // Аудиоконтроллер
   const audioRef = useRef<HTMLAudioElement>(new Audio());
 
   // Переменные для управление положением аудиоплеера
-  const staticPositionY = useRef<boolean>(false);
-  const staticPositionX = useRef<boolean>(false);
   const touchY = useRef<number>(0);
   const touchX = useRef<number>(0);
   const changePos = useRef({ x: 0, y: 0 });
@@ -59,8 +52,8 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
 
   // Переменные для анимирования при переключении
   const transformByCloseX = useRef<boolean>(false);
-  const transformByCloseY = useRef<boolean>(false);
-  const intervalValueByClose = useRef<number>(0.2);
+  // const transformByCloseY = useRef<boolean>(false);
+  const [transformByCloseY, setTransformByCloseY] = useState<boolean>(false);
 
   // Переменные для управление воспроизведением
   const intervalRef = useRef<any>();
@@ -91,47 +84,33 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
   };
   const handleTouchEnd = (ev: TouchEvent) => {
     setBorderStyle(false);
-    staticPositionY.current = false;
-    staticPositionX.current = false;
-    const { clientY, clientX } = ev.changedTouches[0];
-    changePos.current.y = clientY - touchY.current;
+    const { clientX } = ev.changedTouches[0];
     changePos.current.x = clientX - touchX.current;
-    if (changePos.current.y >= differentValue.current && !staticPositionY) {
-      setOpen(false);
-    } else if (changePos.current.x <= -differentValue.current) {
-      goToNextTrack();
+
+    if (changePos.current.x <= -differentValue.current) {
       transformByCloseX.current = true;
+      setTimeout(() => {
+        goToNextTrack();
+      }, 500);
     } else if (
       changePos.current.x >= differentValue.current &&
       changePos.current.x !== 0
     ) {
-      goToPreviousTrack();
       transformByCloseX.current = true;
+      setTimeout(() => {
+        goToPreviousTrack();
+      }, 500);
     } else {
-      setTopPosition(defaultTopPosition);
       setLeftPosition(defaultLeftPosition);
     }
   };
 
   const handleTouchEvent = (ev: TouchEvent) => {
-    const { clientX, clientY } = ev.touches[0];
-    changePos.current.y = clientY - touchY.current;
+    const { clientX } = ev.touches[0];
     changePos.current.x = clientX - touchX.current;
 
     // Установление значений для ограничения движения блока по верт или гориз
     if (Math.abs(numToFix(changePos.current.x, 2)) > differentValue.current) {
-      staticPositionY.current = true;
-      staticPositionX.current = false;
-      console.log('Y', staticPositionY.current);
-    } else if (
-      Math.abs(numToFix(changePos.current.y, 2)) > differentValue.current
-    ) {
-      staticPositionX.current = true;
-      staticPositionY.current = false;
-      console.log('X', staticPositionX.current);
-    }
-
-    if (staticPositionY.current && !staticPositionX.current) {
       setLeftPosition(
         Math.sign(changePos.current.x) > 0
           ? differentValue.current
@@ -140,21 +119,7 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
     } else {
       setLeftPosition(changePos.current.x);
     }
-
-    if (staticPositionX.current && !staticPositionY.current) {
-      setTopPosition(differentValue.current);
-    } else {
-      setTopPosition(Math.abs(changePos.current.y));
-    }
   };
-
-  useEffect(() => {
-    if (staticPositionY.current) {
-      setTopPosition(defaultTopPosition);
-    } else if (staticPositionX.current) {
-      setLeftPosition(defaultLeftPosition);
-    }
-  }, [staticPositionY.current, staticPositionX.current]);
 
   const startTimer = (): void => {
     clearInterval(intervalRef.current);
@@ -195,9 +160,10 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
     // Воспроизведение трека при загрузки частей аудиофайла
     hlsLoad.startPlay(hlsStartPlayAudio);
 
-    transformByCloseX.current = false;
     setLeftPosition(0);
 
+    // Для появления следующего компонента при переключении
+    transformByCloseX.current = false;
     return () => {
       setIsPlaying(false);
       hlsLoad.detachAudio();
@@ -213,7 +179,15 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
       audioRef.current.pause();
     }
   }, [isPlaying]);
-
+  const changeTranslate = useMemo(
+    () =>
+      transformByCloseX.current
+        ? changePos.current.x < 0
+          ? '-100%'
+          : '100%'
+        : 0,
+    [transformByCloseX.current, changePos.current.x]
+  );
   return (
     <div className={classnames({ [s.outside]: open })}>
       <div
@@ -221,30 +195,31 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
         style={{
           top: `${topPosition}px`,
           left: `${leftPosition}px`,
-          transform: `translate(${
-            transformByCloseX.current
-              ? changePos.current.x < 0
-                ? '-700px'
-                : '700px'
-              : 0
-          }, ${transformByCloseY.current ? '700px' : 0})`,
-          transition: `transform ${intervalValueByClose.current}s`,
+          transform: `translate(${changeTranslate}, ${
+            transformByCloseY ? '100%' : 0
+          })`,
           ...(borderStyle && {
             borderBottomLeftRadius: '7%',
             borderBottomRightRadius: '7%'
           })
         }}
         ref={useCombinedRef(containerRef, audioContainerRef)}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onTouchMove={handleTouchEvent}
       >
         <div className={s.container_wrapper}>
-          <div className={s.container_line} />
+          <LineAndNameAudio
+            name={name}
+            artist={artist}
+            setTopPosition={setTopPosition}
+            differentValue={differentValue.current}
+            setTransformByCloseY={setTransformByCloseY}
+            setOpen={setOpen}
+          />
           <div
-            className={s.container_wrapper_title}
-          >{`${name} - ${artist}`}</div>
-          <div className={s.container_wrapper_image}>
+            className={s.container_wrapper_image}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchMove={handleTouchEvent}
+          >
             <div className={s.image_title}>
               <Img
                 src={img}

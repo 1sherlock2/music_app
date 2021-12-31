@@ -15,17 +15,20 @@ export interface IPlaylistPopup {
   setOpen: (value: boolean) => void;
   open: boolean;
 }
+
+export interface INameAndArtistAudio {
+  artist?: string;
+  name: string;
+}
 export interface IAudioPayload {
   goToNextTrack: () => void;
   goToPreviousTrack: () => void;
   trackIndex: number;
   currentTrack: {
     id: number;
-    artist?: string;
-    name: string;
     audio: string;
     img?: string;
-  };
+  } & INameAndArtistAudio;
 }
 
 export interface ITouchY {
