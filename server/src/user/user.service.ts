@@ -7,6 +7,8 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare } from 'bcrypt';
+import { OrderTracks } from 'src/db/entity/orderTracks.entity';
+import { Track } from 'src/db/entity/track.entity';
 import { User } from 'src/db/entity/user.entity';
 import {
   ILoginAccess,
@@ -23,32 +25,55 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userEntity: Repository<User>,
+    @InjectRepository(OrderTracks)
+    private readonly orderTraksEntity: Repository<OrderTracks>,
+    @InjectRepository(Track)
+    private readonly trackEntity: Repository<Track>,
     private readonly jwtService: JwtService
   ) {}
 
   async create(userDTO: UserCreateDTO): Promise<IRegistrationStatus> {
-    const { nickname, password, email, roles } = userDTO;
-    const userHasInDb = await this.userEntity.findOne({ where: { nickname } });
-    if (userHasInDb) {
-      throw new HttpException(
-        httpMessages.userAvailable,
-        HttpStatus.BAD_REQUEST
-      );
-    }
-    const userSave: User = await this.userEntity.create({
-      nickname,
-      password,
-      email,
-      roles
-    });
-    await this.userEntity.save(userSave);
+    try {
+      const { nickname, password, email, roles } = userDTO;
+      const userHasInDb = await this.userEntity.findOne({
+        where: { nickname }
+      });
+      if (userHasInDb) {
+        throw new HttpException(
+          httpMessages.userAvailable,
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      const userSave: User = await this.userEntity.create({
+        nickname,
+        password,
+        email,
+        roles
+      });
+      await this.userEntity.save(userSave);
 
-    const result = {
-      success: true,
-      message: httpMessages.userWasCreated,
-      status: HttpStatus.OK
-    };
-    return result;
+      // Создание взаимосвязи с таблицей треков
+      // const createTracksByUser = await this.trackEntity.create({
+      //   user: userSave
+      // });
+      // await this.trackEntity.save(createTracksByUser);
+
+      // Создание взаимосвязи с таблицей порядка треков
+      const identifyTrakIdsSave = await this.orderTraksEntity.create({
+        order: [],
+        user: userSave
+      });
+      await this.orderTraksEntity.save(identifyTrakIdsSave);
+
+      const result = {
+        success: true,
+        message: httpMessages.userWasCreated,
+        status: HttpStatus.OK
+      };
+      return result;
+    } catch (e) {
+      console.log(e);
+    }
   }
   async authenticate(loginDTO: LoginDTO): Promise<ILoginAccess> {
     const { nickname, password } = loginDTO;

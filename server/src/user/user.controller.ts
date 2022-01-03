@@ -15,7 +15,6 @@ import { UserService } from './user.service';
 import { LoginDTO } from './dto/login.dto';
 import { errorMessage } from 'src/utils/httpErrorObject';
 import { JwtAuthGuard } from './JwtAuth.guard';
-import { request } from 'express';
 
 @Controller('auth')
 export class UserController {

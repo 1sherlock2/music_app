@@ -26,6 +26,8 @@ export const checkAuthDB = async (): Promise<ICheckLoginQuery> =>
   await instanceDB.get('/auth/check');
 
 export const allTracksByUserDB = async () => await instanceDB.get('/track');
+export const updatePositionTracksDB = async (replacedTrackIds: number[]) =>
+  await instanceDB.post('/track/updatePos', { order: replacedTrackIds });
 
 export const getUrlTrackStreamQuery = async (id: number) =>
   await instanceDB.post('/track/url', { trackId: id });

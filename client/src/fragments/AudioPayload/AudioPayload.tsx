@@ -109,7 +109,7 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
     const { clientX } = ev.touches[0];
     changePos.current.x = clientX - touchX.current;
 
-    // Установление значений для ограничения движения блока по верт или гориз
+    // Установление значений для ограничения движения блока по вертикале
     if (Math.abs(numToFix(changePos.current.x, 2)) > differentValue.current) {
       setLeftPosition(
         Math.sign(changePos.current.x) > 0
@@ -179,6 +179,7 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
       audioRef.current.pause();
     }
   }, [isPlaying]);
+
   const changeTranslate = useMemo(
     () =>
       transformByCloseX.current
@@ -188,6 +189,7 @@ const AudioPayload: React.FC<IPlaylistPopup & IAudioPayload> = ({
         : 0,
     [transformByCloseX.current, changePos.current.x]
   );
+
   return (
     <div className={classnames({ [s.outside]: open })}>
       <div

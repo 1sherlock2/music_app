@@ -4,6 +4,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
+import { OrderTracks } from 'src/db/entity/orderTracks.entity';
+import { User } from 'src/db/entity/user.entity';
 import { FilePathModule } from 'src/filePath/filePath.module';
 import { UserModule } from 'src/user/user.module';
 import { Track } from '../db/entity/track.entity';
@@ -12,7 +14,7 @@ import { TrackService } from './track.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Track]),
+    TypeOrmModule.forFeature([Track, OrderTracks, User]),
     CloudinaryModule,
     FilePathModule,
     UserModule,
@@ -24,9 +26,9 @@ import { TrackService } from './track.service';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         timeout: configService.get('HTTP_TIMEOUT'),
-        maxRedirects: configService.get('HTTP_MAX_REDIRECTS'),
+        maxRedirects: configService.get('HTTP_MAX_REDIRECTS')
       }),
-      inject: [ConfigService],
+      inject: [ConfigService]
     })
   ],
   providers: [TrackService],

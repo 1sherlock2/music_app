@@ -4,15 +4,28 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   BeforeInsert,
-  OneToMany
+  OneToMany,
+  OneToOne
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Track } from './track.entity';
+import { OrderTracks } from './orderTracks.entity';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: object | string | Buffer;
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+
+  @OneToOne(() => OrderTracks, (orderTraks) => orderTraks.user)
+  orderTracks: OrderTracks;
+
+  @OneToMany(() => Track, (track) => track.user)
+  tracks: Track[];
 
   @Column({ unique: true })
   nickname: string;
@@ -26,17 +39,9 @@ export class User {
   @Column('text', { array: true, default: ['user'] })
   roles: string[];
 
-  @OneToMany(() => Track, (track) => track.userId)
-  tracks: Track[];
-
   @CreateDateColumn()
   created: Date;
 
   @CreateDateColumn()
   updated: Date;
-
-  @BeforeInsert()
-  async hashPassword() {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
 }

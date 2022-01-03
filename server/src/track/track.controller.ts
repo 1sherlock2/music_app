@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   Post,
   Query,
   Req,
@@ -51,16 +50,6 @@ export class TrackController {
     });
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // @Post(':id')
-  // recieveTrack(
-  //   @Param('id') id: string,
-  //   @Body() otherProperty: { audioUrl: string }
-  // ) {
-  //   const { audioUrl } = otherProperty;
-  //   this.trackService.recieve({ id, audioUrl });
-  // }
-
   @UseGuards(JwtAuthGuard)
   @Delete('delete')
   deleteTrack(@Query('id') id: string, @Req() req) {
@@ -72,7 +61,15 @@ export class TrackController {
   @Post('url')
   getUrlStream(@Body() otherProperty: { trackId: number }) {
     const { trackId } = otherProperty;
-    const result = this.trackService.getUrlStream(trackId)
+    const result = this.trackService.getUrlStream(trackId);
     return result;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('updatePos')
+  updateOrderPosTraks(@Body() otherProperty: { order: number[] }, @Req() req) {
+    const { userId } = req;
+    const { order } = otherProperty;
+    const updatedOrder = this.trackService.updateOrderTracks({ order, userId });
   }
 }

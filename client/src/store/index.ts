@@ -5,7 +5,8 @@ import {
   allTracksByUserDB,
   checkAuthDB,
   getUrlTrackStreamQuery,
-  loginDataDB
+  loginDataDB,
+  updatePositionTracksDB
 } from './queries';
 
 const loginText = atom({ key: 'loginText', default: '' });
@@ -63,10 +64,26 @@ export type IallTraksByUser = {
 const allTraksByUser = selector({
   key: 'allTraksByUser',
   get: async () => {
+    console.log('allTracksByUserDB', allTracksByUserDB);
     const { data }: AxiosResponse<IallTraksByUser[]> =
       await allTracksByUserDB();
     return data;
+  },
+  set: ({ set }, newValue) => {
+    const replacedTrackIds: false | number[] =
+      Array.isArray(newValue) && newValue.map((el: IallTraksByUser) => el.id);
+    if (replacedTrackIds && replacedTrackIds.length) {
+      (async () => {
+        await updatePositionTracksDB(replacedTrackIds);
+      })();
+      set(allTracksByUserAtom, newValue);
+    }
   }
+});
+
+const allTracksByUserAtom = atom<IallTraksByUser[]>({
+  key: 'allTracksByUserAtom',
+  default: allTraksByUser
 });
 
 const getUrlTrackStream = selectorFamily({
@@ -88,5 +105,6 @@ export {
   setAuthData,
   checkAuth,
   getUrlTrackStream,
-  allTraksByUser
+  allTraksByUser,
+  allTracksByUserAtom
 };

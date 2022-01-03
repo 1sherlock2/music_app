@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { OrderTracks } from 'src/db/entity/orderTracks.entity';
+import { Track } from 'src/db/entity/track.entity';
 import { User } from 'src/db/entity/user.entity';
 import { JwtAuthGuard } from './JwtAuth.guard';
 import { JwtStrategy } from './jwtStrategy.service';
@@ -11,7 +13,7 @@ import { UserService } from './user.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, OrderTracks, Track]),
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
