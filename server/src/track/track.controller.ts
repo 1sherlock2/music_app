@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  ParseIntPipe,
   Post,
   Query,
   Req,
@@ -52,7 +53,7 @@ export class TrackController {
 
   @UseGuards(JwtAuthGuard)
   @Delete('delete')
-  deleteTrack(@Query('id') id: string, @Req() req) {
+  deleteTrack(@Query('id', ParseIntPipe) id: number, @Req() req) {
     const { userId } = req;
     return this.trackService.deleteTrack(id, userId);
   }

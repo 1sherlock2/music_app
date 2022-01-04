@@ -28,7 +28,6 @@ export class UserService {
     @InjectRepository(OrderTracks)
     private readonly orderTraksEntity: Repository<OrderTracks>,
     @InjectRepository(Track)
-    private readonly trackEntity: Repository<Track>,
     private readonly jwtService: JwtService
   ) {}
 
@@ -51,12 +50,6 @@ export class UserService {
         roles
       });
       await this.userEntity.save(userSave);
-
-      // Создание взаимосвязи с таблицей треков
-      // const createTracksByUser = await this.trackEntity.create({
-      //   user: userSave
-      // });
-      // await this.trackEntity.save(createTracksByUser);
 
       // Создание взаимосвязи с таблицей порядка треков
       const identifyTrakIdsSave = await this.orderTraksEntity.create({

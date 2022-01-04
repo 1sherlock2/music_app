@@ -8,10 +8,9 @@ import {
   IUploadStatus
 } from 'src/interfaces/track.interface';
 import httpMessages from 'src/utils/httpMessages';
-import { getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { TrackCreateDTO, UpdateOrderTracks } from './dto/trackCreate.dto';
 import { FilePathService } from 'src/filePath/filePath.service';
-import { HttpModule, HttpService } from '@nestjs/axios';
 import { OrderTracks } from 'src/db/entity/orderTracks.entity';
 import { User } from 'src/db/entity/user.entity';
 import updateQueryForOrder from './utils/updateQueryForOrder';
@@ -98,7 +97,7 @@ export class TrackService {
 
   async deleteTrack(id, userId) {
     const track = await this.trackEntity.findOne({
-      where: { id: Number(id), userId }
+      where: { id, userId }
     });
     if (!track) {
       return new HttpException(

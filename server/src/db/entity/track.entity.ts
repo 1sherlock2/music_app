@@ -20,7 +20,4 @@ export class Track {
 
   @ManyToOne(() => User, (user) => user.tracks)
   user: User;
-
-  // @Column('int')
-  // views: number;
 }

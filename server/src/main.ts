@@ -9,20 +9,19 @@ import * as express from 'express';
 import { ExpressAdapter } from '@nestjs/platform-express';
 
 import { readFileSync } from 'fs';
+import { ValidationPipe } from '@nestjs/common';
 
 const start = async () => {
   const ports = {
     http: process.env.HTTP_PORT || 7000,
-    https: process.env.HTTPS_PORT || 4000,
+    https: process.env.HTTPS_PORT || 4000
   };
 
   const httpsOptions = {
     key: readFileSync(
       join(__dirname, '../secrets/CA/localhost/localhost.decrypted.key')
     ),
-    cert: readFileSync(
-      join(__dirname, '../secrets/CA/localhost/localhost.crt')
-    ),
+    cert: readFileSync(join(__dirname, '../secrets/CA/localhost/localhost.crt'))
   };
   try {
     const server = express();
@@ -35,6 +34,7 @@ const start = async () => {
     const document = SwaggerModule.createDocument(app, documentationConfig);
     SwaggerModule.setup('api', app, document);
 
+    app.useGlobalPipes(new ValidationPipe());
     app.enableCors();
     await app.init();
     http.createServer(server).listen(ports.http, () => {

@@ -1,9 +1,15 @@
-import { IsArray, IsEmail, IsNotEmpty, IsString } from "class-validator";
-import { Role } from "src/enums/role.enum";
+import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
+import httpMessages from 'src/utils/httpMessages';
 
-export class UserCreateDTO {  
-  @IsNotEmpty()  nickname: string;
-  @IsNotEmpty()  password: string;
-  @IsNotEmpty() @IsEmail()  email: string;
-  @IsString({ each: true })  roles: string[];
+export class UserCreateDTO {
+  @IsNotEmpty() @IsString() nickname: string;
+
+  @IsNotEmpty() @IsString() @Length(5, 15) password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsEmail({}, { message: httpMessages.emailNotCorrect })
+  email: string;
+
+  @IsString({ each: true }) roles: string[];
 }

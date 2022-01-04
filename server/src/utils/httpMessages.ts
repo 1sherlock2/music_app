@@ -5,6 +5,7 @@ export default {
   userIsNotAuthorithation: 'That user is not authorization',
   userOrPasswordIsNotCorrect: 'That user or password is not correct',
   invalidToken: 'invalid token',
+  emailNotCorrect: 'email is not correct',
   // track
   trackHasBeenCreated: 'This track has been created',
   trackWasCreated: 'Track was created',
