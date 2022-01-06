@@ -12,5 +12,9 @@ export default {
   trackDeleted: 'Track deleted',
   trackIsNotFound: 'That track is not found',
   // cloudinary
-  errorUpladAudioInCloud: 'Error was occured of upload file on cloudinary'
+  errorUpladAudioInCloud: 'Error was occured of upload file on cloudinary',
+  // roles
+  rolesCreated: 'Role has been created',
+  rolesAvailable: 'That role have been created',
+  rolesExeption: 'Error occured was creating role'
 };

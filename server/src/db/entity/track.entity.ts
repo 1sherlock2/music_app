@@ -6,7 +6,7 @@ export class Track {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
+  @Column()
   name: string;
 
   @Column({ nullable: true })
@@ -15,7 +15,7 @@ export class Track {
   @Column({ nullable: true })
   img: string;
 
-  @Column({ nullable: true })
+  @Column()
   audio: string;
 
   @ManyToOne(() => User, (user) => user.tracks)

@@ -13,8 +13,8 @@ import {
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { IRecieveTrack } from 'src/interfaces/track.interface';
-import { JwtAuthGuard } from 'src/user/JwtAuth.guard';
-import { TrackCreateDTO } from './dto/trackCreate.dto';
+import { JwtAuthGuard } from 'src/user/jwtAuth/JwtAuth.guard';
+import { IUserId, TrackCreateDTO } from './dto/trackCreate.dto';
 import { TrackService } from './track.service';
 
 @Controller('track')
@@ -39,7 +39,7 @@ export class TrackController {
   createTrack(
     @UploadedFiles() files: IRecieveTrack,
     @Body() otherProperty: TrackCreateDTO,
-    @Req() req
+    @Req() req: IUserId
   ) {
     const { userId } = req;
     const { audio, img } = files;

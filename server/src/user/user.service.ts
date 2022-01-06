@@ -27,8 +27,7 @@ export class UserService {
     private readonly userEntity: Repository<User>,
     @InjectRepository(OrderTracks)
     private readonly orderTraksEntity: Repository<OrderTracks>,
-    @InjectRepository(Track)
-    private readonly jwtService: JwtService
+    private jwtService: JwtService
   ) {}
 
   async create(userDTO: UserCreateDTO): Promise<IRegistrationStatus> {
@@ -78,13 +77,10 @@ export class UserService {
     if (!passwordCompare) {
       throw new UnauthorizedException(httpMessages.userOrPasswordIsNotCorrect);
     }
-    const accessToken: string = this.jwtService.sign(user.id);
+    const accessToken: string = this.jwtService.sign({
+      id: user.id,
+      roles: user.roles
+    });
     return { nickname, accessToken, success: true };
   }
-
-  // async validateUserByPayload({ nickname }: IJwtValidate) {
-  //   const user = await this.userEntity.findOne({ where: { nickname } });
-  //   if (!user) throw new UnauthorizedException(httpMessages.invalidToken);
-  //   return user;
-  // }
 }

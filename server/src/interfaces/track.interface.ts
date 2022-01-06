@@ -5,7 +5,7 @@ export interface ITrackCreateStatus {
 }
 
 export interface IRecieveTrack {
-  audio?: Express.Multer.File;
+  audio: Express.Multer.File;
   img?: Express.Multer.File;
 }
 

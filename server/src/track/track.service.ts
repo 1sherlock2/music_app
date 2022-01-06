@@ -27,7 +27,7 @@ export class TrackService {
     private readonly cloudinaryService: CloudinaryService,
     private readonly filePathService: FilePathService // private httpService: HttpService
   ) {}
-  async create(trackCreateDTO: TrackCreateDTO): Promise<ITrackCreateStatus> {
+  async create(trackCreateDTO): Promise<ITrackCreateStatus> {
     const { name, artist, img, audio, userId } = trackCreateDTO;
     const imgPath: string = img && this.filePathService.create(img);
     const audioPath: string = audio && this.filePathService.create(audio);

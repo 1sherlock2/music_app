@@ -7,19 +7,16 @@ import {
   Request,
   UseGuards
 } from '@nestjs/common';
-import { Roles } from 'src/decorators/roles.decorator';
 import { UserCreateDTO } from 'src/user/dto/userCreate.dto';
-import { Role } from 'src/enums/role.enum';
 import { IRegistrationStatus } from 'src/interfaces/user.register_status.interface';
 import { UserService } from './user.service';
 import { LoginDTO } from './dto/login.dto';
 import { errorMessage } from 'src/utils/httpErrorObject';
-import { JwtAuthGuard } from './JwtAuth.guard';
-
+import { JwtAuthGuard } from './jwtAuth/JwtAuth.guard';
 @Controller('auth')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  // @Roles(Role.Admin)
+
   @Post('register')
   public async register(
     @Body() createUserDto: UserCreateDTO
@@ -30,6 +27,7 @@ export class UserController {
       return errorMessage(false, HttpStatus.INTERNAL_SERVER_ERROR, e);
     }
   }
+
   @Post('login')
   public async login(@Body() loginService: LoginDTO, @Request() req) {
     try {

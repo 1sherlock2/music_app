@@ -18,10 +18,6 @@ import { TrackService } from './track.service';
     CloudinaryModule,
     FilePathModule,
     UserModule,
-    // HttpModule.register({
-    //   timeout: 2000,
-    //   maxRedirects: 5
-    // })
     HttpModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
