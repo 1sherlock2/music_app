@@ -14,6 +14,6 @@ export class RolesController {
   @UseGuards(RolesGuard, JwtAuthGuard)
   @Post()
   async create(@Body() dto: CreateRoleDto) {
-    await this.rolesService.createRole(dto);
+    return await this.rolesService.createRole(dto);
   }
 }

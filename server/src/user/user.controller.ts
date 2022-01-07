@@ -7,18 +7,20 @@ import {
   Request,
   UseGuards
 } from '@nestjs/common';
-import { UserCreateDTO } from 'src/user/dto/userCreate.dto';
+import { AddRoleDTO, LoginDTO, UserCreateDTO } from 'src/user/dto/user.dto';
 import { IRegistrationStatus } from 'src/interfaces/user.register_status.interface';
 import { UserService } from './user.service';
-import { LoginDTO } from './dto/login.dto';
 import { errorMessage } from 'src/utils/httpErrorObject';
 import { JwtAuthGuard } from './jwtAuth/JwtAuth.guard';
-@Controller('auth')
+import { RolesGuard } from 'src/roles/roles.guard';
+import { Roles } from 'src/roles/roles.decorator';
+import { RoleEnum } from 'src/enums/role.enum';
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('register')
-  public async register(
+  async register(
     @Body() createUserDto: UserCreateDTO
   ): Promise<IRegistrationStatus> {
     try {
@@ -29,7 +31,7 @@ export class UserController {
   }
 
   @Post('login')
-  public async login(@Body() loginService: LoginDTO, @Request() req) {
+  async login(@Body() loginService: LoginDTO) {
     try {
       return await this.userService.authenticate(loginService);
     } catch (e) {
@@ -45,5 +47,19 @@ export class UserController {
       return { success: false };
     }
     return { success: true, userId: req.userId };
+  }
+
+  @Roles(RoleEnum.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('add_role')
+  async addRole(@Body() { userId, role }: AddRoleDTO) {
+    return await this.userService.addRole({ userId, role });
+  }
+
+  @Roles(RoleEnum.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('ban_user')
+  async banUser(@Body() { userId }: { userId: string }) {
+    return await this.userService.ban(userId);
   }
 }

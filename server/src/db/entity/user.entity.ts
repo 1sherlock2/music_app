@@ -37,7 +37,10 @@ export class User {
   email: string;
 
   @Column('text', { array: true, default: ['user'] })
-  roles: string[];
+  roles?: string[];
+
+  @Column('boolean', { default: false })
+  banned: boolean;
 
   @CreateDateColumn()
   created: Date;

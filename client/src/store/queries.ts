@@ -20,10 +20,10 @@ export const loginDataDB = async ({
   nickname,
   password
 }: ILoginDataDB): Promise<ILoginDTO> =>
-  await instanceDB.post('/auth/login', { nickname, password });
+  await instanceDB.post('/user/login', { nickname, password });
 
 export const checkAuthDB = async (): Promise<ICheckLoginQuery> =>
-  await instanceDB.get('/auth/check');
+  await instanceDB.get('/user/check');
 
 export const allTracksByUserDB = async () => await instanceDB.get('/track');
 export const updatePositionTracksDB = async (replacedTrackIds: number[]) =>

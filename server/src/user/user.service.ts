@@ -10,15 +10,15 @@ import { compare } from 'bcrypt';
 import { OrderTracks } from 'src/db/entity/orderTracks.entity';
 import { Track } from 'src/db/entity/track.entity';
 import { User } from 'src/db/entity/user.entity';
+import { RoleEnum } from 'src/enums/role.enum';
 import {
   ILoginAccess,
   IRegistrationStatus
 } from 'src/interfaces/user.register_status.interface';
-import { UserCreateDTO } from 'src/user/dto/userCreate.dto';
+import { LoginDTO, UserCreateDTO } from 'src/user/dto/user.dto';
 import httpMessages from 'src/utils/httpMessages';
-import { Repository } from 'typeorm';
-import { IJwtValidate } from './dto/jwtStrategy.dto';
-import { LoginDTO } from './dto/login.dto';
+import { getConnection, Repository } from 'typeorm';
+import updateQueryForUser from './utils/updateQueryForUser';
 
 @Injectable()
 export class UserService {
@@ -27,7 +27,7 @@ export class UserService {
     private readonly userEntity: Repository<User>,
     @InjectRepository(OrderTracks)
     private readonly orderTraksEntity: Repository<OrderTracks>,
-    private jwtService: JwtService
+    private readonly jwtService: JwtService
   ) {}
 
   async create(userDTO: UserCreateDTO): Promise<IRegistrationStatus> {
@@ -82,5 +82,38 @@ export class UserService {
       roles: user.roles
     });
     return { nickname, accessToken, success: true };
+  }
+
+  async addRole({ userId, role }) {
+    const user = await this.userEntity.findOne(userId);
+    if (!user) {
+      throw new UnauthorizedException(httpMessages.userNotFound);
+    }
+    const rolesAvailable = Array.isArray(role)
+      ? role.some((el) => user.roles.includes(el))
+      : user.roles.includes(role);
+    if (rolesAvailable) {
+      throw new HttpException(
+        httpMessages.rolesAvailableByUser,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    const modifyRoles = Array.isArray(role) ? role : [role];
+    await updateQueryForUser(User, { roles: modifyRoles }, userId);
+    return { status: HttpStatus.OK, message: httpMessages.rolesUpdated };
+  }
+
+  async ban(userId) {
+    const user = await this.userEntity.findOne(userId);
+    const userIsAdmin = user.roles.includes(RoleEnum.Admin);
+    if (!user) {
+      throw new UnauthorizedException(httpMessages.userNotFound);
+    }
+    if (userIsAdmin) {
+      throw new HttpException(httpMessages.userIsAdmin, HttpStatus.BAD_REQUEST);
+    }
+
+    await updateQueryForUser(User, { banned: true }, userId);
+    return { status: HttpStatus.OK, message: httpMessages.userWasBanned };
   }
 }

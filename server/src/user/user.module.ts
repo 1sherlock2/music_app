@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderTracks } from 'src/db/entity/orderTracks.entity';
 import { Track } from 'src/db/entity/track.entity';
 import { User } from 'src/db/entity/user.entity';
+import { JwtConfig } from './jwtAuth/jwt.config';
 import { JwtAuthGuard } from './jwtAuth/JwtAuth.guard';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
@@ -14,13 +15,7 @@ import { UserService } from './user.service';
   imports: [
     TypeOrmModule.forFeature([User, OrderTracks, Track]),
     PassportModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async () => ({
-        secret: process.env.SECRET_KEY
-      }),
-      inject: [ConfigService]
-    })
+    JwtModule.registerAsync(new JwtConfig())
   ],
   providers: [UserService, JwtAuthGuard],
   controllers: [UserController],

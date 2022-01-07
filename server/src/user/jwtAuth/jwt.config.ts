@@ -13,9 +13,4 @@ export class JwtConfig {
     });
     this.inject = [ConfigService];
   }
-  // imports: [ConfigModule],
-  // useFactory: async () => ({
-  //   secret: process.env.SECRET_KEY
-  // }),
-  // inject: [ConfigService]
 }
