@@ -1,25 +1,13 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  SetStateAction
-} from 'react';
+import React, { useCallback, useEffect, useState, SetStateAction } from 'react';
 import Close from '../Icons/Close';
-import {
-  IErrorInput,
-  IInput,
-  IInputStyle,
-  ITypeInput
-} from './Input.interface';
+import { IInput, IInputStyle } from './Input.interface';
 import classnames from 'classnames';
 import s from './Input.scss';
 import IconVisibilityOff from '../Icons/Visibility/VisibilityOff';
 import IconVisibility from '../Icons/Visibility/Visibility';
 import {
   emailValidation,
-  passwordValidation,
-  validateOptions
+  passwordValidation
 } from './validation/validateOptions';
 
 const Input: React.FC<IInput> = ({
@@ -31,7 +19,8 @@ const Input: React.FC<IInput> = ({
   style = 'white',
   closeSize,
   disabled,
-  validate
+  validate,
+  className
 }) => {
   const [typeInput, setTypeInput] = useState(type);
   const [errorData, setErrorData] =
@@ -93,7 +82,7 @@ const Input: React.FC<IInput> = ({
     { [s.disabled]: disabled }
   );
   return (
-    <div className={s.container}>
+    <div className={classnames(className, s.container)}>
       {type === 'submit' && (
         <input
           type={type}
@@ -121,7 +110,7 @@ const Input: React.FC<IInput> = ({
           >
             <Close {...iconsSize} />
           </button>
-          {errorData[validate]?.status && value && (
+          {errorData && errorData[validate]?.status && value && (
             <div className={s.error}> {errorData[validate]?.message} </div>
           )}
         </>
@@ -135,7 +124,7 @@ const Input: React.FC<IInput> = ({
           >
             <VisibleIcon {...iconsSize} />
           </button>
-          {errorData[validate]?.status && value && (
+          {errorData && errorData[validate]?.status && value && (
             <div className={s.error}> {errorData[validate]?.message} </div>
           )}
         </>

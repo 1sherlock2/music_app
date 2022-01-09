@@ -1,15 +1,16 @@
 import axios from 'axios';
 import { authLocalStorage } from '../utils/localStorage';
-import { ILoginDTO } from '../fragments/Auth/Login/Login.interface';
 import {
   ICheckLoginQuery,
-  IGetTrackInfoSrc,
-  ILoginDataDB
+  ILoginDataDB,
+  ILoginDTO,
+  IRegisterData,
+  IRegisterDTO
 } from './queries.interface';
 
 const instanceDB = axios.create({
-  // baseURL: 'http://localhost:7000',
-  baseURL: 'http://192.168.0.105:7000',
+  baseURL: 'http://localhost:7000',
+  // baseURL: 'http://192.168.0.105:7000',
   // baseURL: 'http://10.254.1.164:7000',
   headers: {
     Authorization: authLocalStorage.getToken()
@@ -19,8 +20,13 @@ const instanceDB = axios.create({
 export const loginDataDB = async ({
   nickname,
   password
-}: ILoginDataDB): Promise<ILoginDTO> =>
+}: ILoginDTO): Promise<ILoginDataDB> =>
   await instanceDB.post('/user/login', { nickname, password });
+
+export const registerDataDB = async (
+  registerData: IRegisterDTO
+): Promise<IRegisterData> =>
+  await instanceDB.post('/user/register', registerData);
 
 export const checkAuthDB = async (): Promise<ICheckLoginQuery> =>
   await instanceDB.get('/user/check');

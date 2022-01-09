@@ -1,0 +1,18 @@
+@import '../../styles/variables.scss';
+
+.error {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  h1 {
+    display: flex;
+    justify-content: center;
+    @include font($size-28, false, $gray-800);
+    margin: $size-46 auto;
+  }
+
+  &_message {
+    width: 100%;
+  }
+}

@@ -42,11 +42,10 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get('check')
   getProfile(@Request() req) {
-    const userId = req.userId;
-    if (!userId) {
+    if (!req.user?.id) {
       return { success: false };
     }
-    return { success: true, userId: req.userId };
+    return { success: true, userId: req.user.id };
   }
 
   @Roles(RoleEnum.Admin)

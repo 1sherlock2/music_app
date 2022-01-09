@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-@Injectable()
 export class JwtConfig {
   imports: typeof ConfigModule[];
   useFactory: () => Promise<{ secret: string }>;

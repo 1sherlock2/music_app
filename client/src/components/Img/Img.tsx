@@ -2,7 +2,7 @@ import React, { useState, useRef, forwardRef } from 'react';
 import useIntersection from '../../hooks/useIntersection';
 import PropTypes from 'prop-types';
 
-const Img = ({
+const Img: React.FC = ({
   src,
   alt = '',
   lazy,

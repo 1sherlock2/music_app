@@ -6,12 +6,33 @@ import {
   checkAuthDB,
   getUrlTrackStreamQuery,
   loginDataDB,
+  registerDataDB,
   updatePositionTracksDB
 } from './queries';
+import responseMessages from './responseMessages';
 
 const loginText = atom({ key: 'loginText', default: '' });
 const loginPassword = atom({ key: 'loginPassword', default: '' });
 const isAuthentication = atom({ key: 'authStatus', default: false });
+
+const setRegistrData = atom({
+  key: 'setRegistrData',
+  default: { nickname: '', email: '', password: '' }
+});
+
+const responseRegister = selector({
+  key: 'responseRegister',
+  get: async ({ get }) => {
+    const { nickname, email, password } = get(setRegistrData);
+    if (nickname && email && password) {
+      const response = await registerDataDB({ nickname, email, password });
+      const {
+        data: { success, message }
+      } = response;
+      return { success, message };
+    }
+  }
+});
 
 const setAuthData = atom({
   key: 'setAuthData',
@@ -22,6 +43,10 @@ const stateQuery = selector({
   key: 'stateQuery',
   get: async ({ get }) => {
     const { nickname, password } = get(setAuthData);
+    if (!nickname || !password) {
+      return { success: false, message: responseMessages.loginError };
+    }
+
     const response = await loginDataDB({ nickname, password });
     const {
       success,
@@ -31,8 +56,7 @@ const stateQuery = selector({
     if (!success) {
       return {
         success,
-        message: `This login or password is not correct. Please repeat user data or
-      switch to register form`
+        message: responseMessages.loginError
       };
     }
     authLocalStorage.setStorage(token, responseNick);
@@ -46,9 +70,9 @@ const checkAuth = selector({
     const response = await checkAuthDB();
     const { success, userId } = response?.data;
     if (success) {
-      return String(userId);
+      return true;
     } else if (!success) {
-      return null;
+      return false;
     }
   }
 });
@@ -64,7 +88,6 @@ export type IallTraksByUser = {
 const allTraksByUser = selector({
   key: 'allTraksByUser',
   get: async () => {
-    console.log('allTracksByUserDB', allTracksByUserDB);
     const { data }: AxiosResponse<IallTraksByUser[]> =
       await allTracksByUserDB();
     return data;
@@ -106,5 +129,7 @@ export {
   checkAuth,
   getUrlTrackStream,
   allTraksByUser,
-  allTracksByUserAtom
+  allTracksByUserAtom,
+  setRegistrData,
+  responseRegister
 };

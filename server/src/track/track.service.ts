@@ -36,8 +36,8 @@ export class TrackService {
     const multipleUpload = arrayPath.map((path) => {
       return this.cloudinaryService.uploadFile(path, process.env.FOLDER_NAME);
     });
-    const resposeUploadFiles = await Promise.all(multipleUpload);
-    const objectResult = resposeUploadFiles.reduce(
+    const resUploadFiles = await Promise.all(multipleUpload);
+    const objectResult = resUploadFiles.reduce(
       (acc: IResultCloudinary, response: IUploadStatus) => {
         const { success, audioHlsUrl, imgUrl } = response;
         if (!success) {
@@ -77,7 +77,7 @@ export class TrackService {
     };
   }
 
-  async getAll({ userId }: { userId: string }) {
+  async getAll({ userId }: { userId: number }) {
     const tracks = await this.trackEntity.find({ where: { user: userId } });
     const tracksOrder = await this.orderTraks.findOne({
       where: { user: userId }

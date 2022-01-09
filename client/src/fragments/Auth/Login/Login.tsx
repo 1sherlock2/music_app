@@ -35,16 +35,16 @@ const Login = () => {
     }
   }, [isAuth]);
 
-  useEffect((): void => {
+  useEffect(() => {
     if (nicknameInput && password) {
       const { success, message } = responseAuth;
       if (!success) {
         setErrorAuth(message);
+        setloginLoading(false);
         setIsAuth(false);
-        setloginLoading(false);
       } else {
-        setIsAuth(true);
         setloginLoading(false);
+        setIsAuth(true);
       }
     }
   }, [responseAuth]);
@@ -70,7 +70,7 @@ const Login = () => {
           validate="password"
         />
         <div className={s.handleSubmit}>
-          <Input type="submit" value="Entry" size="m" style="pink" />
+          <Input type="submit" value="Sign in" size="l" style="pink" />
           {loginLoading && <Loader_1 />}
         </div>
         {errorAuth && <div className={s.errorAuth}>{errorAuth}</div>}

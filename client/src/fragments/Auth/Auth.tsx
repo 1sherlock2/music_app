@@ -2,6 +2,7 @@ import React, { SetStateAction, Suspense, useEffect, useState } from 'react';
 import Tabs from '../../components/Tabs/Tabs';
 import s from './Auth.scss';
 import Login from './Login/Login';
+import Registration from './Registration/Registration';
 
 const Auth: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -15,9 +16,8 @@ const Auth: React.FC = () => {
   }, []);
 
   const componentByTabs: React.ReactElement<{}>[] = [
-    <Suspense fallback={<div> ...loading</div>}>
-      <Login />
-    </Suspense>
+    <Login />,
+    <Registration />
   ].filter(Boolean);
 
   return (
@@ -31,7 +31,9 @@ const Auth: React.FC = () => {
           color="pink"
         />
       </div>
-      {componentByTabs[activeTab]}
+      <Suspense fallback={<div> ...loading</div>}>
+        {componentByTabs[activeTab]}
+      </Suspense>
     </div>
   );
 };

@@ -1,13 +1,19 @@
 export interface IButton {
-  type?: string | undefined;
-  size?: string | undefined;
-  color?: string | undefined;
+  type?: string;
+  size?: 'l' | 'm' | 's';
+  color?: 'pink' | 'white';
   children?: any;
   disabled?: boolean;
+  onClick: () => void;
 }
 
 export interface IButtonSize {
-  s?: object | undefined;
-  m?: object | undefined;
-  l?: object | undefined;
+  s: string;
+  m: string;
+  l: string;
+}
+
+export interface IStyleColor {
+  pink: string;
+  white: string;
 }

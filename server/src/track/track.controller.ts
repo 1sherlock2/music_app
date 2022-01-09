@@ -14,7 +14,7 @@ import {
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { IRecieveTrack } from 'src/interfaces/track.interface';
 import { JwtAuthGuard } from 'src/user/jwtAuth/JwtAuth.guard';
-import { IUserId, TrackCreateDTO } from './dto/trackCreate.dto';
+import { TrackCreateDTO, UserId } from './dto/trackCreate.dto';
 import { TrackService } from './track.service';
 
 @Controller('track')
@@ -24,8 +24,10 @@ export class TrackController {
   @UseGuards(JwtAuthGuard)
   @Get()
   getAllTrack(@Req() req) {
-    const { userId } = req;
-    return this.trackService.getAll({ userId });
+    const {
+      user: { id }
+    }: UserId = req;
+    return this.trackService.getAll({ userId: id });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -39,13 +41,15 @@ export class TrackController {
   createTrack(
     @UploadedFiles() files: IRecieveTrack,
     @Body() otherProperty: TrackCreateDTO,
-    @Req() req: IUserId
+    @Req() req: UserId
   ) {
-    const { userId } = req;
+    const {
+      user: { id }
+    } = req;
     const { audio, img } = files;
     return this.trackService.create({
       ...otherProperty,
-      userId,
+      userId: id,
       img: img && img[0],
       audio: audio && audio[0]
     });

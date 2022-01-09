@@ -32,6 +32,7 @@ export class UserService {
 
   async create(userDTO: UserCreateDTO): Promise<IRegistrationStatus> {
     try {
+      // TODO удалить создание ролей ( нужно в тестовом формате )
       const { nickname, password, email, roles } = userDTO;
       const userHasInDb = await this.userEntity.findOne({
         where: { nickname }

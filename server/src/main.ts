@@ -34,7 +34,7 @@ const start = async () => {
     const document = SwaggerModule.createDocument(app, documentationConfig);
     SwaggerModule.setup('api', app, document);
 
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(new ValidationPipe({ transform: true }));
     app.enableCors();
     await app.init();
     http.createServer(server).listen(ports.http, () => {

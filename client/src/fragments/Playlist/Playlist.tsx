@@ -15,11 +15,9 @@ import s from './Playlist.scss';
 const Playlist = () => {
   const allTracks = useRecoilValue(allTracksByUserAtom);
   const setOrderTracks = useSetRecoilState(allTraksByUser);
-  console.log('render');
   // const trackRefs: any = useRef(allTracks?.map(() => React.createRef()));
   const [generalIndexTrack, setTrackIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
-  console.log(`allTracks`, allTracks);
 
   const handleClick = useCallback((index: number) => {
     setTrackIndex(index);
