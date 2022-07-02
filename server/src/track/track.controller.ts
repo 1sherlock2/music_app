@@ -12,25 +12,22 @@ import {
   UseInterceptors
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { IRecieveTrack } from 'src/interfaces/track.interface';
-import { JwtAuthGuard } from 'src/user/jwtAuth/JwtAuth.guard';
-import { TrackCreateDTO, UserId } from './dto/trackCreate.dto';
+import { UserId } from '../decorators/userId.decorator';
+import { JwtAuthGuard } from '../user/jwtAuth/JwtAuth.guard';
+import { IUserId, TrackCreateDTO } from './dto/trackCreate.dto';
 import { TrackService } from './track.service';
+import { IRecieveTrack } from './utils/track.interface';
 
 @Controller('track')
+@UseGuards(JwtAuthGuard)
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get()
-  getAllTrack(@Req() req) {
-    const {
-      user: { id }
-    }: UserId = req;
-    return this.trackService.getAll({ userId: id });
+  getAllTrack(@UserId() { userId }: IUserId) {
+    return this.trackService.getAll({ userId });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('add')
   @UseInterceptors(
     FileFieldsInterceptor([
@@ -41,39 +38,36 @@ export class TrackController {
   createTrack(
     @UploadedFiles() files: IRecieveTrack,
     @Body() otherProperty: TrackCreateDTO,
-    @Req() req: UserId
+    @UserId() { userId }: IUserId
   ) {
-    const {
-      user: { id }
-    } = req;
     const { audio, img } = files;
     return this.trackService.create({
       ...otherProperty,
-      userId: id,
+      userId,
       img: img && img[0],
       audio: audio && audio[0]
     });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete('delete')
-  deleteTrack(@Query('id', ParseIntPipe) id: number, @Req() req) {
-    const { userId } = req;
+  deleteTrack(
+    @Query('id', ParseIntPipe) id: number,
+    @UserId() userId: IUserId
+  ) {
     return this.trackService.deleteTrack(id, userId);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('url')
   getUrlStream(@Body() otherProperty: { trackId: number }) {
     const { trackId } = otherProperty;
-    const result = this.trackService.getUrlStream(trackId);
-    return result;
+    return this.trackService.getUrlStream(trackId);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('updatePos')
-  updateOrderPosTraks(@Body() otherProperty: { order: number[] }, @Req() req) {
-    const { userId } = req;
+  updateOrderPosTraks(
+    @Body() otherProperty: { order: number[] },
+    @UserId() userId: IUserId
+  ) {
     const { order } = otherProperty;
     const updatedOrder = this.trackService.updateOrderTracks({ order, userId });
   }

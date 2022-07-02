@@ -8,17 +8,19 @@ import {
   ValidateNested
 } from 'class-validator';
 
-class IUserId {
-  id: number;
+export class IUserId {
+  userId: number;
 }
-export class UserId {
+export class IUser {
   @IsDefined()
   @ValidateNested()
   @Type(() => IUserId)
   user: IUserId;
 }
 export class TrackCreateDTO {
-  @IsNotEmpty() @IsString() name: string;
+  @IsNotEmpty()
+  @IsString()
+  name: string;
 
   @IsString()
   artist?: string;
@@ -26,5 +28,5 @@ export class TrackCreateDTO {
 export class UpdateOrderTracks {
   @IsArray()
   order?: number[];
-  userId: string;
+  userId: IUserId;
 }

@@ -4,9 +4,7 @@ import { v2 } from 'cloudinary';
 import * as fs from 'fs';
 import * as fileFormats from 'file-formats';
 import * as path from 'path';
-import httpMessages from 'src/utils/httpMessages';
-import { IUploadStatus } from 'src/interfaces/track.interface';
-import { IResponseUpload } from './cloudinary.interface';
+import { IUploadStatus } from '../track/utils/track.interface';
 
 const streamProfile = [
   { streaming_profile: 'full_hd', format: 'm3u8' },
@@ -28,12 +26,10 @@ export class CloudinaryService {
         resource_type: isAudioFormat && 'video'
       }));
 
+    fs.unlinkSync(filePath);
     if (!response.public_id) {
-      fs.unlinkSync(filePath);
       return { success: false };
     }
-
-    fs.unlinkSync(filePath);
 
     return {
       success: true,
@@ -45,11 +41,10 @@ export class CloudinaryService {
   async urlStream(urlByStream) {
     try {
       // return await v2.url(urlByStream, streamProfile);
-      const aaa = await v2.url(urlByStream, [
+      return await v2.url(urlByStream, [
         { streaming_profile: 'full_hd', resource_type: 'video' },
         { streaming_profile: 'hd', resource_type: 'video' }
       ]);
-      return aaa;
     } catch (e) {
       throw new Error(e);
     }

@@ -20,10 +20,8 @@ export interface IResultCloudinary {
   cloudinaryAudio?: string;
 }
 
-export interface TrackRecieveParam {
-  id: string;
-  audioUrl: string;
-}
-export interface Todo {
-  id?: number;
+export interface ITrackCreate extends IRecieveTrack {
+  name?: string;
+  artist?: string;
+  userId: number;
 }

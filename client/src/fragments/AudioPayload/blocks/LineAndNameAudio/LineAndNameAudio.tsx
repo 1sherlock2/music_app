@@ -1,12 +1,12 @@
 import React, { forwardRef, TouchEventHandler, useEffect, useRef } from 'react';
 import { INameAndArtistAudio } from '../../AudioPayload.interface';
-import { ILineAndNameProps } from './LineAndNameAudio.interface';
 import s from './LineAndNameAudio.scss';
 
 const LineAndNameAudio: React.FC<INameAndArtistAudio & ILineAndNameProps> = ({
   name,
   artist,
   setTopPosition,
+  defaultTopPosition,
   differentValue,
   setTransformByCloseY,
   setOpen
@@ -20,10 +20,11 @@ const LineAndNameAudio: React.FC<INameAndArtistAudio & ILineAndNameProps> = ({
 
   const handleTouchEventClose: TouchEventHandler<HTMLDivElement> = (e) => {
     const { clientY } = e.touches[0];
-    changePosY.current = clientY - startPositionY.current;
-    setTopPosition(changePosY.current);
+    if (startPositionY.current) {
+      changePosY.current = clientY - startPositionY.current;
+      setTopPosition(changePosY.current);
+    }
   };
-
   const handleTouchEndClose: TouchEventHandler<HTMLDivElement> = (e) => {
     const { clientY } = e.changedTouches[0];
     if (startPositionY.current) {
@@ -33,6 +34,8 @@ const LineAndNameAudio: React.FC<INameAndArtistAudio & ILineAndNameProps> = ({
         setTimeout(() => {
           setOpen(false);
         }, 100);
+      } else {
+        setTopPosition(defaultTopPosition);
       }
     }
   };

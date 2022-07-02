@@ -7,14 +7,14 @@ import {
   Request,
   UseGuards
 } from '@nestjs/common';
-import { AddRoleDTO, LoginDTO, UserCreateDTO } from 'src/user/dto/user.dto';
-import { IRegistrationStatus } from 'src/interfaces/user.register_status.interface';
 import { UserService } from './user.service';
-import { errorMessage } from 'src/utils/httpErrorObject';
 import { JwtAuthGuard } from './jwtAuth/JwtAuth.guard';
-import { RolesGuard } from 'src/roles/roles.guard';
-import { Roles } from 'src/roles/roles.decorator';
-import { RoleEnum } from 'src/enums/role.enum';
+import { AddRoleDTO, LoginDTO, UserCreateDTO } from './dto/user.dto';
+import { IRegistrationStatus } from '../interfaces/user.register_status.interface';
+import { errorMessage } from '../utils/httpErrorObject';
+import { Roles } from '../roles/roles.decorator';
+import { RoleEnum } from '../enums/role.enum';
+import { RolesGuard } from '../roles/roles.guard';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

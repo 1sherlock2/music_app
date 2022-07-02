@@ -1,19 +1,20 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
-import { Track } from 'src/db/entity/track.entity';
-import {
-  IResultCloudinary,
-  ITrackCreateStatus,
-  IUploadStatus
-} from 'src/interfaces/track.interface';
-import httpMessages from 'src/utils/httpMessages';
 import { Repository } from 'typeorm';
-import { TrackCreateDTO, UpdateOrderTracks } from './dto/trackCreate.dto';
-import { FilePathService } from 'src/filePath/filePath.service';
-import { OrderTracks } from 'src/db/entity/orderTracks.entity';
+import { IUserId, UpdateOrderTracks } from './dto/trackCreate.dto';
 import { User } from 'src/db/entity/user.entity';
 import updateQueryForOrder from './utils/updateQueryForOrder';
+import {
+  IResultCloudinary,
+  ITrackCreate,
+  ITrackCreateStatus,
+  IUploadStatus
+} from './utils/track.interface';
+import { OrderTracks } from '../db/entity/orderTracks.entity';
+import { Track } from '../db/entity/track.entity';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { FilePathService } from '../filePath/filePath.service';
+import httpMessages from '../utils/httpMessages';
 
 @Injectable()
 export class TrackService {
@@ -27,8 +28,13 @@ export class TrackService {
     private readonly cloudinaryService: CloudinaryService,
     private readonly filePathService: FilePathService // private httpService: HttpService
   ) {}
-  async create(trackCreateDTO): Promise<ITrackCreateStatus> {
-    const { name, artist, img, audio, userId } = trackCreateDTO;
+  async create({
+    name,
+    artist,
+    img,
+    audio,
+    userId
+  }: ITrackCreate): Promise<ITrackCreateStatus> {
     const imgPath: string = img && this.filePathService.create(img);
     const audioPath: string = audio && this.filePathService.create(audio);
     const arrayPath = [imgPath, audioPath].filter(Boolean);
@@ -70,6 +76,16 @@ export class TrackService {
       user: user
     });
     await this.trackEntity.save(trackSave);
+
+    // для обновления порядка последовательности треков
+    const { id } = await this.trackEntity.findOne({
+      where: { audio: cloudinaryAudio }
+    });
+    const { order } = await this.orderTraks.findOne({
+      where: { user: userId }
+    });
+    const modifyOrder = [id, ...order];
+    await updateQueryForOrder(OrderTracks, modifyOrder, userId);
     return {
       success: true,
       message: httpMessages.trackWasCreated,
@@ -77,7 +93,7 @@ export class TrackService {
     };
   }
 
-  async getAll({ userId }: { userId: number }) {
+  async getAll({ userId }: IUserId) {
     const tracks = await this.trackEntity.find({ where: { user: userId } });
     const tracksOrder = await this.orderTraks.findOne({
       where: { user: userId }
@@ -92,10 +108,11 @@ export class TrackService {
       acc = { ...acc, [el.id]: el };
       return acc;
     }, {});
-    return order.map((el) => trackObject[el]);
+    const aaa = order.map((el) => trackObject[el]);
+    return aaa;
   }
 
-  async deleteTrack(id, userId) {
+  async deleteTrack(id: number, userId: IUserId) {
     const track = await this.trackEntity.findOne({
       where: { id, userId }
     });
@@ -124,7 +141,7 @@ export class TrackService {
   async updateOrderTracks({ order, userId }: UpdateOrderTracks) {
     try {
       if (order.length) {
-        await updateQueryForOrder(OrderTracks, order, userId);
+        await updateQueryForOrder(OrderTracks, order, userId.userId);
       }
     } catch (e) {
       console.log(e);

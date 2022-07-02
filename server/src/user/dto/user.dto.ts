@@ -36,9 +36,9 @@ export class LoginDTO {
 export class AddRoleDTO {
   @IsNotEmpty()
   @IsString()
-  readonly userId: string | number;
+  userId: string | number;
 
   @IsNotEmpty()
   @IsString({ each: true, groups: RoleType })
-  readonly role: string | typeof RoleType;
+  role: string | typeof RoleType;
 }

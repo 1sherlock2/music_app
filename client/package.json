@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "app-watch": "parcel ./public/index.html -p 5000 --open",
-    "start-server": "npm --prefix ./server run start:dev",
+    "start-server": "npm --prefix ../server run start:debug",
     "dev": "concurrently --kill-others \"npm run start-server\" \"npm run app-watch\"",
     "build": "parcel build ./public/index.html",
     "start": "npm run build && node ./server/server.js"
