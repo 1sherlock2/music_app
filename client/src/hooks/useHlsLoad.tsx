@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import Hls, { Events, LevelLoadedData } from 'hls.js';
 import hlsConfig from '../fragments/AudioPayload/utils/hlsConfig';
 
-const useHlsLoad = (audioRef: any, urlStream: string) => {
+const useHlsLoad = (audioRef: any, urlStream: string, activeSlide: boolean) => {
   const hlsRef = useRef(new Hls(hlsConfig));
 
   return {
@@ -10,7 +10,7 @@ const useHlsLoad = (audioRef: any, urlStream: string) => {
       durationFunc: (event: Events.LEVEL_LOADED, data: LevelLoadedData) => void
     ) => {
       useEffect(() => {
-        if (Hls.isSupported()) {
+        if (Hls.isSupported() && activeSlide) {
           hlsRef.current.attachMedia(audioRef?.current);
           hlsRef.current.on(Hls.Events.MEDIA_ATTACHED, (_e, data) => {
             const { media } = data;

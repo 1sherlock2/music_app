@@ -8,6 +8,20 @@
   flex: 2 2;
   margin-top: $size-10;
 
+  @each $state in (prev, play, next) {
+    &_#{$state}:active {
+      svg {
+        transform: scale(1.2);
+        transition: 0.1s;
+        -webkit-transform: scale(1.2);
+        -moz-transform: scale(1.2);
+        -o-transform: scale(1.2);
+        -ms-transform: scale(1.2);
+        -webkit-transition: 0.2s;
+      }
+    }
+  }
+
   &_repeat {
     position: relative;
     height: 30px;
@@ -25,31 +39,6 @@
       border-radius: 40%;
       font-family: none;
       transition: 2s;
-    }
-  }
-  .nextStyleTrack {
-    svg {
-      transform: scale(1.2);
-      transition: 0.1s;
-    }
-  }
-
-  .previousStyleTrack {
-    svg {
-      transform: scale(1.2);
-      transition: 0.1s;
-    }
-  }
-
-  .playStyleTrack {
-    svg {
-      transform: scale(1.2);
-      transition: 0.1s;
-      -webkit-transform: scale(1.2);
-      -moz-transform: scale(1.2);
-      -o-transform: scale(1.2);
-      -ms-transform: scale(1.2);
-      -webkit-transition: 0.2s;
     }
   }
 }

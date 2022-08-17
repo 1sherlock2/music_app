@@ -108,8 +108,7 @@ export class TrackService {
       acc = { ...acc, [el.id]: el };
       return acc;
     }, {});
-    const aaa = order.map((el) => trackObject[el]);
-    return aaa;
+    return order.map((el) => trackObject[el]).filter(Boolean);
   }
 
   async deleteTrack(id: number, userId: IUserId) {

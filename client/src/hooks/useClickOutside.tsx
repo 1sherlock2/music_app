@@ -2,9 +2,9 @@ import React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
 const useClickOutside = (
-  onClickOutside,
-  useCapture = true,
-  eventType = 'click'
+  onClickOutside: () => void,
+  useCapture: boolean = true,
+  eventType: string = 'click'
 ) => {
   const [refsInside, setRefsInside] = useState([]);
 

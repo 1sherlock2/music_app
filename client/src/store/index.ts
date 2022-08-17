@@ -120,11 +120,6 @@ const getUrlTrackStream = selectorFamily({
   }
 });
 
-const initialTranslateX = atom<boolean>({
-  key: 'changeTranslate',
-  default: false
-});
-
 export {
   loginText,
   loginPassword,
@@ -136,6 +131,5 @@ export {
   allTraksByUser,
   allTracksByUserAtom,
   setRegistrData,
-  responseRegister,
-  initialTranslateX
+  responseRegister
 };
