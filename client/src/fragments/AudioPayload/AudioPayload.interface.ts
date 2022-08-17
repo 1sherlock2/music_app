@@ -16,14 +16,23 @@ export interface IPlaylistPopup {
   open: boolean;
 }
 
-export interface INameAndArtistAudio {
+export type INameAndArtistAudio = {
   artist?: string;
   name: string;
-}
+};
+
+export type IRepeat = {
+  oneLoop: string;
+  allLoop: string;
+  noLoop: string;
+};
 export interface IAudioPayload {
   goToNextTrack: () => void;
   goToPreviousTrack: () => void;
-  trackIndex: number;
+  setRepeat: (prev: string) => void;
+  isChangeTrack?: boolean;
+  repeat: keyof IRepeat;
+  trackIndex?: number;
   currentTrack: {
     id: number;
     audio: string;
