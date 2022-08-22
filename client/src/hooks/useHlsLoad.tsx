@@ -1,16 +1,18 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Hls, { Events, LevelLoadedData } from 'hls.js';
 import hlsConfig from '../fragments/AudioPayload/utils/hlsConfig';
+import { IHlsLoad } from './types/useHlsLoad.interface';
 
-const useHlsLoad = (audioRef: any, urlStream: string, activeSlide: boolean) => {
+const useHlsLoad = (
+  audioRef: { current: HTMLAudioElement },
+  urlStream: string
+): IHlsLoad => {
   const hlsRef = useRef(new Hls(hlsConfig));
 
   return {
-    hlsSetDuration: (
-      durationFunc: (event: Events.LEVEL_LOADED, data: LevelLoadedData) => void
-    ) => {
+    hlsSetDuration: (durationFunc) => {
       useEffect(() => {
-        if (Hls.isSupported() && activeSlide) {
+        if (Hls.isSupported()) {
           hlsRef.current.attachMedia(audioRef?.current);
           hlsRef.current.on(Hls.Events.MEDIA_ATTACHED, (_e, data) => {
             const { media } = data;
@@ -24,14 +26,14 @@ const useHlsLoad = (audioRef: any, urlStream: string, activeSlide: boolean) => {
         }
       }, [durationFunc, urlStream]);
     },
-    fragsLoad: (fragLoadingFunc: () => void) => {
+    fragsLoad: (fragLoadingFunc) => {
       useEffect(() => {
         if (fragLoadingFunc) {
           hlsRef.current.on(Hls.Events.FRAG_LOADING, fragLoadingFunc);
         }
       }, []);
     },
-    startPlay: (hlsStartPlayAudio: () => void) => {
+    startPlay: (hlsStartPlayAudio) => {
       hlsRef.current.on(Hls.Events.BUFFER_CREATED, (_e, data) => {
         const bufferExist = data.tracks?.audio?.buffer;
         if (bufferExist) {

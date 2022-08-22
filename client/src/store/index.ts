@@ -80,7 +80,7 @@ const checkAuth = selector({
 export type IallTraksByUser = {
   id: number;
   name: string;
-  artist?: string;
+  artist: string;
   img?: string;
   audio: string;
 };

@@ -77,7 +77,6 @@ const Playlist = () => {
                 allTracks={allTracks}
                 generalIndexTrack={generalIndexTrack}
                 setOpen={setOpen}
-                open={open}
               />
             )}
             {provided.placeholder}

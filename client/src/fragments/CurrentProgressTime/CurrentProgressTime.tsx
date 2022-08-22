@@ -1,9 +1,11 @@
 import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import formatTimer from '../../utils/formatTimer';
+import { IAudioPayload } from '../AudioPayload/AudioPayload.interface';
+import { ICurrentProgressTime } from './CurrentProgressTime.interface';
 import s from './CurrentProgressTime.scss';
 import FragDurations from './FragDurations/FragDurations';
 
-const CurrentProgressTime = ({
+const CurrentProgressTime: React.FC<ICurrentProgressTime> = ({
   onScrubEnd,
   duration,
   trackProgress,
@@ -25,7 +27,7 @@ const CurrentProgressTime = ({
         <input
           type="range"
           min="0"
-          onChange={(e) => changeCurrentTime(e.target.value)}
+          onChange={changeCurrentTime}
           onMouseUp={onScrubEnd}
           max={duration ? duration : `${duration}`}
           value={trackProgress}

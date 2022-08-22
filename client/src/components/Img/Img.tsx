@@ -1,8 +1,9 @@
 import React, { useState, useRef, forwardRef } from 'react';
 import useIntersection from '../../hooks/useIntersection';
 import PropTypes from 'prop-types';
+import { ImgProps } from './Img.interface';
 
-const Img: React.FC = ({
+const Img: React.FC<ImgProps> = ({
   src,
   alt = '',
   lazy,
@@ -42,17 +43,6 @@ const Img: React.FC = ({
       {...restProps}
     />
   );
-};
-
-Img.propTypes = {
-  src: PropTypes.string,
-  altSrc: PropTypes.string,
-  alt: PropTypes.string,
-  lazy: PropTypes.bool,
-  loadImage: PropTypes.func,
-  errorImage: PropTypes.func,
-  offset: PropTypes.number,
-  intersectionRootMargin: PropTypes.string
 };
 
 export default Img;

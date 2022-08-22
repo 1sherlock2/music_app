@@ -1,20 +1,10 @@
+import React from 'react';
+import { IHlsLoad } from '../../hooks/types/useHlsLoad.interface';
 import { IallTraksByUser } from '../../store/index';
 
-export interface IintervalRef<T> {
-  current: T;
-}
-export interface IDurationTarget {
-  target: {
-    duration: React.SetStateAction<number>;
-  };
-}
-
-export interface IPlaylistPopup {
-  allTracks?: IallTraksByUser[] | undefined;
-  generalIndexTrack?: number;
-  setOpen: (value: boolean) => void;
-  open: boolean;
-}
+export type IchangeCurrentTime = (
+  event: React.ChangeEvent<HTMLInputElement>
+) => void;
 
 export type INameAndArtistAudio = {
   artist?: string;
@@ -22,25 +12,22 @@ export type INameAndArtistAudio = {
 };
 
 export type IRepeat = {
-  oneLoop: string;
-  allLoop: string;
-  noLoop: string;
+  oneLoop: 'allLoop';
+  allLoop: 'noLoop';
+  noLoop: 'oneLoop';
 };
-export interface IAudioPayload {
+
+export type IAudioPayload = {
+  isPlaying: boolean;
+  repeat: keyof IRepeat;
+  currentTrack: IallTraksByUser;
+  hlsLoad: IHlsLoad;
+  trackProgress: number;
+  duration: number;
+  changeCurrentTime: IchangeCurrentTime;
+  onScrubEnd: () => void;
   goToNextTrack: () => void;
   goToPreviousTrack: () => void;
-  setRepeat: (prev: string) => void;
-  isChangeTrack?: boolean;
-  repeat: keyof IRepeat;
-  trackIndex?: number;
-  currentTrack: {
-    id: number;
-    audio: string;
-    img?: string;
-  } & INameAndArtistAudio;
-}
-
-export interface ITouchY {
-  startY?: number;
-  endY?: number;
-}
+  setRepeat: (prevState: keyof IRepeat) => void;
+  setIsPlaying: (prevState: boolean) => void;
+};

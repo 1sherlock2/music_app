@@ -1,29 +1,16 @@
-import React, {
-  forwardRef,
-  MutableRefObject,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState
-} from 'react';
+import React from 'react';
 import Previous from '../../components/Icons/AudioPlayer/Previous';
 import Play from '../../components/Icons/AudioPlayer/Play';
-import classnames from 'classnames';
 import Next from '../../components/Icons/AudioPlayer/Next';
-import Repeat from '../../components/Icons/AudioPlayer/Repeat';
 import Order from '../../components/Icons/AudioPlayer/Order';
 import Pause from '../../components/Icons/AudioPlayer/Pause';
 import s from './AudioPlayer.scss';
-import { IAudioPayload, IRepeat } from '../AudioPayload/AudioPayload.interface';
+import { IRepeat } from '../AudioPayload/AudioPayload.interface';
 import { IAudioPlayer } from './AudioPlayer.interface';
 
 const width = '50px';
 const height = '50px';
-const repeatValue: IRepeat = {
-  oneLoop: 'allLoop',
-  allLoop: 'noLoop',
-  noLoop: 'oneLoop'
-};
+
 const AudioPlayer = ({
   isPlaying,
   setIsPlaying,
@@ -31,9 +18,13 @@ const AudioPlayer = ({
   goToPreviousTrack,
   setRepeat,
   repeat
-}: IAudioPayload & IAudioPlayer) => {
+}: IAudioPlayer) => {
+  const repeatValue: IRepeat = {
+    oneLoop: 'allLoop',
+    allLoop: 'noLoop',
+    noLoop: 'oneLoop'
+  };
   const handleClickRep = (val: keyof IRepeat) => setRepeat(repeatValue[val]);
-
   return (
     <div className={s.audio_player}>
       <div
