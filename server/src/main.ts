@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { IndexModule } from './index.module';
+import { IndexModule } from './modules/index.moduleule';
 import { SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
 import * as https from 'https';
