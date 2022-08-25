@@ -6,6 +6,7 @@ export default {
   userOrPasswordIsNotCorrect: 'That user or password is not correct',
   invalidToken: 'invalid token',
   emailNotCorrect: 'email is not correct',
+  userIsNotFind: 'user by name is not found',
 
   // user
   userNotFound: 'user is not found',

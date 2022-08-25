@@ -1,6 +1,6 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { RoleEnum } from 'src/enums/role.enum';
-import { JwtAuthGuard } from 'src/user/jwtAuth/JwtAuth.guard';
+import { JwtAuthGuard } from 'src/modules/user/jwtAuth/JwtAuth.guard';
 import { CreateRoleDto } from './dto/roles.dto';
 import { Roles } from './roles.decorator';
 import { RolesGuard } from './roles.guard';

@@ -4,7 +4,7 @@ import { v2 } from 'cloudinary';
 import * as fs from 'fs';
 import * as fileFormats from 'file-formats';
 import * as path from 'path';
-import { IUploadStatus } from '../track/utils/track.interface';
+import { IUploadStatus } from '../modules/track/utils/track.interface';
 
 const streamProfile = [
   { streaming_profile: 'full_hd', format: 'm3u8' },
