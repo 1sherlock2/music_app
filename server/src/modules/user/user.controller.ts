@@ -17,9 +17,9 @@ import {
 } from './dto/user.dto';
 import { IRegistrationStatus } from '../../interfaces/user.register_status.interface';
 import { errorMessage } from '../../utils/httpErrorObject';
-import { Roles } from '../../roles/roles.decorator';
+import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../../enums/role.enum';
-import { RolesGuard } from '../../roles/roles.guard';
+import { RolesGuard } from '../roles/roles.guard';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

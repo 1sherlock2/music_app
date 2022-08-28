@@ -3,12 +3,12 @@ import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
-import { OrderTracks } from 'src/db/entity/orderTracks.entity';
-import { User } from 'src/db/entity/user.entity';
-import { FilePathModule } from 'src/filePath/filePath.module';
-import { UserModule } from 'src/modules/user/user.module';
+import { OrderTracks } from '../../db/entity/orderTracks.entity';
 import { Track } from '../../db/entity/track.entity';
+import { User } from '../../db/entity/user.entity';
+import { FilePathModule } from '../../filePath/filePath.module';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
+import { UserModule } from '../user/user.module';
 import { TrackController } from './track.controller';
 import { TrackService } from './track.service';
 

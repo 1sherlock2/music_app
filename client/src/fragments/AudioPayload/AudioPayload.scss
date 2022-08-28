@@ -1,14 +1,5 @@
 @import '../../styles/variables.scss';
 
-// @keyframes ani {
-//   0% {
-//     transform: translateX(100%);
-//   }
-//   100% {
-//     transform: translateX(0);
-//   }
-// }
-
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -18,25 +9,4 @@
   position: relative;
   width: 85%;
   height: 100vh;
-
-  &_image {
-    display: flex;
-    flex: 1 1 15%;
-    min-width: 300px;
-    margin-top: $size-20;
-    border-radius: 50px;
-    box-shadow: $neomorphizm_white;
-    flex-direction: column;
-    justify-content: center;
-    .image_title {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      img {
-        border-radius: 50%;
-        width: 50%;
-        height: 50%;
-      }
-    }
-  }
 }

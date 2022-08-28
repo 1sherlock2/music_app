@@ -1,4 +1,5 @@
 import React, {
+  ChangeEventHandler,
   useCallback,
   useEffect,
   useMemo,
@@ -15,82 +16,33 @@ import useHlsLoad from '../../hooks/useHlsLoad';
 import { getUrlTrackStream } from '../../store';
 import AudioPayload from '../AudioPayload/AudioPayload';
 import { Events, LevelLoadedData } from 'hls.js';
-import {
-  IchangeCurrentTime,
-  IRepeat
-} from '../AudioPayload/AudioPayload.interface';
+import { IChangeRange, IRepeat } from '../AudioPayload/AudioPayload.interface';
 import s from './PlaylistPopup.scss';
 import { IPlaylistPopup } from './PlaylistPopup.interface';
+import { repeatValue } from './constant';
+import useCombinedRef from '../../hooks/useCombinedRef';
 
 const PlaylistPopup: React.FC<IPlaylistPopup> = ({
-  allTracks,
+  allTracks = [],
   generalIndexTrack,
   setOpen
 }) => {
   const [trackIndex, setTrackIndex] = useState<number>(generalIndexTrack || 0);
-  const [isChangeTrack, setIsChangeTrack] = useState<boolean>(false);
-  const [repeat, setRepeat] = useState<keyof IRepeat>('allLoop');
-
-  const currentTrack = useMemo(
-    () => allTracks && allTracks[trackIndex],
-    [allTracks, trackIndex]
-  );
-  const containerRef = useClickOutside(() => setOpen(false));
-
-  useEffect(() => {
-    const rootEl = document.getElementById('root');
-    const firstChild = rootEl?.firstElementChild;
-    firstChild?.classList.add(s.hidden);
-  }, []);
-
-  // Следующий трек
-  const goToNextTrack = useCallback(() => setTrackIndex((prev) => ++prev), []);
-
-  // Предыдущий трек
-  const goToPreviousTrack = useCallback(
-    () => setTrackIndex((prev) => --prev),
-    []
-  );
-
-  // Действия при начальной инициализации свайпера
-  // const initSwiper = (swiper) => {
-  //   console.log('init', swiper);
-  // };
-
-  console.log({ trackIndex });
-  // Изменение трека свайпом
-  const changeTrackSwipe = useCallback(
-    (swiper: { activeIndex: React.SetStateAction<number> }) => {
-      setIsChangeTrack(true);
-      setTrackIndex((swiper.activeIndex as number) - 1);
-      console.log(`activeIndex`, swiper.activeIndex);
-    },
-    []
-  );
-
-  useEffect(() => {
-    setIsChangeTrack(false);
-    if (allTracks) {
-      //? добавить логику повторения аудиолиста при перелистывании последнего трека
-      if (trackIndex > allTracks.length) {
-        setTrackIndex(0);
-      }
-      if (trackIndex < 0) {
-        setTrackIndex(allTracks.length - 1);
-      }
-    }
-  }, [trackIndex]);
-
-  if (!currentTrack?.audio) return null;
-
-  //!
-  const urlStream = useRecoilValue(getUrlTrackStream(currentTrack.id));
+  const [repeat, setRepeat] = useState<keyof IRepeat>(repeatValue.allLoop);
   const [trackProgress, setTrackProgress] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
+  const [volume, setVolume] = useState<number>(0.5);
+  const currentTrack = useMemo(
+    () => allTracks[trackIndex],
+    [allTracks, trackIndex]
+  );
+  if (!currentTrack?.audio) return null;
+  const urlStream = useRecoilValue(getUrlTrackStream(currentTrack.id));
 
   // Аудиоконтроллер
   const audioRef = useRef<HTMLAudioElement>(new Audio());
+  console.log({ audioRef });
 
   // Переменные для управление воспроизведением
   const intervalRef = useRef<any>();
@@ -106,11 +58,31 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     },
     []
   );
-  // Установка длительности трека
-  hlsLoad.hlsSetDuration(hlsSetDuration);
-  const hlsStartPlayAudio = () => {
-    setIsPlaying(true);
-  };
+
+  const containerRef = useClickOutside(() => setOpen(false));
+
+  // Следующий трек
+  const goToNextTrack = useCallback(() => setTrackIndex((prev) => ++prev), []);
+
+  // Предыдущий трек
+  const goToPreviousTrack = useCallback(
+    () => setTrackIndex((prev) => --prev),
+    []
+  );
+
+  // Действия при начальной инициализации свайпера
+  // const initSwiper = (swiper) => {
+  //   console.log('init', swiper);
+  // };
+
+  // Изменение трека свайпом
+  const changeTrackSwipe = useCallback(
+    (swiper: { realIndex: React.SetStateAction<number> }) => {
+      setTrackIndex(swiper.realIndex as number);
+      console.log(`realIndex`, swiper.realIndex);
+    },
+    []
+  );
 
   const startTimer = (): void => {
     clearInterval(intervalRef.current);
@@ -123,7 +95,7 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     }, 1000);
   };
 
-  const changeCurrentTime: IchangeCurrentTime = useCallback(
+  const changeCurrentTime: IChangeRange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       if (isPlaying) {
         clearInterval(intervalRef.current);
@@ -147,19 +119,36 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     startTimer();
   }, [isPlaying]);
 
-  // Смена трека
+  useEffect(() => {
+    const rootEl = document.getElementById('root');
+    const firstChild = rootEl?.firstElementChild;
+    firstChild?.classList.add(s.hidden);
+  }, []);
+
+  // Установка длительности трека
+  hlsLoad.hlsSetDuration(hlsSetDuration);
+  const hlsStartPlayAudio = () => {
+    setIsPlaying(true);
+  };
+
   useEffect(() => {
     // Воспроизведение трека при загрузки частей аудиофайла
-    hlsLoad.startPlay(hlsStartPlayAudio);
-    if (isChangeTrack) {
-      setIsPlaying(false); // audioRef.current = false
-      hlsLoad.detachAudio();
+    if (allTracks) {
+      hlsLoad.startPlay(hlsStartPlayAudio);
+      //? добавить логику повторения аудиолиста при перелистывании последнего трека
+      // if (trackIndex > allTracks.length) {
+      //   setTrackIndex(0);
+      // }
+      // if (trackIndex < 0) {
+      //   setTrackIndex(allTracks.length - 1);
+      // }
     }
+
     return () => {
       setIsPlaying(false); // audioRef.current = false
       hlsLoad.detachAudio();
     };
-  }, [trackIndex, audioRef.current, isChangeTrack]);
+  }, [trackIndex]);
 
   // Действия при проигрывании (остановка и воспроизведение трека)
   useEffect(() => {
@@ -211,6 +200,8 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
                 goToPreviousTrack={goToPreviousTrack}
                 currentTrack={currentTrack}
                 setRepeat={setRepeat}
+                volume={volume}
+                setVolume={setVolume}
                 repeat={repeat}
               />
             </SwiperSlide>

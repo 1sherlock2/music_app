@@ -1,13 +1,14 @@
 import React from 'react';
+import { IAudioIconsProps } from './AudioPlayer/AudioPlayer.interface';
 import { IIconWrapper } from './IconWrapper.interface';
 
 const IconWrapper = ({
-  color = 'currentColor',
-  size = '1rem',
+  color = '#333',
+  size = '60px',
   children,
   ...rest
-}: IIconWrapper) =>
-  React.cloneElement(children, {
+}: IAudioIconsProps) =>
+  React.cloneElement<IIconWrapper>(children, {
     width: size,
     height: size,
     fill: color,

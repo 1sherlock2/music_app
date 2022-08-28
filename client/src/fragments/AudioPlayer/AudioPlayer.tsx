@@ -7,9 +7,9 @@ import Pause from '../../components/Icons/AudioPlayer/Pause';
 import s from './AudioPlayer.scss';
 import { IRepeat } from '../AudioPayload/AudioPayload.interface';
 import { IAudioPlayer } from './AudioPlayer.interface';
-
-const width = '50px';
-const height = '50px';
+import { repeatValue } from '../PlaylistPopup/constant';
+import RepeateOne from '../../components/Icons/AudioPlayer/RepeateOne';
+import Repeat from '../../components/Icons/AudioPlayer/Repeat';
 
 const AudioPlayer = ({
   isPlaying,
@@ -19,11 +19,7 @@ const AudioPlayer = ({
   setRepeat,
   repeat
 }: IAudioPlayer) => {
-  const repeatValue: IRepeat = {
-    oneLoop: 'allLoop',
-    allLoop: 'noLoop',
-    noLoop: 'oneLoop'
-  };
+  const size = '50px';
   const handleClickRep = (val: keyof IRepeat) => setRepeat(repeatValue[val]);
   return (
     <div className={s.audio_player}>
@@ -31,28 +27,34 @@ const AudioPlayer = ({
         className={s.audio_player_repeat}
         onClick={() => handleClickRep(repeat)}
       >
-        <div>{repeat === 'allLoop' ? 1 : repeat === 'noLoop' ? 2 : 3}</div>
-        {/* <Repeat color="#333" width="30" height="30" /> */}
-        {/* {repeat && <i className={s.audio_player_repeat_icon}> 1 </i>} */}
+        <div>
+          {repeat === 'allLoop' ? (
+            <Repeat color="#6F6F6F" size="30px" />
+          ) : repeat === 'noLoop' ? (
+            <Repeat color="#333" size="30px" />
+          ) : (
+            <RepeateOne color="#333" size="30px" />
+          )}
+        </div>
       </div>
       <div className={s.audio_player_prev} onClick={goToPreviousTrack}>
-        <Previous color="#333" width={width} height={height} />
+        <Previous color="#333" size={size} />
       </div>
       <div
         className={s.audio_player_play}
         onClick={() => setIsPlaying(!isPlaying)}
       >
         {!isPlaying ? (
-          <Play color="#333" width="60px" height="60px" />
+          <Play color="#333" size="60px" />
         ) : (
-          <Pause color="#333" width="60px" height="60px" />
+          <Pause color="#333" size="60px" />
         )}
       </div>
       <div className={s.audio_player_next} onClick={goToNextTrack}>
-        <Next color="#333" width={width} height={height} />
+        <Next color="#333" size={size} />
       </div>
       <div className={s.audio_player_order}>
-        <Order color="#333" width="30" height="30" />
+        <Order color="#333" size="30px" />
       </div>
     </div>
   );

@@ -6,7 +6,6 @@ import {
   ParseIntPipe,
   Post,
   Query,
-  Req,
   UploadedFiles,
   UseGuards,
   UseInterceptors

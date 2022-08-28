@@ -1,6 +1,6 @@
-export interface IIconWrapper {
-  [x: string]: any;
-  color?: any;
-  size?: string | undefined | number;
-  children?: any;
-}
+export type IIconWrapper = {
+  [x: string]: string;
+  fill: string;
+  width: string;
+  height: string;
+};

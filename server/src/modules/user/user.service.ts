@@ -10,17 +10,16 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
-import { OrderTracks } from 'src/db/entity/orderTracks.entity';
-import { Track } from 'src/db/entity/track.entity';
-import { User } from 'src/db/entity/user.entity';
-import { RoleEnum } from 'src/enums/role.enum';
+import { getConnection, Repository } from 'typeorm';
+import { OrderTracks } from '../../db/entity/orderTracks.entity';
+import { User } from '../../db/entity/user.entity';
+import { RoleEnum } from '../../enums/role.enum';
 import {
   ILoginAccess,
   IRegistrationStatus
-} from 'src/interfaces/user.register_status.interface';
-import { LoginDTO, UserCreateDTO } from 'src/modules/user/dto/user.dto';
-import httpMessages from 'src/utils/httpMessages';
-import { getConnection, Repository } from 'typeorm';
+} from '../../interfaces/user.register_status.interface';
+import httpMessages from '../../utils/httpMessages';
+import { LoginDTO, UserCreateDTO } from './dto/user.dto';
 import updateQueryForUser from './utils/updateQueryForUser';
 
 @Injectable()

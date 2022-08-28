@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IUserId, UpdateOrderTracks } from './dto/trackCreate.dto';
-import { User } from 'src/db/entity/user.entity';
 import updateQueryForOrder from './utils/updateQueryForOrder';
 import {
   IResultCloudinary,
@@ -12,9 +11,10 @@ import {
 } from './utils/track.interface';
 import { OrderTracks } from '../../db/entity/orderTracks.entity';
 import { Track } from '../../db/entity/track.entity';
-import { CloudinaryService } from '../../cloudinary/cloudinary.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { FilePathService } from '../../filePath/filePath.service';
 import httpMessages from '../../utils/httpMessages';
+import { User } from '../../db/entity/user.entity';
 
 @Injectable()
 export class TrackService {

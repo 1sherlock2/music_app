@@ -1,5 +1,4 @@
 import { NestFactory } from '@nestjs/core';
-import { IndexModule } from './modules/index.moduleule';
 import { SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
 import * as https from 'https';
@@ -10,6 +9,7 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 
 import { readFileSync } from 'fs';
 import { ValidationPipe } from '@nestjs/common';
+import { IndexModule } from './modules/index.module';
 
 const start = async () => {
   const ports = {
@@ -17,12 +17,12 @@ const start = async () => {
     https: process.env.HTTPS_PORT || 4000
   };
 
-  const httpsOptions = {
-    key: readFileSync(
-      join(__dirname, '../secrets/CA/localhost/localhost.decrypted.key')
-    ),
-    cert: readFileSync(join(__dirname, '../secrets/CA/localhost/localhost.crt'))
-  };
+  // const httpsOptions = {
+  //   key: readFileSync(
+  //     join(__dirname, '../secrets/CA/localhost/localhost.decrypted.key')
+  //   ),
+  //   cert: readFileSync(join(__dirname, '../secrets/CA/localhost/localhost.crt'))
+  // };
   try {
     const server = express();
     const app = await NestFactory.create(
@@ -41,11 +41,11 @@ const start = async () => {
       console.log(`http server was started on ${ports.http}`);
     });
     console.log(server);
-    https
-      .createServer(httpsOptions, () => server)
-      .listen(ports.https, () => {
-        console.log(`https server was started on ${ports.https}`);
-      });
+    // https
+    //   .createServer(httpsOptions, () => server)
+    //   .listen(ports.https, () => {
+    //     console.log(`https server was started on ${ports.https}`);
+    //   });
   } catch (e) {
     console.log(e);
   }

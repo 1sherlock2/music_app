@@ -5,8 +5,8 @@ import {
   IsString,
   Length
 } from 'class-validator';
-import { RoleEnum, RoleType } from 'src/enums/role.enum';
-import httpMessages from 'src/utils/httpMessages';
+import { RoleType } from '../../../enums/role.enum';
+import httpMessages from '../../../utils/httpMessages';
 
 export class UserCreateDTO {
   @IsNotEmpty() @IsString() nickname: string;
