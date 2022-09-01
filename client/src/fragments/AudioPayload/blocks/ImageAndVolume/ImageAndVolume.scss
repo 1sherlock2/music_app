@@ -44,6 +44,9 @@ $primary-50: #61bd4f;
   }
 
   .volume {
+    display: flex;
+    flex-direction: column-reverse;
+    border-radius: $size-6;
     margin-left: $size-10;
     height: 100%;
     min-width: $size-8;
@@ -52,6 +55,10 @@ $primary-50: #61bd4f;
     position: relative;
 
     &_track {
+      &__progress {
+        background-color: $gray-200;
+        border-radius: $size-6;
+      }
       &__thumb {
         position: absolute;
         left: -3px;
