@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 import { atom, selector, selectorFamily } from 'recoil';
 import { authLocalStorage } from '../utils/localStorage';
+import keyState from './keyState';
 import {
   allTracksByUserDB,
   checkAuthDB,
@@ -16,12 +17,12 @@ const loginPassword = atom({ key: 'loginPassword', default: '' });
 const isAuthentication = atom({ key: 'authStatus', default: false });
 
 const setRegistrData = atom({
-  key: 'setRegistrData',
+  key: keyState.SET_REGISTER_DATA,
   default: { nickname: '', email: '', password: '' }
 });
 
 const responseRegister = selector({
-  key: 'responseRegister',
+  key: keyState.RESPONSE_REGISTER,
   get: async ({ get }) => {
     const { nickname, email, password } = get(setRegistrData);
     if (nickname && email && password) {
@@ -35,7 +36,7 @@ const responseRegister = selector({
 });
 
 const setAuthData = atom({
-  key: 'setAuthData',
+  key: keyState.SET_AUTH_DATA,
   default: { nickname: '', password: '' }
 });
 
@@ -65,10 +66,10 @@ const stateQuery = selector({
 });
 
 const checkAuth = selector({
-  key: 'checkAuth',
+  key: keyState.CHECK_AUTH,
   get: async () => {
     const response = await checkAuthDB();
-    const { success, userId } = response?.data;
+    const { success } = response?.data;
     if (success) {
       return true;
     } else if (!success) {
@@ -86,7 +87,7 @@ export type IallTraksByUser = {
 };
 
 const allTraksByUser = selector({
-  key: 'allTraksByUser',
+  key: keyState.ALL_TRACKS_BY_USER,
   get: async () => {
     const { data }: AxiosResponse<IallTraksByUser[]> =
       await allTracksByUserDB();
@@ -105,12 +106,12 @@ const allTraksByUser = selector({
 });
 
 const allTracksByUserAtom = atom<IallTraksByUser[]>({
-  key: 'allTracksByUserAtom',
+  key: keyState.ALL_TRACKS_BY_USER_ATOM,
   default: allTraksByUser
 });
 
 const getUrlTrackStream = selectorFamily({
-  key: 'getUrlTrackStream',
+  key: keyState.GET_URL_TRACK_STREAM,
   get: (id: number) => async () => {
     const { data } = await getUrlTrackStreamQuery(id);
     if (!data) {

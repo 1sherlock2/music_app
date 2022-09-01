@@ -42,7 +42,7 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
 
   // Аудиоконтроллер
   const audioRef = useRef<HTMLAudioElement>(new Audio());
-  console.log({ audioRef });
+  audioRef.current.volume = volume;
 
   // Переменные для управление воспроизведением
   const intervalRef = useRef<any>();
@@ -77,10 +77,8 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
 
   // Изменение трека свайпом
   const changeTrackSwipe = useCallback(
-    (swiper: { realIndex: React.SetStateAction<number> }) => {
-      setTrackIndex(swiper.realIndex as number);
-      console.log(`realIndex`, swiper.realIndex);
-    },
+    (swiper: { realIndex: React.SetStateAction<number> }) =>
+      setTrackIndex(swiper.realIndex),
     []
   );
 
@@ -119,6 +117,14 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     startTimer();
   }, [isPlaying]);
 
+  const hlsStartPlayAudio = () => {
+    setIsPlaying(true);
+  };
+
+  const handleClickRep = useCallback(() => {
+    setRepeat(repeatValue[repeat]);
+  }, [repeat]);
+
   useEffect(() => {
     const rootEl = document.getElementById('root');
     const firstChild = rootEl?.firstElementChild;
@@ -127,21 +133,15 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
 
   // Установка длительности трека
   hlsLoad.hlsSetDuration(hlsSetDuration);
-  const hlsStartPlayAudio = () => {
-    setIsPlaying(true);
-  };
 
   useEffect(() => {
     // Воспроизведение трека при загрузки частей аудиофайла
     if (allTracks) {
       hlsLoad.startPlay(hlsStartPlayAudio);
       //? добавить логику повторения аудиолиста при перелистывании последнего трека
-      // if (trackIndex > allTracks.length) {
-      //   setTrackIndex(0);
-      // }
-      // if (trackIndex < 0) {
-      //   setTrackIndex(allTracks.length - 1);
-      // }
+      if (trackIndex > allTracks.length) {
+        setTrackIndex(0);
+      }
     }
 
     return () => {
@@ -161,14 +161,17 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
   }, [isPlaying]);
 
   useEffect(() => {
-    if (repeat === 'oneLoop') {
-      (audioRef as React.MutableRefObject<{ loop: boolean }>).current.loop =
-        true;
-    } else {
-      (audioRef as React.MutableRefObject<{ loop: boolean }>).current.loop =
-        false;
-    }
+    (audioRef as React.MutableRefObject<{ loop: boolean }>).current.loop =
+      repeat === repeatValue.noLoop ? true : false;
   }, [repeat]);
+
+  const loopMode: boolean = useMemo(
+    () => repeat === repeatValue.oneLoop,
+    [repeat]
+  );
+
+  // console.log({ repeat });
+  // console.log('loop', audioRef.current.loop);
 
   return createPortal(
     <div className={s.outside}>
@@ -179,15 +182,12 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
           // onInit={initSwiper}
           initialSlide={trackIndex}
           onSlideChange={changeTrackSwipe}
-          loop={repeat === 'allLoop'}
+          loop={loopMode}
           lazy
           modules={[Lazy]}
         >
           {allTracks?.map((track, index) => (
-            <SwiperSlide
-              key={`${track.name}-${index}`}
-              virtualIndex={trackIndex}
-            >
+            <SwiperSlide key={`${track.name}-${index}`}>
               <AudioPayload
                 isPlaying={isPlaying}
                 setIsPlaying={setIsPlaying}
@@ -199,7 +199,7 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
                 goToNextTrack={goToNextTrack}
                 goToPreviousTrack={goToPreviousTrack}
                 currentTrack={currentTrack}
-                setRepeat={setRepeat}
+                handleClickRep={handleClickRep}
                 volume={volume}
                 setVolume={setVolume}
                 repeat={repeat}

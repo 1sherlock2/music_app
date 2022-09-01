@@ -12,7 +12,7 @@ import classnames from 'classnames';
 import Img from '../../components/Img/Img';
 import s from './Playlist.scss';
 
-const Playlist = () => {
+const Playlist: React.FC = () => {
   const allTracks = useRecoilValue(allTracksByUserAtom);
   const setOrderTracks = useSetRecoilState(allTraksByUser);
   // const trackRefs: any = useRef(allTracks?.map(() => React.createRef()));

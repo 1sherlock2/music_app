@@ -27,7 +27,7 @@ export type IAudioPayload = {
   onScrubEnd: () => void;
   goToNextTrack: () => void;
   goToPreviousTrack: () => void;
-  setRepeat: (prevState: keyof IRepeat) => void;
+  handleClickRep: () => void;
   setIsPlaying: (prevState: boolean) => void;
   setVolume: (prevState: number) => void;
 };

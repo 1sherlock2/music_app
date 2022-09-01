@@ -16,22 +16,18 @@ const AudioPlayer = ({
   setIsPlaying,
   goToNextTrack,
   goToPreviousTrack,
-  setRepeat,
+  handleClickRep,
   repeat
 }: IAudioPlayer) => {
   const size = '50px';
-  const handleClickRep = (val: keyof IRepeat) => setRepeat(repeatValue[val]);
   return (
     <div className={s.audio_player}>
-      <div
-        className={s.audio_player_repeat}
-        onClick={() => handleClickRep(repeat)}
-      >
+      <div className={s.audio_player_repeat} onClick={handleClickRep}>
         <div>
           {repeat === 'allLoop' ? (
-            <Repeat color="#6F6F6F" size="30px" />
-          ) : repeat === 'noLoop' ? (
             <Repeat color="#333" size="30px" />
+          ) : repeat === 'noLoop' ? (
+            <Repeat color="#6F6F6F" size="30px" />
           ) : (
             <RepeateOne color="#333" size="30px" />
           )}

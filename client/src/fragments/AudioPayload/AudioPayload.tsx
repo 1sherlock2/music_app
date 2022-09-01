@@ -18,7 +18,7 @@ const AudioPayload: React.FC<IAudioPayload> = ({
   goToNextTrack,
   goToPreviousTrack,
   currentTrack,
-  setRepeat,
+  handleClickRep,
   volume,
   setVolume,
   repeat
@@ -37,7 +37,7 @@ const AudioPayload: React.FC<IAudioPayload> = ({
         isPlaying={isPlaying}
         goToNextTrack={goToNextTrack}
         goToPreviousTrack={goToPreviousTrack}
-        setRepeat={setRepeat}
+        handleClickRep={handleClickRep}
         repeat={repeat}
       />
       <CurrentProgressTime

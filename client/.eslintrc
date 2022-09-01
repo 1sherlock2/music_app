@@ -5,6 +5,14 @@
     "react-hooks/exhaustive-deps": [
       "warn",
       { "additionalHooks": "(useRecoilCallback|useRecoilTransaction_UNSTABLE)" }
-    ]
+    ],
+    "react/jsx-fragments": 2,
+    "react/static-property-placement": 0,
+    "react/destructuring-assignment": 0,
+    "react/jsx-one-expression-per-line": 0,
+    "react/button-has-type": 0,
+    "react/jsx-props-no-spreading": 0,
+    "react/state-in-constructor": 0,
+    "react/no-access-state-in-setstate": 0
   }
 }

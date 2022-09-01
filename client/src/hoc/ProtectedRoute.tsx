@@ -10,8 +10,8 @@ const ProtectedRoute = ({
   ...restProps
 }: IProtectedRouteProps) => {
   const isAuth = useRecoilValue(isAuthentication);
-  const checkAuthentication =
-    authLocalStorage.getToken() && useRecoilValue(checkAuth);
+  const isCheck = useRecoilValue(checkAuth);
+  const checkAuthentication = authLocalStorage.getToken() && isCheck;
 
   return (
     <Route path={restProps.path}>

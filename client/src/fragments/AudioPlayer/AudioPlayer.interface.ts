@@ -5,6 +5,6 @@ type IncludesProps =
   | 'setIsPlaying'
   | 'goToNextTrack'
   | 'goToPreviousTrack'
-  | 'setRepeat'
+  | 'handleClickRep'
   | 'repeat';
 export type IAudioPlayer = Pick<IAudioPayload, IncludesProps>;
