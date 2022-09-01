@@ -2,7 +2,7 @@ import React, { ChangeEventHandler } from 'react';
 import { IHlsLoad } from '../../hooks/types/useHlsLoad.interface';
 import { IallTraksByUser } from '../../store/index';
 
-export type IChangeRange = (event: React.ChangeEvent<HTMLInputElement>) => void;
+// export type IChangeRange = (event: React.ChangeEvent<HTMLInputElement>) => void;
 
 export type INameAndArtistAudio = {
   artist?: string;
@@ -22,9 +22,9 @@ export type IAudioPayload = {
   hlsLoad: IHlsLoad;
   trackProgress: number;
   duration: number;
-  changeCurrentTime: IChangeRange;
   volume: number;
-  onScrubEnd: () => void;
+  setBlockSwipe: (prevState: boolean) => void;
+  changeCurrentTime: (time: number) => void;
   goToNextTrack: () => void;
   goToPreviousTrack: () => void;
   handleClickRep: () => void;

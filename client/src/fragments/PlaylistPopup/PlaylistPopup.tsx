@@ -16,7 +16,7 @@ import useHlsLoad from '../../hooks/useHlsLoad';
 import { getUrlTrackStream } from '../../store';
 import AudioPayload from '../AudioPayload/AudioPayload';
 import { Events, LevelLoadedData } from 'hls.js';
-import { IChangeRange, IRepeat } from '../AudioPayload/AudioPayload.interface';
+import { IRepeat } from '../AudioPayload/AudioPayload.interface';
 import s from './PlaylistPopup.scss';
 import { IPlaylistPopup } from './PlaylistPopup.interface';
 import { repeatValue } from './constant';
@@ -33,6 +33,8 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
   const [volume, setVolume] = useState<number>(0.5);
+  const [blockSwipe, setBlockSwipe] = useState<boolean>(false);
+
   const currentTrack = useMemo(
     () => allTracks[trackIndex],
     [allTracks, trackIndex]
@@ -54,6 +56,7 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
       _e: Events.LEVEL_LOADED,
       { details: { totalduration } }: LevelLoadedData
     ) => {
+      console.log({ totalduration });
       setDuration(Math.floor((totalduration * 100) / 100));
     },
     []
@@ -93,29 +96,21 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     }, 1000);
   };
 
-  const changeCurrentTime: IChangeRange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+  const changeCurrentTime = useCallback(
+    (time) => {
       if (isPlaying) {
         clearInterval(intervalRef.current);
-        audioRef.current.currentTime = Number(event.target.value);
+        audioRef.current.currentTime = Number(time);
         startTimer();
       } else {
         clearInterval(intervalRef.current);
-        audioRef.current.currentTime = Number(event.target.value);
+        audioRef.current.currentTime = Number(time);
         setTrackProgress(audioRef.current.currentTime);
         setIsPlaying(true);
       }
     },
     [isPlaying]
   );
-
-  // Действия по смене времени трека
-  const onScrubEnd = useCallback(() => {
-    if (!isPlaying) {
-      setIsPlaying(true);
-    }
-    startTimer();
-  }, [isPlaying]);
 
   const hlsStartPlayAudio = () => {
     setIsPlaying(true);
@@ -170,9 +165,6 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     [repeat]
   );
 
-  // console.log({ repeat });
-  // console.log('loop', audioRef.current.loop);
-
   return createPortal(
     <div className={s.outside}>
       <div ref={containerRef}>
@@ -185,6 +177,8 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
           loop={loopMode}
           lazy
           modules={[Lazy]}
+          onTouchMove={(swiper) => (swiper.allowTouchMove = !blockSwipe)}
+          onTouchEnd={(swiper) => (swiper.allowTouchMove = !blockSwipe)}
         >
           {allTracks?.map((track, index) => (
             <SwiperSlide key={`${track.name}-${index}`}>
@@ -192,9 +186,8 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
                 isPlaying={isPlaying}
                 setIsPlaying={setIsPlaying}
                 hlsLoad={hlsLoad}
-                onScrubEnd={onScrubEnd}
                 trackProgress={trackProgress}
-                changeCurrentTime={changeCurrentTime}
+                setBlockSwipe={setBlockSwipe}
                 duration={duration}
                 goToNextTrack={goToNextTrack}
                 goToPreviousTrack={goToPreviousTrack}
@@ -203,6 +196,7 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
                 volume={volume}
                 setVolume={setVolume}
                 repeat={repeat}
+                changeCurrentTime={changeCurrentTime}
               />
             </SwiperSlide>
           ))}

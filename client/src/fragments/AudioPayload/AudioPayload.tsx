@@ -11,9 +11,8 @@ const AudioPayload: React.FC<IAudioPayload> = ({
   isPlaying,
   setIsPlaying,
   hlsLoad,
-  onScrubEnd,
   trackProgress,
-  changeCurrentTime,
+  setBlockSwipe,
   duration,
   goToNextTrack,
   goToPreviousTrack,
@@ -21,7 +20,8 @@ const AudioPayload: React.FC<IAudioPayload> = ({
   handleClickRep,
   volume,
   setVolume,
-  repeat
+  repeat,
+  changeCurrentTime
 }) => {
   const swiperSlide = useSwiperSlide();
   if (!swiperSlide.isActive) return null;
@@ -42,10 +42,10 @@ const AudioPayload: React.FC<IAudioPayload> = ({
       />
       <CurrentProgressTime
         hlsLoad={hlsLoad}
-        onScrubEnd={onScrubEnd}
         trackProgress={trackProgress}
-        changeCurrentTime={changeCurrentTime}
+        setBlockSwipe={setBlockSwipe}
         duration={duration}
+        changeCurrentTime={changeCurrentTime}
       />
     </div>
   );

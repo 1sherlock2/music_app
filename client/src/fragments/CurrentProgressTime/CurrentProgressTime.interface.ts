@@ -1,9 +1,9 @@
 import { IAudioPayload } from '../AudioPayload/AudioPayload.interface';
 
 type IncludesProps =
-  | 'onScrubEnd'
+  | 'changeCurrentTime'
   | 'duration'
   | 'trackProgress'
-  | 'changeCurrentTime'
+  | 'setBlockSwipe'
   | 'hlsLoad';
 export type ICurrentProgressTime = Pick<IAudioPayload, IncludesProps>;
