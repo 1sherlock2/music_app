@@ -10,6 +10,7 @@ const ImageAndVolume: React.FC<IImageAndVolumeProps> = ({
   setVolume
 }) => {
   const [topPosition, setTopPosition] = useState<number>((1 - volume) * 100);
+  // const [volumeLine, setVolumeLine] = useState<number>();
   const volumeRef = useRef<HTMLDivElement>(null);
   const thumbRef = useRef<HTMLDivElement>(null);
   const percentByVolume = (posY: number) => {
@@ -50,7 +51,10 @@ const ImageAndVolume: React.FC<IImageAndVolumeProps> = ({
         onTouchStart={handleTouchStart}
         onTouchEnd={() => thumbRef.current?.classList.remove(s.increase)}
       >
-        <div className={s.volume_track__progress} />
+        <div
+          className={s.volume_track__progress}
+          style={{ height: `${volume * 100}%` }}
+        />
         <div
           className={s.volume_track__thumb}
           style={{ top: `${topPosition}%` }}
