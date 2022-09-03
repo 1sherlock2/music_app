@@ -1,5 +1,6 @@
 import React, { TouchEventHandler, useRef, useState } from 'react';
 import Img from '../../../../components/Img/Img';
+import { altImageSrc } from '../../../../store/altrImageSrc';
 import { IImageAndVolumeProps } from './ImageAndVolume.interface';
 import s from './ImageAndVolume.scss';
 
@@ -40,10 +41,7 @@ const ImageAndVolume: React.FC<IImageAndVolumeProps> = ({
     <div className={s.wrapper_img}>
       <div className={s.image}>
         <div className={s.image_title}>
-          <Img
-            src={img}
-            altSrc="https://res.cloudinary.com/drypohi9s/image/upload/v1633723468/music_app/alt_src_img/audio-wave-svgrepo-com_trpgkx.svg"
-          />
+          <Img src={img} altSrc={altImageSrc} />
         </div>
       </div>
       <div

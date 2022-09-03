@@ -11,6 +11,7 @@ import {
 import classnames from 'classnames';
 import Img from '../../components/Img/Img';
 import s from './Playlist.scss';
+import { altImageSrc } from '../../store/altrImageSrc';
 
 const Playlist: React.FC = () => {
   const allTracks = useRecoilValue(allTracksByUserAtom);
@@ -56,10 +57,7 @@ const Playlist: React.FC = () => {
                       onClick={() => handleClick(index)}
                     >
                       <div className={s.container_img}>
-                        <Img
-                          src={img}
-                          altSrc="https://res.cloudinary.com/drypohi9s/image/upload/v1633723468/music_app/alt_src_img/audio-wave-svgrepo-com_trpgkx.svg"
-                        />
+                        <Img src={img} altSrc={altImageSrc} />
                       </div>
                       <div className={s.container_track}>
                         <div className={s.container_track__name}>{name}</div>

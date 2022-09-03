@@ -14,10 +14,12 @@
     width: 100%;
     background-color: $gray-100;
     height: $size-24;
+    border-radius: $size-18;
 
     .loaded {
       height: inherit;
       background: $gray-200;
+      border-radius: $size-18;
     }
 
     .progress {
@@ -27,6 +29,7 @@
       border-radius: $size-4;
       height: inherit;
       background: $gray-500;
+      border-radius: $size-18;
     }
 
     .thumb {

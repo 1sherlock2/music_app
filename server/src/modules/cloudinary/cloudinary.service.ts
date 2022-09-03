@@ -40,10 +40,9 @@ export class CloudinaryService {
   }
   async urlStream(urlByStream) {
     try {
-      // return await v2.url(urlByStream, streamProfile);
       return await v2.url(urlByStream, [
-        { streaming_profile: 'full_hd', resource_type: 'video' },
-        { streaming_profile: 'hd', resource_type: 'video' }
+        { streaming_profile: 'hd_lean', resource_type: 'video' },
+        { streaming_profile: 'full_hd_wifi', resource_type: 'video' }
       ]);
     } catch (e) {
       throw new Error(e);

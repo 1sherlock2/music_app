@@ -55,10 +55,7 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     (
       _e: Events.LEVEL_LOADED,
       { details: { totalduration } }: LevelLoadedData
-    ) => {
-      console.log({ totalduration });
-      setDuration(Math.floor((totalduration * 100) / 100));
-    },
+    ) => setDuration(Math.floor((totalduration * 100) / 100)),
     []
   );
 
@@ -93,7 +90,7 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
       } else {
         setTrackProgress(audioRef.current.currentTime);
       }
-    }, 1000);
+    }, 500);
   };
 
   const changeCurrentTime = useCallback(

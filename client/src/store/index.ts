@@ -12,9 +12,9 @@ import {
 } from './queries';
 import responseMessages from './responseMessages';
 
-const loginText = atom({ key: 'loginText', default: '' });
-const loginPassword = atom({ key: 'loginPassword', default: '' });
-const isAuthentication = atom({ key: 'authStatus', default: false });
+const loginText = atom({ key: keyState.LOGIN_TEXT, default: '' });
+const loginPassword = atom({ key: keyState.LOGIN_TEXT, default: '' });
+const isAuthentication = atom({ key: keyState.AUTH_STATUS, default: false });
 
 const setRegistrData = atom({
   key: keyState.SET_REGISTER_DATA,
