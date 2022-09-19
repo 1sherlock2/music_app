@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   ParseIntPipe,
   Post,
   Query,
@@ -13,9 +14,13 @@ import {
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UserId } from '../../decorators/userId.decorator';
 import { JwtAuthGuard } from '../user/jwtAuth/JwtAuth.guard';
-import { IUserId, TrackCreateDTO } from './dto/trackCreate.dto';
+import {
+  IUserId,
+  TrackCreateDTO,
+  UploadFileByLinkDTO
+} from './dto/trackCreate.dto';
 import { TrackService } from './track.service';
-import { IRecieveTrack } from './utils/track.interface';
+import { IRecieveTrack } from './interfaces/track.interface';
 
 @Controller('track')
 @UseGuards(JwtAuthGuard)
@@ -68,6 +73,21 @@ export class TrackController {
     @UserId() userId: IUserId
   ) {
     const { order } = otherProperty;
-    const updatedOrder = this.trackService.updateOrderTracks({ order, userId });
+    this.trackService.updateOrderTracks({ order, userId });
+  }
+
+  @Post('download')
+  @HttpCode(200)
+  downloadAudio(@Body() otherProperty: { urlSrc: string }) {
+    return this.trackService.downloadAudio(otherProperty);
+  }
+
+  @Post('upload_file')
+  @HttpCode(200)
+  uploadFile(
+    @Body() otherProperty: UploadFileByLinkDTO,
+    @UserId() userId: IUserId
+  ) {
+    return this.trackService.uploadFileByLink({ ...otherProperty, ...userId });
   }
 }

@@ -1,9 +1,15 @@
 import { Dispatch, MutableRefObject, SetStateAction } from 'react';
+import { IAudioPayload } from '../../AudioPayload.interface';
 
-export interface ILineAndNameProps {
-  setTopPosition: Dispatch<SetStateAction<number>>;
-  differentValue: number;
-  defaultTopPosition: number;
-  setTransformByCloseY: Dispatch<SetStateAction<boolean>>;
-  setOpen: (value: boolean) => void;
-}
+type IncludesProps =
+  | 'setTopPosition'
+  | 'setTransformByCloseY'
+  | 'defaultTopPosition'
+  | 'fullHeight';
+type INameAndArtistAudio = {
+  artist?: string;
+  name: string;
+};
+
+export type ILineAndNameProps = Pick<IAudioPayload, IncludesProps> &
+  INameAndArtistAudio;

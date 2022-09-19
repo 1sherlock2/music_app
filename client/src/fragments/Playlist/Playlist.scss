@@ -1,4 +1,4 @@
-@import '../../styles/variables.scss';
+@import '~styles/variables.scss';
 
 .playList {
   display: flex;
@@ -23,6 +23,7 @@
       height: $size-50;
 
       img {
+        border-radius: $size-6;
         object-fit: fill;
         width: 100%;
         height: 100%;

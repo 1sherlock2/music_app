@@ -1,8 +1,8 @@
 import React from 'react';
 import IconWrapper from '../IconWrapper';
-import { IIconWrapper } from '../IconWrapper.interface';
+import { IIconWrapperProps } from '../IconWrapper.interface';
 
-const Visibility = (props: IIconWrapper & JSX.IntrinsicAttributes) => (
+const Visibility = (props: IIconWrapperProps) => (
   <IconWrapper {...props}>
     <svg viewBox="0 0 24 24">
       <path

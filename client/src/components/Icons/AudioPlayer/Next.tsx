@@ -1,8 +1,8 @@
 import React from 'react';
 import IconWrapper from '../IconWrapper';
-import { IAudioIconsProps } from './AudioPlayer.interface';
+import { IIconWrapperProps } from '../IconWrapper.interface';
 
-const Next = (props: IAudioIconsProps) => (
+const Next = (props: IIconWrapperProps) => (
   <IconWrapper {...props}>
     <svg viewBox="0 0 64 64">
       <path

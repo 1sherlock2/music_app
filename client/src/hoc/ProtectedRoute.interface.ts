@@ -4,4 +4,5 @@ export interface IProtectedRouteProps {
   isAuth?: boolean;
   component: FunctionComponent<ReactNode>;
   path: string;
+  exact?: boolean;
 }

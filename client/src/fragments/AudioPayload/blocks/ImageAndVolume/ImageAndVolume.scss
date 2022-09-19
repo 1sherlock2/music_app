@@ -1,15 +1,4 @@
-@import '../../../../styles/variables.scss';
-
-//colors:
-$white: #fff;
-$gray-50: #f8f9f9;
-$gray-100: #edeff0;
-$gray-150: #d6dadc;
-$gray-200: #838c91;
-$gray-250: #333;
-$link-50: #298fca;
-$link-100: #0079bf;
-$primary-50: #61bd4f;
+@import '~styles/variables.scss';
 
 .wrapper_img {
   display: flex;

@@ -14,6 +14,9 @@
     "allowJs": true,
     "skipLibCheck": true
   },
+  "ts-node": {
+    "esm": true
+  },
   "include": ["src/**/*", "lib.es5.d.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

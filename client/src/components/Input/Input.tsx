@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, SetStateAction } from 'react';
 import Close from '../Icons/Close';
-import { IInput, IInputStyle } from './Input.interface';
+import { IIconSize, IInput, IInputStyle } from './Input.interface';
 import classnames from 'classnames';
 import s from './Input.scss';
 import IconVisibilityOff from '../Icons/Visibility/VisibilityOff';
@@ -35,22 +35,25 @@ const Input: React.FC<IInput> = ({
     setErrorData(errorInput);
   }, [value]);
 
-  const IconSize: any = {
+  const IconSize: IIconSize = {
     s: '28px',
     m: '32px',
     l: '36px'
   };
 
+  const iconTopPosition: string =
+    s[`clear_top_pos_${size === 's' ? 0 : size === 'm' ? 2 : 4}`];
+
   const closeHandler = (event: any) => {
     event.preventDefault();
     event.stopPropagation();
-    onChange('');
+    onChange && onChange('');
   };
 
   const handleChange = useCallback(
     (event) => {
       event.preventDefault();
-      onChange(event.target.value);
+      onChange && onChange(event.target.value);
     },
     [onChange]
   );
@@ -91,7 +94,7 @@ const Input: React.FC<IInput> = ({
           disabled={disabled}
         />
       )}
-      {type !== 'submit' && (
+      {type !== 'submit' && !!onChange && (
         <input
           type={typeInput}
           placeholder={placeholder}
@@ -100,11 +103,11 @@ const Input: React.FC<IInput> = ({
           className={inputClass}
         />
       )}
-      {type !== 'password' && closeSize && value && (
+      {type !== 'password' && closeSize && value && !!onChange && (
         <>
           <button
             aria-label="clear textfield"
-            className={s.icon}
+            className={classnames(s.icon, iconTopPosition)}
             onClick={closeHandler}
             disabled={disabled}
           >
@@ -118,7 +121,7 @@ const Input: React.FC<IInput> = ({
       {type === 'password' && (
         <>
           <button
-            className={s.icon}
+            className={classnames(s.icon, iconTopPosition)}
             onClick={showPassword}
             aria-label="toggle password visibility"
           >

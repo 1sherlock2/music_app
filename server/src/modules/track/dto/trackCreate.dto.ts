@@ -4,6 +4,7 @@ import {
   IsDefined,
   isInstance,
   IsNotEmpty,
+  IsOptional,
   IsString,
   ValidateNested
 } from 'class-validator';
@@ -29,4 +30,30 @@ export class UpdateOrderTracks {
   @IsArray()
   order?: number[];
   userId: IUserId;
+}
+
+export class UploadFileByLinkDTO {
+  @IsString()
+  @IsNotEmpty()
+  url: string;
+
+  @IsString()
+  @IsOptional()
+  image?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  title: string;
+
+  @IsString()
+  @IsNotEmpty()
+  ext: string;
+
+  @IsString()
+  @IsOptional()
+  artist?: string;
+
+  @IsString()
+  @IsOptional()
+  name?: string;
 }

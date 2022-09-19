@@ -21,16 +21,24 @@ const AudioPayload: React.FC<IAudioPayload> = ({
   volume,
   setVolume,
   repeat,
-  changeCurrentTime
+  changeCurrentTime,
+  defaultTopPosition,
+  setTopPosition,
+  setTransformByCloseY,
+  fullHeight
 }) => {
-  const swiperSlide = useSwiperSlide();
-  if (!swiperSlide.isActive) return null;
-
   const { artist, name, img } = useMemo(() => currentTrack, [currentTrack]);
 
   return (
     <div className={s.wrapper}>
-      <LineAndNameAudio name={name} artist={artist} />
+      <LineAndNameAudio
+        name={name}
+        artist={artist}
+        setTopPosition={setTopPosition}
+        setTransformByCloseY={setTransformByCloseY}
+        defaultTopPosition={defaultTopPosition}
+        fullHeight={fullHeight}
+      />
       <ImageAndVolume img={img} volume={volume} setVolume={setVolume} />
       <AudioPlayer
         setIsPlaying={setIsPlaying}
@@ -50,5 +58,4 @@ const AudioPayload: React.FC<IAudioPayload> = ({
     </div>
   );
 };
-const memoAudioPayload = React.memo(AudioPayload);
-export default memoAudioPayload;
+export default AudioPayload;

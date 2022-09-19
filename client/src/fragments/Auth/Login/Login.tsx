@@ -2,10 +2,8 @@ import React, { SetStateAction, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   isAuthentication,
-  loginPassword,
-  loginText,
-  setAuthData,
-  stateQuery
+  loginQuery,
+  setAuthData
 } from '../../../store/index';
 import Input from '../../../components/Input/Input';
 import s from './Login.scss';
@@ -13,10 +11,10 @@ import { Loader_1 } from '../../../loader/Loader_1';
 import { useHistory } from 'react-router';
 
 const Login = () => {
-  const [nicknameInput, setNicknameInput] = useRecoilState(loginText);
-  const [password, setPassword] = useRecoilState(loginPassword);
+  const [nicknameInput, setNicknameInput] = useState('');
+  const [password, setPassword] = useState('');
   const authDatas = useSetRecoilState(setAuthData);
-  const responseAuth = useRecoilValue(stateQuery);
+  const responseAuth = useRecoilValue(loginQuery);
   const [isAuth, setIsAuth] = useRecoilState(isAuthentication);
   const [errorAuth, setErrorAuth] =
     useState<SetStateAction<boolean | string>>(false);

@@ -1,0 +1,21 @@
+@import '~styles/variables.scss';
+
+.search {
+  display: flex;
+  margin: #{$size-40} #{$size-20};
+  gap: $size-10;
+
+  &_container {
+    flex: 1 0 80%;
+  }
+  &_button {
+    flex: 1 1;
+    background: $pink-200;
+    height: $size-60;
+
+    &:active,
+    &:hover {
+      background-color: $pink-400;
+    }
+  }
+}

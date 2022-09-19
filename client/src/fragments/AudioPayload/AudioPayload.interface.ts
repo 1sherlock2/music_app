@@ -2,13 +2,6 @@ import React, { ChangeEventHandler } from 'react';
 import { IHlsLoad } from '../../hooks/types/useHlsLoad.interface';
 import { IallTraksByUser } from '../../store/index';
 
-// export type IChangeRange = (event: React.ChangeEvent<HTMLInputElement>) => void;
-
-export type INameAndArtistAudio = {
-  artist?: string;
-  name: string;
-};
-
 export type IRepeat = {
   oneLoop: 'allLoop';
   allLoop: 'noLoop';
@@ -23,6 +16,10 @@ export type IAudioPayload = {
   trackProgress: number;
   duration: number;
   volume: number;
+  defaultTopPosition: number;
+  fullHeight: number;
+  setTopPosition: (prevState: number) => void;
+  setTransformByCloseY: (prevState: boolean) => void;
   setBlockSwipe: (prevState: boolean) => void;
   changeCurrentTime: (time: number) => void;
   goToNextTrack: () => void;

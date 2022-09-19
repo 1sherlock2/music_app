@@ -28,5 +28,8 @@ export default {
   rolesExeption: 'Error occured was creating role',
   rolesExeptionUpdate: 'Error occured by updating role',
   rolesAvailableByUser: 'That user has this role',
-  rolesUpdated: 'Roles for user updated'
+  rolesUpdated: 'Roles for user updated',
+
+  // download
+  contentIsNotFound: 'Content is not found'
 };

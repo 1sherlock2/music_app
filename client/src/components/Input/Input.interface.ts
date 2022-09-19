@@ -1,40 +1,49 @@
 import { SetStateAction } from 'react';
 
-export interface IInput {
+export type IInput = {
   placeholder?: string;
   type?: string;
   closeSize?: boolean;
-  onChange?: React.Dispatch<React.SetStateAction<HTMLInputElement>>;
+  onChange?: (value: string) => void;
   value: string;
-  size?: string;
-  style?: string;
+  size?: 's' | 'm' | 'l';
+  style?: 'white' | 'pink';
   disabled?: boolean | undefined;
   validate?: string;
-}
+  className?: string;
+};
 
-export interface IErrorStatus {
+export type IErrorStatus = {
   status?: boolean;
   message?: string;
-}
+};
 
 export type IErrorInput = IErrorStatus | boolean;
 
-export interface IValidationIptions {
+export type IValidationIptions = {
   email: RegExp;
   password: {
     length: number;
   };
-}
+};
 
-export interface ITypeInput {
+export type ITypeInput = {
   text?: string;
   password?: string;
-}
+};
 
-export interface IInputStyle {
-  [x: string]: string;
-}
-export interface IValidationInput {
+export type IInputStyle = {
+  white: string;
+  pink: string;
+};
+
+export type IIconSize = {
+  s: string;
+  m: string;
+  l: string;
+};
+
+export type IValidationInput = {
   value: string;
   type?: string;
-}
+};

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import s from './Button.scss';
 import { IButton, IButtonSize, IStyleColor } from './Button.interface';
@@ -9,7 +9,8 @@ const Button: React.FC<IButton> = ({
   color = 'pink',
   children,
   disabled,
-  onClick
+  onClick,
+  className
 }) => {
   const buttonSize: IButtonSize = {
     s: s.small,
@@ -20,17 +21,22 @@ const Button: React.FC<IButton> = ({
     pink: s.pink,
     white: s.white
   };
-  const classes = classNames(buttonSize[size], styleColor[color], {
+  const classes = classNames(buttonSize[size], styleColor[color], className, {
     [s.disabled]: disabled
   });
-  const handleClick = (event: any) => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     onClick();
   };
 
   return (
     <div className={s.button}>
-      <button onClick={handleClick} disabled={disabled} className={classes}>
+      <button
+        onClick={handleClick}
+        disabled={disabled}
+        className={classes}
+        type={type}
+      >
         {children}
       </button>
     </div>

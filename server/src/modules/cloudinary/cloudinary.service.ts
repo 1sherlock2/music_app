@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UploadApiResponse, UploadApiErrorResponse } from 'cloudinary';
 import { v2 } from 'cloudinary';
 import * as fs from 'fs';
 import * as fileFormats from 'file-formats';
 import * as path from 'path';
-import { IUploadStatus } from '../track/utils/track.interface';
+import { IUploadStatus } from '../track/interfaces/track.interface';
 
 const streamProfile = [
   { streaming_profile: 'full_hd', format: 'm3u8' },
@@ -13,30 +13,37 @@ const streamProfile = [
 @Injectable()
 export class CloudinaryService {
   async uploadFile(filePath: string, folder?: string): Promise<IUploadStatus> {
-    const formatFile = filePath && path.extname(filePath);
-    const isAudioFormat = fileFormats.list().some((el) => el === formatFile);
+    try {
+      const formatFile = filePath && path.extname(filePath);
+      const audioExtentions = fileFormats.list();
+      audioExtentions.push('.m4a');
+      const isAudioFormat = audioExtentions.some((el) => el === formatFile);
+      if (!filePath) {
+        return { success: false };
+      }
 
-    const response =
-      filePath &&
-      (await v2.uploader.upload(filePath, {
+      const response = await v2.uploader.upload(filePath, {
         folder: `${folder}/${isAudioFormat ? 'audio' : 'img'}`,
         overwrite: true,
         eager: isAudioFormat && streamProfile,
         eager_async: true,
         resource_type: isAudioFormat && 'video'
-      }));
+      });
 
-    fs.unlinkSync(filePath);
-    if (!response.public_id) {
-      return { success: false };
+      fs.unlinkSync(filePath);
+      if (!response.public_id) {
+        return { success: false };
+      }
+
+      return {
+        success: true,
+        [`${isAudioFormat ? 'audioHlsUrl' : 'imgUrl'}`]: isAudioFormat
+          ? response.eager[0].url
+          : response.url
+      };
+    } catch (e) {
+      throw new InternalServerErrorException(e);
     }
-
-    return {
-      success: true,
-      [`${isAudioFormat ? 'audioHlsUrl' : 'imgUrl'}`]: isAudioFormat
-        ? response.eager[0].url
-        : response.url
-    };
   }
   async urlStream(urlByStream) {
     try {
@@ -45,7 +52,7 @@ export class CloudinaryService {
         { streaming_profile: 'full_hd_wifi', resource_type: 'video' }
       ]);
     } catch (e) {
-      throw new Error(e);
+      throw new InternalServerErrorException(e);
     }
   }
 }

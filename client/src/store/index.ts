@@ -12,8 +12,6 @@ import {
 } from './queries';
 import responseMessages from './responseMessages';
 
-const loginText = atom({ key: keyState.LOGIN_TEXT, default: '' });
-const loginPassword = atom({ key: keyState.LOGIN_TEXT, default: '' });
 const isAuthentication = atom({ key: keyState.AUTH_STATUS, default: false });
 
 const setRegistrData = atom({
@@ -40,8 +38,8 @@ const setAuthData = atom({
   default: { nickname: '', password: '' }
 });
 
-const stateQuery = selector({
-  key: 'stateQuery',
+const loginQuery = selector({
+  key: keyState.STATE_QUERY,
   get: async ({ get }) => {
     const { nickname, password } = get(setAuthData);
     if (!nickname || !password) {
@@ -122,10 +120,8 @@ const getUrlTrackStream = selectorFamily({
 });
 
 export {
-  loginText,
-  loginPassword,
   isAuthentication,
-  stateQuery,
+  loginQuery,
   setAuthData,
   checkAuth,
   getUrlTrackStream,

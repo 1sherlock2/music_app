@@ -12,6 +12,7 @@ import classnames from 'classnames';
 import Img from '../../components/Img/Img';
 import s from './Playlist.scss';
 import { altImageSrc } from '../../store/altrImageSrc';
+import BottomPanel from '../BottomPanel/BottomPanel';
 
 const Playlist: React.FC = () => {
   const allTracks = useRecoilValue(allTracksByUserAtom);
@@ -34,54 +35,57 @@ const Playlist: React.FC = () => {
   };
 
   return (
-    <DragDropContext onDragEnd={handleOnDragEnd}>
-      <Droppable droppableId="characters">
-        {(provided) => (
-          <div
-            className={classnames(s.playList, 'characters')}
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-          >
-            {allTracks?.map((track, index) => {
-              const { id, img, artist, name } = track;
-              return (
-                <Draggable key={id} draggableId={`${id}`} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      key={`${id}_${index}`}
-                      // ref={trackRefs.current[index]}
-                      className={s.container}
-                      onClick={() => handleClick(index)}
-                    >
-                      <div className={s.container_img}>
-                        <Img src={img} altSrc={altImageSrc} />
-                      </div>
-                      <div className={s.container_track}>
-                        <div className={s.container_track__name}>{name}</div>
-                        <div className={s.container_track__author}>
-                          {artist}
+    <>
+      <DragDropContext onDragEnd={handleOnDragEnd}>
+        <Droppable droppableId="characters">
+          {(provided) => (
+            <div
+              className={classnames(s.playList, 'characters')}
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {allTracks?.map((track, index) => {
+                const { id, img, artist, name } = track;
+                return (
+                  <Draggable key={id} draggableId={`${id}`} index={index}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        key={`${id}_${index}`}
+                        // ref={trackRefs.current[index]}
+                        className={s.container}
+                        onClick={() => handleClick(index)}
+                      >
+                        <div className={s.container_img}>
+                          <Img src={img} altSrc={altImageSrc} />
+                        </div>
+                        <div className={s.container_track}>
+                          <div className={s.container_track__name}>{name}</div>
+                          <div className={s.container_torderrack__author}>
+                            {artist}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
-                </Draggable>
-              );
-            })}
-            {open && !!allTracks.length && (
-              <PlaylistPopup
-                allTracks={allTracks}
-                generalIndexTrack={generalIndexTrack}
-                setOpen={setOpen}
-              />
-            )}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+                    )}
+                  </Draggable>
+                );
+              })}
+              {open && !!allTracks.length && (
+                <PlaylistPopup
+                  allTracks={allTracks}
+                  generalIndexTrack={generalIndexTrack}
+                  setOpen={setOpen}
+                />
+              )}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+      <BottomPanel />
+    </>
   );
 };
 

@@ -7,6 +7,7 @@ import { authLocalStorage } from '../utils/localStorage';
 
 const ProtectedRoute = ({
   component: Component,
+  exact,
   ...restProps
 }: IProtectedRouteProps) => {
   const isAuth = useRecoilValue(isAuthentication);
@@ -14,7 +15,7 @@ const ProtectedRoute = ({
   const checkAuthentication = authLocalStorage.getToken() && isCheck;
 
   return (
-    <Route path={restProps.path}>
+    <Route path={restProps.path} exact>
       {isAuth || checkAuthentication ? <Component /> : <Redirect to="/login" />}
     </Route>
   );

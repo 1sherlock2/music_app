@@ -1,4 +1,4 @@
-@import '../../styles/variables.scss';
+@import '~styles/variables.scss';
 
 .container {
   position: relative;
@@ -8,7 +8,7 @@
   width: 100%;
 
   &_input {
-    width: 80%;
+    width: 100%;
     padding-right: 60px;
     padding-left: 10px;
     border-radius: $size-20;
@@ -33,11 +33,22 @@
     font-size: $size-14;
     color: $pink-500;
   }
+
+  .clear_top_pos_0 {
+    top: 0;
+  }
+
+  .clear_top_pos_2 {
+    top: $size-2;
+  }
+
+  .clear_top_pos_4 {
+    top: $size-4;
+  }
 }
 
 .icon {
   position: absolute;
-  top: $size-2;
   right: $size-4;
   border: none;
   display: flex;

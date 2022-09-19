@@ -1,0 +1,40 @@
+@import '~styles/variables.scss';
+
+.result {
+  display: flex;
+  flex-direction: column;
+  padding: $size-10;
+  overflow-y: auto;
+  gap: $size-10;
+  &_info {
+    display: flex;
+    gap: $size-10;
+    justify-items: center;
+    align-items: center;
+    img {
+      display: flex;
+      flex: 1 1 20%;
+      max-width: 20%;
+      height: 20%;
+      border-radius: $size-10;
+    }
+    span {
+      font-size: $size-14;
+    }
+  }
+  .links {
+    overflow-y: auto;
+    max-height: 70vh;
+
+    &_item {
+      display: flex;
+      justify-items: center;
+      align-items: center;
+      justify-content: space-between;
+      margin: 10px auto;
+      padding: 14px;
+      border-bottom: 1px solid $gray-200;
+      font-size: $size-20;
+    }
+  }
+}

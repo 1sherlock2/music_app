@@ -4,3 +4,9 @@ export type IIconWrapper = {
   width: string;
   height: string;
 };
+
+export type IIconWrapperProps = {
+  [x: string]: any;
+  size?: string;
+  color?: string;
+};

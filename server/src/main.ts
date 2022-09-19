@@ -10,6 +10,9 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { readFileSync } from 'fs';
 import { ValidationPipe } from '@nestjs/common';
 import { IndexModule } from './modules/index.module';
+import childProcess from 'child_process';
+import path from 'path';
+import findByPort from './utils/findByPort';
 
 const start = async () => {
   const ports = {
@@ -37,10 +40,13 @@ const start = async () => {
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     app.enableCors();
     await app.init();
+    // const aaa = childProcess.spawn(__filename);
+    await findByPort(7000);
+    // findProcess.default('port', 7000).then((list) => console.log(list));
     http.createServer(server).listen(ports.http, () => {
       console.log(`http server was started on ${ports.http}`);
     });
-    console.log(server);
+    // console.log(server);
     // https
     //   .createServer(httpsOptions, () => server)
     //   .listen(ports.https, () => {

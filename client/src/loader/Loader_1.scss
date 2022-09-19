@@ -1,5 +1,5 @@
 // https://github.com/MatejKustec/SpinThatShit
-@import '../styles/variables.scss';
+@import '~styles/variables.scss';
 
 $loader-color: #0052ec !default;
 $loader-size: 56px !default;
@@ -87,15 +87,13 @@ $loader-animation-duration: 1s !default;
 }
 
 .loader_1 {
+  position: relative;
   width: 20px;
   height: 20px;
   border: 8px solid $pink-400;
   border-right-color: transparent;
   border-radius: 50%;
-  position: absolute;
   animation: loader-rotate 1s linear infinite;
-  top: 35px;
-  left: 30px;
   margin: -28px auto 0;
 }
 .loader01::after {

@@ -1,14 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException
+} from '@nestjs/common';
 import * as uuid from 'uuid';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as fileFormats from 'file-formats';
+import nodeFetch from 'node-fetch';
+import { PassThrough } from 'stream';
 
 @Injectable()
 export class FilePathService {
-  create(file) {
+  create(file: Express.Multer.File, name?: string) {
     try {
       const fileFormat = file?.originalname.split('.').pop();
-      const fileName = `${uuid.v4()}.${fileFormat}`;
+      const fileName = `${name}_${uuid.v4()}.${fileFormat}`;
       const filePath = path.resolve(__dirname, '../..', 'assets');
       if (!fs.existsSync(filePath)) {
         fs.mkdirSync(filePath, { recursive: true });
@@ -17,18 +24,49 @@ export class FilePathService {
       fs.writeFileSync(fileExistion, Buffer.from(new Uint8Array(file.buffer)));
       return fileExistion;
     } catch (e) {
-      console.log(e);
+      throw new InternalServerErrorException(e);
     }
   }
+
   createFileStream(data: string): string {
-    const fileFormat = data.split('.').pop().replace(/\n/g, '');
-    const fileName = `${uuid.v4()}.${fileFormat}`;
-    const filePath = path.resolve(__dirname, '../..', 'assets', 'audio');
-    if (!fs.existsSync(filePath)) {
-      fs.mkdirSync(filePath, { recursive: true });
+    try {
+      const fileFormat = data.split('.').pop().replace(/\n/g, '');
+      const fileName = `${uuid.v4()}.${fileFormat}`;
+      const filePath = path.resolve(__dirname, '../..', 'assets', 'audio');
+      if (!fs.existsSync(filePath)) {
+        fs.mkdirSync(filePath, { recursive: true });
+      }
+      const fileExistion: string = path.resolve(filePath, fileName);
+      fs.writeFileSync(fileExistion, data);
+      return fileExistion;
+    } catch (e) {
+      throw new InternalServerErrorException(e);
     }
-    const fileExistion: string = path.resolve(filePath, fileName);
-    fs.writeFileSync(fileExistion, data);
-    return fileExistion;
+  }
+
+  downloadByUrl(url: string | undefined, name?: string, ext?: string) {
+    return new Promise((resolve, reject) => {
+      if (!url) {
+        reject(new Error('Url path is not found'));
+        return;
+      }
+      const audioExtentions = fileFormats.list();
+      audioExtentions.push('.m4a');
+      const isAudioFormat = audioExtentions.some((el) => el === `.${ext}`);
+      nodeFetch(url).then((responseFile) => {
+        const passStream = responseFile.body; // PassThrough;
+        const fileName = `${name || ''}_${uuid.v4()}.${
+          isAudioFormat ? ext : 'jpg'
+        }`;
+        const filePath = path.resolve(__dirname, '../..', 'assets', fileName);
+
+        passStream.on('data', (chunk) => {
+          fs.appendFileSync(filePath, chunk);
+          console.log(`Received ${chunk.length} bytes of data.`);
+        });
+        passStream.on('end', () => resolve(filePath));
+        passStream.on('error', (err) => reject(err));
+      });
+    });
   }
 }

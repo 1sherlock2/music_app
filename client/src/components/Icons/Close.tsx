@@ -1,8 +1,8 @@
 import React from 'react';
 import IconWrapper from './IconWrapper';
-import { IVisibility } from './Visibility/Visibility.interface';
+import { IIconWrapperProps } from './IconWrapper.interface';
 
-const Close = (props: any) => (
+const Close = (props: IIconWrapperProps) => (
   <IconWrapper {...props}>
     <svg viewBox="0 0 24 24">
       <path d="m12 10.59 2.885-2.885a.997.997 0 0 1 1.41 1.41L13.41 12l2.885 2.885a.997.997 0 1 1-1.41 1.41L12 13.41l-2.885 2.885a.997.997 0 1 1-1.41-1.41L10.59 12 7.705 9.115a.997.997 0 0 1 1.41-1.41L12 10.59z" />

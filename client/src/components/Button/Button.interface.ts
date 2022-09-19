@@ -1,10 +1,11 @@
 export interface IButton {
-  type?: string;
+  type: 'button' | 'submit' | 'reset';
   size?: 'l' | 'm' | 's';
   color?: 'pink' | 'white';
   children?: any;
   disabled?: boolean;
   onClick: () => void;
+  className: string;
 }
 
 export interface IButtonSize {

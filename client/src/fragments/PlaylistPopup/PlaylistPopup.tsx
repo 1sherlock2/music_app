@@ -1,15 +1,17 @@
 import React, {
   ChangeEventHandler,
+  DOMElement,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState
 } from 'react';
 import { createPortal } from 'react-dom';
 import { useRecoilValue } from 'recoil';
-import { Lazy, SwiperOptions } from 'swiper';
-import { Swiper, SwiperSlide, useSwiperSlide } from 'swiper/react/swiper-react';
+import { Lazy } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react/swiper-react';
 import 'swiper/swiper.scss';
 import useClickOutside from '../../hooks/useClickOutside';
 import useHlsLoad from '../../hooks/useHlsLoad';
@@ -27,6 +29,7 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
   generalIndexTrack,
   setOpen
 }) => {
+  const defaultTopPosition = 10;
   const [trackIndex, setTrackIndex] = useState<number>(generalIndexTrack || 0);
   const [repeat, setRepeat] = useState<keyof IRepeat>(repeatValue.allLoop);
   const [trackProgress, setTrackProgress] = useState<number>(0);
@@ -34,6 +37,9 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
   const [duration, setDuration] = useState<number>(0);
   const [volume, setVolume] = useState<number>(0.5);
   const [blockSwipe, setBlockSwipe] = useState<boolean>(false);
+  const [topPosition, setTopPosition] = useState<number>(defaultTopPosition);
+  const [transformByCloseY, setTransformByCloseY] = useState<boolean>(false);
+  const [fullHeight, setFullHeight] = useState<number>(0);
 
   const currentTrack = useMemo(
     () => allTracks[trackIndex],
@@ -59,7 +65,8 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     []
   );
 
-  const containerRef = useClickOutside(() => setOpen(false));
+  const containerOutRef = useClickOutside(() => setOpen(false));
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Следующий трек
   const goToNextTrack = useCallback(() => setTrackIndex((prev) => ++prev), []);
@@ -69,11 +76,6 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     () => setTrackIndex((prev) => --prev),
     []
   );
-
-  // Действия при начальной инициализации свайпера
-  // const initSwiper = (swiper) => {
-  //   console.log('init', swiper);
-  // };
 
   // Изменение трека свайпом
   const changeTrackSwipe = useCallback(
@@ -117,10 +119,14 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     setRepeat(repeatValue[repeat]);
   }, [repeat]);
 
+  // useEffects
   useEffect(() => {
     const rootEl = document.getElementById('root');
     const firstChild = rootEl?.firstElementChild;
     firstChild?.classList.add(s.hidden);
+
+    const { height } = containerRef.current?.getBoundingClientRect() as DOMRect;
+    setFullHeight(height);
   }, []);
 
   // Установка длительности трека
@@ -135,9 +141,8 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
         setTrackIndex(0);
       }
     }
-
     return () => {
-      setIsPlaying(false); // audioRef.current = false
+      setIsPlaying(false);
       hlsLoad.detachAudio();
     };
   }, [trackIndex]);
@@ -157,6 +162,12 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
       repeat === repeatValue.noLoop ? true : false;
   }, [repeat]);
 
+  useEffect(() => {
+    if (transformByCloseY) {
+      setTimeout(() => setOpen(false), 200);
+    }
+  }, [transformByCloseY]);
+
   const loopMode: boolean = useMemo(
     () => repeat === repeatValue.oneLoop,
     [repeat]
@@ -164,16 +175,22 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
 
   return createPortal(
     <div className={s.outside}>
-      <div ref={containerRef}>
+      <div
+        ref={useCombinedRef(containerOutRef, containerRef)}
+        className={s.container}
+      >
         <Swiper
+          style={{
+            top: `${topPosition}%`,
+            transform: `translateY(${transformByCloseY ? 100 : 0}%)`
+          }}
           className={s.swiper}
           spaceBetween={20}
-          // onInit={initSwiper}
           initialSlide={trackIndex}
-          onSlideChange={changeTrackSwipe}
           loop={loopMode}
           lazy
           modules={[Lazy]}
+          onSlideChange={changeTrackSwipe}
           onTouchMove={(swiper) => (swiper.allowTouchMove = !blockSwipe)}
           onTouchEnd={(swiper) => (swiper.allowTouchMove = !blockSwipe)}
         >
@@ -194,6 +211,10 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
                 setVolume={setVolume}
                 repeat={repeat}
                 changeCurrentTime={changeCurrentTime}
+                defaultTopPosition={defaultTopPosition}
+                setTopPosition={setTopPosition}
+                setTransformByCloseY={setTransformByCloseY}
+                fullHeight={fullHeight}
               />
             </SwiperSlide>
           ))}

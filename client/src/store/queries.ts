@@ -9,8 +9,8 @@ import {
 } from './queries.interface';
 
 const instanceDB = axios.create({
-  // baseURL: 'http://localhost:7000',
-  baseURL: 'http://192.168.0.100:7000',
+  baseURL: 'http://localhost:7000',
+  // baseURL: 'http://192.168.0.100:7000',
   // baseURL: 'http://10.254.1.164:7000',
   headers: {
     Authorization: authLocalStorage.getToken()
@@ -37,3 +37,9 @@ export const updatePositionTracksDB = async (replacedTrackIds: number[]) =>
 
 export const getUrlTrackStreamQuery = async (id: number) =>
   await instanceDB.post('/track/url', { trackId: id });
+
+export const dataByLinkDB = async (link: string) =>
+  await instanceDB.post('/track/download', { urlSrc: link });
+
+export const uploadFileByLinkDB = async (data) =>
+  await instanceDB.post('/track/upload_file', data);
