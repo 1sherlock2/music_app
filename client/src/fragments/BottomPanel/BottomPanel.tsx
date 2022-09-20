@@ -28,6 +28,7 @@ const BottomPanel: React.FC = () => {
           to={location}
           className={s.container_item}
           key={`${location}_${i}`}
+          reloadDocument
         >
           {icon}
         </Link>
