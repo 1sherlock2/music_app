@@ -11,5 +11,11 @@
 
   &_title {
     margin-top: $size-20;
+    max-height: $size-28;
+    max-width: 300px;
+    marquee {
+      overflow: visible;
+      -moz-binding: none;
+    }
   }
 }

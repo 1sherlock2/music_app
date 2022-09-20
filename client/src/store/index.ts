@@ -76,38 +76,6 @@ const checkAuth = selector({
   }
 });
 
-export type IallTraksByUser = {
-  id: number;
-  name: string;
-  artist: string;
-  img?: string;
-  audio: string;
-};
-
-const allTraksByUser = selector({
-  key: keyState.ALL_TRACKS_BY_USER,
-  get: async () => {
-    const { data }: AxiosResponse<IallTraksByUser[]> =
-      await allTracksByUserDB();
-    return data;
-  },
-  set: ({ set }, newValue) => {
-    const replacedTrackIds: false | number[] =
-      Array.isArray(newValue) && newValue.map((el: IallTraksByUser) => el.id);
-    if (replacedTrackIds && replacedTrackIds.length) {
-      (async () => {
-        await updatePositionTracksDB(replacedTrackIds);
-      })();
-      set(allTracksByUserAtom, newValue);
-    }
-  }
-});
-
-const allTracksByUserAtom = atom<IallTraksByUser[]>({
-  key: keyState.ALL_TRACKS_BY_USER_ATOM,
-  default: allTraksByUser
-});
-
 const getUrlTrackStream = selectorFamily({
   key: keyState.GET_URL_TRACK_STREAM,
   get: (id: number) => async () => {
@@ -125,8 +93,6 @@ export {
   setAuthData,
   checkAuth,
   getUrlTrackStream,
-  allTraksByUser,
-  allTracksByUserAtom,
   setRegistrData,
   responseRegister
 };

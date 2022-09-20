@@ -1,7 +1,12 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState
+} from 'recoil';
 import PlaylistPopup from '../PlaylistPopup/PlaylistPopup';
-import { allTracksByUserAtom, allTraksByUser } from '../../store/index';
 import {
   DragDropContext,
   Droppable,
@@ -13,6 +18,7 @@ import Img from '../../components/Img/Img';
 import s from './Playlist.scss';
 import { altImageSrc } from '../../store/altrImageSrc';
 import BottomPanel from '../BottomPanel/BottomPanel';
+import { allTracksByUserAtom, allTraksByUser } from './state';
 
 const Playlist: React.FC = () => {
   const allTracks = useRecoilValue(allTracksByUserAtom);
@@ -33,6 +39,10 @@ const Playlist: React.FC = () => {
     items.splice(result.destination.index, 0, reorderedItem);
     setOrderTracks(items);
   };
+
+  useEffect(() => {
+    setOrderTracks(allTracks);
+  }, []);
 
   return (
     <>
@@ -63,7 +73,7 @@ const Playlist: React.FC = () => {
                         </div>
                         <div className={s.container_track}>
                           <div className={s.container_track__name}>{name}</div>
-                          <div className={s.container_torderrack__author}>
+                          <div className={s.container_track__author}>
                             {artist}
                           </div>
                         </div>

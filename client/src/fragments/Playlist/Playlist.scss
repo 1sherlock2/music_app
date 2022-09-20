@@ -21,6 +21,7 @@
       justify-content: center;
       width: $size-50;
       height: $size-50;
+      flex: 1 0 15%;
 
       img {
         border-radius: $size-6;
@@ -35,13 +36,17 @@
       flex-wrap: nowrap;
       flex-direction: column;
       width: 100%;
-      gap: $size-6;
+      gap: $size-2;
+      white-space: nowrap;
+      overflow: hidden;
 
       &__name {
         @include font($size-20);
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
       &__author {
-        @include font($size-14, false, $gray-700);
+        @include font($size-16, false, $gray-700);
       }
     }
   }

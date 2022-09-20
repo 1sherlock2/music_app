@@ -103,10 +103,16 @@ export class TrackService {
     const tracksOrder = await this.orderTraks.findOne({
       where: { user: userId }
     });
-    const { order } = tracksOrder;
+    let { order } = tracksOrder;
     const collectionIdTrack: number[] = tracks.map((el) => el.id);
     if (!order.length) {
       await updateQueryForOrder(OrderTracks, collectionIdTrack, userId);
+    }
+    const excludeTracksId = collectionIdTrack.filter(
+      (orderId) => !order.includes(orderId)
+    );
+    if (excludeTracksId) {
+      order = [...excludeTracksId.reverse(), ...order];
     }
 
     const trackObject = tracks.reduce((acc, el) => {

@@ -23,8 +23,7 @@ const uploadFile = selectorFamily({
   key: keyState.UPLOAD_FILE,
   get: (data) => async () => {
     if (data) {
-      const response = await uploadFileByLinkDB(data);
-      return response.status;
+      return await uploadFileByLinkDB(data);
     }
     return false;
   }

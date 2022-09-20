@@ -51,7 +51,11 @@ const LineAndNameAudio: React.FC<ILineAndNameProps> = ({
       ref={containerRef}
     >
       <div className={s.audioName_line} />
-      <div className={s.audioName_title}>{`${name} - ${artist}`}</div>
+      <div className={s.audioName_title}>
+        <marquee width="300px">{`${name}${
+          artist ? '-' + artist : ''
+        }`}</marquee>
+      </div>
     </div>
   );
 };
