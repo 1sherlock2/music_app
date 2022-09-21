@@ -54,17 +54,24 @@ export class FilePathService {
       audioExtentions.push('.m4a');
       const isAudioFormat = audioExtentions.some((el) => el === `.${ext}`);
       nodeFetch(url).then((responseFile) => {
+        if (!responseFile.ok) {
+          reject(new Error(`Error by query: ${responseFile.url}`));
+        }
+
         const passStream = responseFile.body; // PassThrough;
         const fileName = `${name || ''}_${uuid.v4()}.${
           isAudioFormat ? ext : 'jpg'
         }`;
         const filePath = path.resolve(__dirname, '../..', 'assets', fileName);
-
         passStream.on('data', (chunk) => {
           fs.appendFileSync(filePath, chunk);
           console.log(`Received ${chunk.length} bytes of data.`);
         });
-        passStream.on('end', () => resolve(filePath));
+        passStream.on('end', () => {
+          console.log('END');
+          resolve(filePath);
+        });
+
         passStream.on('error', (err) => reject(err));
       });
     });

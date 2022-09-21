@@ -33,7 +33,6 @@ import nodeFetch from 'node-fetch';
 import * as fs from 'fs';
 import * as uuid from 'uuid';
 import * as path from 'path';
-import { HttpService } from '@nestjs/axios';
 import objectResultCloud from '../../utils/objectResultCloud';
 @Injectable()
 export class TrackService {
@@ -45,8 +44,7 @@ export class TrackService {
     @InjectRepository(User)
     private readonly userEntity: Repository<User>,
     private readonly cloudinaryService: CloudinaryService,
-    private readonly filePathService: FilePathService,
-    private readonly httpService: HttpService
+    private readonly filePathService: FilePathService
   ) {}
   async create({
     name,
@@ -189,7 +187,6 @@ export class TrackService {
   async uploadFileByLink({
     url: audioUrl,
     image: imageUrl,
-    title,
     ext,
     artist,
     name,
@@ -214,7 +211,7 @@ export class TrackService {
     const { cloudinaryImg, cloudinaryAudio } = objectResult;
     const user = await this.userEntity.findOne(userId);
     const trackSave = await this.trackEntity.create({
-      name: name || title,
+      name,
       artist,
       img: cloudinaryImg,
       audio: cloudinaryAudio,

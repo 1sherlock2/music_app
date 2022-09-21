@@ -1,5 +1,5 @@
-import React, { Suspense, useCallback, useState } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import React, { Suspense, useState } from 'react';
+import { useRecoilCallback } from 'recoil';
 import Button from '../../components/Button/Button';
 import Search from '../../components/Icons/Search';
 import Input from '../../components/Input/Input';
@@ -7,15 +7,19 @@ import { Loader_1 } from '../../loader/Loader_1';
 import BottomPanel from '../BottomPanel/BottomPanel';
 import s from './BrowserPage.scss';
 import MediaResult from './MediaResult/MediaResult';
-import { linkText, queryDataLink } from './state';
+import {
+  dataByUploadClick,
+  linkText,
+  queryDataLink,
+  uploadFile
+} from './state';
 
 const BrowserPage = () => {
   const [linkValue, setLinkValue] = useState<string>('');
-  const setLink = useSetRecoilState(linkText);
-  const handleClick = useCallback(() => {
-    setLink(linkValue);
-  }, [linkValue]);
-  console.log({ linkValue });
+  const handleClick = useRecoilCallback(({ set, reset }) => () => {
+    reset(dataByUploadClick);
+    set(linkText, linkValue);
+  });
   return (
     <>
       <div className={s.search}>

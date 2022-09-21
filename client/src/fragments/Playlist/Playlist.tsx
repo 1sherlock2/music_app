@@ -18,14 +18,19 @@ import Img from '../../components/Img/Img';
 import s from './Playlist.scss';
 import { altImageSrc } from '../../store/altrImageSrc';
 import BottomPanel from '../BottomPanel/BottomPanel';
-import { allTracksByUserAtom, allTraksByUser } from './state';
+import { allTraksByUser, refreshState } from './state';
 
 const Playlist: React.FC = () => {
-  const allTracks = useRecoilValue(allTracksByUserAtom);
+  const allTracks = useRecoilValue(allTraksByUser);
   const setOrderTracks = useSetRecoilState(allTraksByUser);
   // const trackRefs: any = useRef(allTracks?.map(() => React.createRef()));
   const [generalIndexTrack, setTrackIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
+  const [refreshPage, setRefreshPage] = useRecoilState(refreshState);
+
+  if (refreshPage) {
+    setRefreshPage(!refreshPage);
+  }
 
   const handleClick = useCallback((index: number) => {
     setTrackIndex(index);

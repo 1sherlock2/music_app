@@ -11,17 +11,15 @@ const allTracksByDB = async (): Promise<AxiosResponse<IallTraksByUser[]>> => {
 const allTraksByUser = selector({
   key: keyState.ALL_TRACKS_BY_USER,
   get: async () => {
-    console.log('data');
     const { data } = await allTracksByDB();
     return data;
   },
   set: ({ set, get }, newValue: IallTraksByUser[] | DefaultValue) => {
-    console.log('set');
+    const availableTracks = get(allTracksByUserAtom);
     (async () => {
-      const availableTracks = get(allTracksByUserAtom);
       const { data } = await allTracksByDB();
       if (data.length > availableTracks.length) {
-        set(allTracksByUserAtom, data);
+        set(refreshState, true);
       }
     })();
     const replacedTrackIds: false | number[] =
@@ -34,10 +32,11 @@ const allTraksByUser = selector({
     }
   }
 });
+const refreshState = atom({ key: keyState.REFRESH_PLAYLIST, default: false });
 
 const allTracksByUserAtom = atom<IallTraksByUser[]>({
   key: keyState.ALL_TRACKS_BY_USER_ATOM,
   default: allTraksByUser || []
 });
 
-export { allTraksByUser, allTracksByUserAtom };
+export { allTraksByUser, allTracksByUserAtom, refreshState };

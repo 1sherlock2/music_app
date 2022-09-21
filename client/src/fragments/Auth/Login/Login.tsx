@@ -8,7 +8,7 @@ import {
 import Input from '../../../components/Input/Input';
 import s from './Login.scss';
 import { Loader_1 } from '../../../loader/Loader_1';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [nicknameInput, setNicknameInput] = useState('');
@@ -19,7 +19,7 @@ const Login = () => {
   const [errorAuth, setErrorAuth] =
     useState<SetStateAction<boolean | string>>(false);
   const [loginLoading, setloginLoading] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -29,7 +29,7 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuth) {
-      history.push('/');
+      navigate('/');
     }
   }, [isAuth]);
 

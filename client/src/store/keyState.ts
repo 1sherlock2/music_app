@@ -10,5 +10,7 @@ export default {
   GET_URL_TRACK_STREAM: 'getUrlTrackStream',
   LINK_TEXT: 'linkText',
   QUERY_DATA_LINK: 'queryDataLink',
-  UPLOAD_FILE: 'uploadFile'
+  UPLOAD_FILE: 'uploadFile',
+  REFRESH_PLAYLIST: 'refreshPlaylist',
+  DATA_BY_UPLOAD: 'dataByUpload'
 } as { [key: string]: string };

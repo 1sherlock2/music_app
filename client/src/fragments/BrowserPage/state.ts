@@ -2,11 +2,8 @@ import { atom, selector, selectorFamily } from 'recoil';
 import keyState from '../../store/keyState';
 import { dataByLinkDB, uploadFileByLinkDB } from '../../store/queries';
 
-const linkText = atom<string>({ key: keyState.LINK_TEXT, default: '' });
-const uploadStatus = atom<boolean>({
-  key: keyState.UPLOAD_STATUS,
-  default: false
-});
+const linkText = atom({ key: keyState.LINK_TEXT, default: '' });
+console.log({ linkText });
 
 const queryDataLink = selector({
   key: keyState.QUERY_DATA_LINK,
@@ -19,14 +16,15 @@ const queryDataLink = selector({
   }
 });
 
-const uploadFile = selectorFamily({
+const dataByUploadClick = atom({ key: keyState.DATA_BY_UPLOAD, default: '' });
+const uploadFile = selector({
   key: keyState.UPLOAD_FILE,
-  get: (data) => async () => {
+  get: async ({ get }) => {
+    const data = get(dataByUploadClick);
     if (data) {
       return await uploadFileByLinkDB(data);
     }
-    return false;
   }
 });
 
-export { linkText, queryDataLink, uploadFile };
+export { linkText, queryDataLink, uploadFile, dataByUploadClick };

@@ -14,7 +14,6 @@ import {
   setRegistrData
 } from '../../../store/index';
 import responseMessages from '../../../store/responseMessages';
-import { useHistory } from 'react-router-dom';
 
 const Registration: React.FC = () => {
   const [name, setName] = useState('');

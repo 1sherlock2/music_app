@@ -2,7 +2,6 @@ import { Type } from 'class-transformer';
 import {
   IsArray,
   IsDefined,
-  isInstance,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -43,10 +42,6 @@ export class UploadFileByLinkDTO {
 
   @IsString()
   @IsNotEmpty()
-  title: string;
-
-  @IsString()
-  @IsNotEmpty()
   ext: string;
 
   @IsString()
@@ -54,6 +49,6 @@ export class UploadFileByLinkDTO {
   artist?: string;
 
   @IsString()
-  @IsOptional()
-  name?: string;
+  @IsNotEmpty()
+  name: string;
 }
