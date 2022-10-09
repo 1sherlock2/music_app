@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { IDataByQuery } from '../fragments/BrowserPage/MediaResult/DownloadedUrl/DownloadedUrl.interface';
 import { authLocalStorage } from '../utils/localStorage';
 import {
   ICheckLoginQuery,
@@ -41,5 +42,5 @@ export const getUrlTrackStreamQuery = async (id: number) =>
 export const dataByLinkDB = async (link: string) =>
   await instanceDB.post('/track/download', { urlSrc: link });
 
-export const uploadFileByLinkDB = async (data) =>
+export const uploadFileByLinkDB = async (data: IDataByQuery | string) =>
   await instanceDB.post('/track/upload_file', data);

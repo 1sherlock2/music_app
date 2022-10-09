@@ -1,4 +1,4 @@
-import { IallTraksByUser } from '../../store';
+import { IallTraksByUser } from '../Playlist/Playlist.interface';
 
 export type IPlaylistPopup = {
   allTracks?: IallTraksByUser[] | [];

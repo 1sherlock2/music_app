@@ -7,12 +7,7 @@ import { Loader_1 } from '../../loader/Loader_1';
 import BottomPanel from '../BottomPanel/BottomPanel';
 import s from './BrowserPage.scss';
 import MediaResult from './MediaResult/MediaResult';
-import {
-  dataByUploadClick,
-  linkText,
-  queryDataLink,
-  uploadFile
-} from './state';
+import { dataByUploadClick, linkText } from './state';
 
 const BrowserPage = () => {
   const [linkValue, setLinkValue] = useState<string>('');

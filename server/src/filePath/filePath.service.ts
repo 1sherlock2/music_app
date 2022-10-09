@@ -1,4 +1,6 @@
 import {
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException
@@ -53,27 +55,39 @@ export class FilePathService {
       const audioExtentions = fileFormats.list();
       audioExtentions.push('.m4a');
       const isAudioFormat = audioExtentions.some((el) => el === `.${ext}`);
-      nodeFetch(url).then((responseFile) => {
-        if (!responseFile.ok) {
-          reject(new Error(`Error by query: ${responseFile.url}`));
-        }
+      nodeFetch(url)
+        .then((responseFile) => {
+          if (!responseFile.ok) {
+            reject(
+              new HttpException(
+                {
+                  error: `Error by query: ${responseFile.url}`,
+                  message: false
+                },
+                HttpStatus.NOT_FOUND
+              )
+            );
+          }
 
-        const passStream = responseFile.body; // PassThrough;
-        const fileName = `${name || ''}_${uuid.v4()}.${
-          isAudioFormat ? ext : 'jpg'
-        }`;
-        const filePath = path.resolve(__dirname, '../..', 'assets', fileName);
-        passStream.on('data', (chunk) => {
-          fs.appendFileSync(filePath, chunk);
-          console.log(`Received ${chunk.length} bytes of data.`);
-        });
-        passStream.on('end', () => {
-          console.log('END');
-          resolve(filePath);
-        });
+          const passStream = responseFile.body; // PassThrough;
+          const fileName = `${name || ''}_${uuid.v4()}.${
+            isAudioFormat ? ext : 'jpg'
+          }`;
+          const filePath = path.resolve(__dirname, '../..', 'assets', fileName);
+          passStream.on('data', (chunk) => {
+            fs.appendFileSync(filePath, chunk);
+            console.log(`Received ${chunk.length} bytes of data.`);
+          });
+          passStream.on('end', () => {
+            console.log('END');
+            resolve(filePath);
+          });
 
-        passStream.on('error', (err) => reject(err));
-      });
+          passStream.on('error', (err) => reject(err));
+        })
+        .catch((e) => {
+          throw new NotFoundException(e);
+        });
     });
   }
 }

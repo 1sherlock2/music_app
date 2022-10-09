@@ -26,7 +26,7 @@ const Button: React.FC<IButton> = ({
   });
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    onClick();
+    onClick?.();
   };
 
   return (

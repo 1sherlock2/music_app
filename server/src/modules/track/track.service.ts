@@ -17,10 +17,8 @@ import {
   IDownloadAudioProps,
   IDownloadByLink,
   IDownloadResult,
-  IResultCloudinary,
   ITrackCreate,
-  ITrackCreateStatus,
-  IUploadStatus
+  ITrackCreateStatus
 } from './interfaces/track.interface';
 import { OrderTracks } from '../../db/entity/orderTracks.entity';
 import { Track } from '../../db/entity/track.entity';
@@ -30,9 +28,6 @@ import httpMessages from '../../utils/httpMessages';
 import { User } from '../../db/entity/user.entity';
 import optionsDownload from './utils/optionsDownload';
 import nodeFetch from 'node-fetch';
-import * as fs from 'fs';
-import * as uuid from 'uuid';
-import * as path from 'path';
 import objectResultCloud from '../../utils/objectResultCloud';
 @Injectable()
 export class TrackService {
@@ -175,9 +170,7 @@ export class TrackService {
         throw new NotFoundException(httpMessages.contentIsNotFound);
       }
 
-      const modifyUrls = url.filter(
-        (item) => !!item.audio && item.ext === 'm4a'
-      );
+      const modifyUrls = url.filter((item) => !!item.audio);
       return { id, title, thumbnail, duration, url: modifyUrls };
     } catch (e) {
       throw new InternalServerErrorException(e);
@@ -198,7 +191,7 @@ export class TrackService {
       audioPath = await this.filePathService.downloadByUrl(audioUrl, name, ext);
       imgPath = await this.filePathService.downloadByUrl(imageUrl);
     } catch (e) {
-      throw new NotFoundException(e.message);
+      throw new NotFoundException(e);
     }
 
     const multipleUpload = [audioPath, imgPath]

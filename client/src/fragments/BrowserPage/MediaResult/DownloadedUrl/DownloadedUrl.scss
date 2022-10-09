@@ -1,0 +1,18 @@
+@import '~styles/variables.scss';
+
+.links_item {
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  min-height: $size-64;
+  justify-content: space-between;
+  margin: 10px auto;
+  padding: 14px;
+  border-bottom: 1px solid $gray-200;
+  font-size: $size-20;
+
+  &__url {
+    position: relative;
+    min-width: $size-36;
+  }
+}

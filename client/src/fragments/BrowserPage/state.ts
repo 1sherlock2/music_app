@@ -1,22 +1,14 @@
-import { atom, selector, selectorFamily } from 'recoil';
+import { atom, selector } from 'recoil';
 import keyState from '../../store/keyState';
-import { dataByLinkDB, uploadFileByLinkDB } from '../../store/queries';
+import { uploadFileByLinkDB } from '../../store/queries';
+import { IDataByQuery } from './MediaResult/DownloadedUrl/DownloadedUrl.interface';
 
 const linkText = atom({ key: keyState.LINK_TEXT, default: '' });
-console.log({ linkText });
 
-const queryDataLink = selector({
-  key: keyState.QUERY_DATA_LINK,
-  get: async ({ get }) => {
-    const link = get(linkText);
-    if (link) {
-      const response = await dataByLinkDB(link);
-      return response.data;
-    }
-  }
+const dataByUploadClick = atom<IDataByQuery | string>({
+  key: keyState.DATA_BY_UPLOAD,
+  default: ''
 });
-
-const dataByUploadClick = atom({ key: keyState.DATA_BY_UPLOAD, default: '' });
 const uploadFile = selector({
   key: keyState.UPLOAD_FILE,
   get: async ({ get }) => {
@@ -27,4 +19,4 @@ const uploadFile = selector({
   }
 });
 
-export { linkText, queryDataLink, uploadFile, dataByUploadClick };
+export { linkText, uploadFile, dataByUploadClick };
