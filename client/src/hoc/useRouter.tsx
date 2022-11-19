@@ -6,6 +6,7 @@ import ProtectedRoute from './ProtectedRoute';
 import BrowserPage from '../fragments/BrowserPage/BrowserPage';
 import { Navigate, useRoutes } from 'react-router-dom';
 import ErrorFallback from '../fragments/ErrorFallback/ErrorFallback';
+import Settings from '../fragments/Settings/Settings';
 
 const AppRoutes = () => {
   const routes = [
@@ -23,6 +24,10 @@ const AppRoutes = () => {
         {
           path: 'browser',
           element: <ProtectedRoute component={BrowserPage} />
+        },
+        {
+          path: 'settings',
+          element: <ProtectedRoute component={Settings} />
         },
         {
           path: '/',
