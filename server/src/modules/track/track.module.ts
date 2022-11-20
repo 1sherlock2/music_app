@@ -7,6 +7,7 @@ import { OrderTracks } from '../../db/entity/orderTracks.entity';
 import { Track } from '../../db/entity/track.entity';
 import { User } from '../../db/entity/user.entity';
 import { FilePathModule } from '../../filePath/filePath.module';
+import { WorkerPool } from '../../workerPool';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import { UserModule } from '../user/user.module';
 import { TrackController } from './track.controller';
@@ -27,7 +28,7 @@ import { TrackService } from './track.service';
       inject: [ConfigService]
     })
   ],
-  providers: [TrackService],
+  providers: [TrackService, WorkerPool],
   controllers: [TrackController]
 })
 export class TrackModule {}

@@ -18,7 +18,7 @@ const panelChild: IBottomPanel[] = [
   },
   {
     icon: <SettingsIcon size="30px" color="#333" />,
-    location: '/'
+    location: '/settings'
   }
 ];
 const BottomPanel: React.FC = () => {

@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfigAsync } from '../typeOrmConfig/typeorm.config';
 import { TrackModule } from './track/track.module';
 import { UserModule } from './user/user.module';
-import * as memoryStorage from 'multer';
+import memoryStorage from 'multer';
 import { RolesModule } from './roles/roles.module';
 
 @Module({

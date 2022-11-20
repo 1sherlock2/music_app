@@ -4,7 +4,7 @@ import { join } from 'path';
 import * as https from 'https';
 import * as http from 'http';
 import documentationConfig from '../documentation/config';
-import * as express from 'express';
+import express from 'express';
 import { ExpressAdapter } from '@nestjs/platform-express';
 
 import { readFileSync } from 'fs';

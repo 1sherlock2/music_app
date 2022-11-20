@@ -20,7 +20,7 @@ import { altImageSrc } from '../../store/altrImageSrc';
 import BottomPanel from '../BottomPanel/BottomPanel';
 import { allTraksByUser, refreshState } from './state';
 
-const Playlist: React.FC = () => {
+const Playlist = () => {
   const allTracks = useRecoilValue(allTraksByUser);
   const setOrderTracks = useSetRecoilState(allTraksByUser);
   // const trackRefs: any = useRef(allTracks?.map(() => React.createRef()));

@@ -1,6 +1,7 @@
 import {
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException
@@ -29,6 +30,7 @@ import { User } from '../../db/entity/user.entity';
 import optionsDownload from './utils/optionsDownload';
 import nodeFetch from 'node-fetch';
 import objectResultCloud from '../../utils/objectResultCloud';
+import { WorkerPool } from '../../workerPool';
 @Injectable()
 export class TrackService {
   constructor(
@@ -39,7 +41,10 @@ export class TrackService {
     @InjectRepository(User)
     private readonly userEntity: Repository<User>,
     private readonly cloudinaryService: CloudinaryService,
-    private readonly filePathService: FilePathService
+    private readonly filePathService: FilePathService,
+    // @Inject(new WorkerPool('./utils/downloadByUrl.ts'))
+    // private readonly workerPool
+    private readonly workerPool: WorkerPool
   ) {}
   async create({
     name,
@@ -188,8 +193,10 @@ export class TrackService {
     let audioPath;
     let imgPath;
     try {
-      audioPath = await this.filePathService.downloadByUrl(audioUrl, name, ext);
-      imgPath = await this.filePathService.downloadByUrl(imageUrl);
+      audioPath = await this.workerPool.run(audioUrl, name, ext);
+      imgPath = await this.workerPool.run(imageUrl);
+      // audioPath = await this.filePathService.downloadByUrl(audioUrl, name, ext);
+      // imgPath = await this.filePathService.downloadByUrl(imageUrl);
     } catch (e) {
       throw new NotFoundException(e);
     }

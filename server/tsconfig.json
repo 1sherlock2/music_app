@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "esModuleInterop": true,
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -17,6 +18,11 @@
   "ts-node": {
     "esm": true
   },
-  "include": ["src/**/*", "lib.es5.d.ts"],
+  "include": [
+    "src/**/*",
+    "lib.es5.d.ts",
+    "src/modules/workerPool/.ts",
+    "workerPool"
+  ],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

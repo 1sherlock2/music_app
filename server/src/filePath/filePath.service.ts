@@ -10,7 +10,6 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as fileFormats from 'file-formats';
 import nodeFetch from 'node-fetch';
-import { PassThrough } from 'stream';
 
 @Injectable()
 export class FilePathService {

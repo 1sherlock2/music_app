@@ -9,7 +9,7 @@ import { IAudioURL } from '../MediaResult.interface';
 import { IDataByQuery, IDownloadedUrl } from './DownloadedUrl.interface';
 import s from './DownloadedUrl.scss';
 
-const DownloadedUrl = ({
+const DownloadedUrl: React.FC<IDownloadedUrl> = ({
   ext,
   id,
   audioCodec,
@@ -18,7 +18,7 @@ const DownloadedUrl = ({
   thumbnail,
   artist,
   name
-}: IDownloadedUrl) => {
+}) => {
   const prevAudioUrl = usePrevious(audioUrl);
   const [uploadStatus, setUploadStatus] = useState('');
   const [dataByQuery, setDataByQuery] = useState<IDataByQuery>();

@@ -5,6 +5,7 @@
   flex: 3 1;
   gap: $size-10;
   margin-top: $size-20;
+  max-height: 230px;
 
   .image {
     display: flex;
@@ -14,10 +15,11 @@
     flex-direction: column;
     justify-content: center;
 
-    .image_title {
+    &_title {
       display: flex;
       justify-content: space-around;
       align-items: center;
+      height: 100%;
 
       img {
         border-radius: 15%;
