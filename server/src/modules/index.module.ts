@@ -7,6 +7,7 @@ import { TrackModule } from './track/track.module';
 import { UserModule } from './user/user.module';
 import memoryStorage from 'multer';
 import { RolesModule } from './roles/roles.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { RolesModule } from './roles/roles.module';
     MulterModule.register({
       storage: memoryStorage()
     }),
+    ScheduleModule.forRoot(),
     TrackModule,
     UserModule,
     RolesModule

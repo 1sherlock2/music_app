@@ -19,6 +19,7 @@ import {
   IRegistrationStatus
 } from '../../interfaces/user.register_status.interface';
 import httpMessages from '../../utils/httpMessages';
+import { EmailService } from '../email/email.service';
 import { LoginDTO, UserCreateDTO } from './dto/user.dto';
 import updateQueryForUser from './utils/updateQueryForUser';
 
@@ -30,7 +31,8 @@ export class UserService {
     @InjectRepository(OrderTracks)
     private readonly orderTraksEntity: Repository<OrderTracks>,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly emailService: EmailService
   ) {}
 
   async create(userDTO: UserCreateDTO): Promise<IRegistrationStatus> {
@@ -52,6 +54,10 @@ export class UserService {
         email,
         roles
       });
+
+      // верификационная ссылка
+      await this.emailService.sendVerificationLink(email);
+
       await this.userEntity.save(userSave);
 
       // Создание взаимосвязи с таблицей порядка треков
@@ -59,8 +65,8 @@ export class UserService {
         order: [],
         user: userSave
       });
-      await this.orderTraksEntity.save(identifyTrakIdsSave);
 
+      await this.orderTraksEntity.save(identifyTrakIdsSave);
       const result = {
         success: true,
         message: httpMessages.userWasCreated,

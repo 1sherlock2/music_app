@@ -40,9 +40,7 @@ const start = async () => {
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     app.enableCors();
     await app.init();
-    // const aaa = childProcess.spawn(__filename);
     await findByPort(7000);
-    // findProcess.default('port', 7000).then((list) => console.log(list));
     http.createServer(server).listen(ports.http, () => {
       console.log(`http server was started on ${ports.http}`);
     });

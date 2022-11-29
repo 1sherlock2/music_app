@@ -193,10 +193,10 @@ export class TrackService {
     let audioPath;
     let imgPath;
     try {
-      audioPath = await this.workerPool.run(audioUrl, name, ext);
-      imgPath = await this.workerPool.run(imageUrl);
-      // audioPath = await this.filePathService.downloadByUrl(audioUrl, name, ext);
-      // imgPath = await this.filePathService.downloadByUrl(imageUrl);
+      // audioPath = await this.workerPool.run(audioUrl, name, ext);
+      // imgPath = await this.workerPool.run(imageUrl);
+      audioPath = await this.filePathService.downloadByUrl(audioUrl, name, ext);
+      imgPath = await this.filePathService.downloadByUrl(imageUrl);
     } catch (e) {
       throw new NotFoundException(e);
     }

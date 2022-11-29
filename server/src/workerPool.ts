@@ -4,16 +4,15 @@ import * as path from 'path';
 
 @Injectable()
 export class WorkerPool {
-  private pool: Piscina;
-  constructor() {
-    this.pool = new Piscina({
-      filename: path.resolve(__dirname, 'modules/track/utils/downloadByUrl.js')
-    });
-  }
-
-  public async run(...params) {
-    await this.pool.run(params);
-  }
+  // private pool: Piscina;
+  // constructor() {
+  //   this.pool = new Piscina({
+  //     filename: path.resolve(__dirname, 'modules/track/utils/downloadByUrl.js')
+  //   });
+  // }
+  // public async run(...params) {
+  //   await this.pool.run(params);
+  // }
 }
 
 // constructor(name) {
