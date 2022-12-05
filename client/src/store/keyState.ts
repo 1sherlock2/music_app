@@ -11,6 +11,7 @@ export default {
   LINK_TEXT: 'linkText',
   QUERY_DATA_LINK: 'queryDataLink',
   UPLOAD_FILE: 'uploadFile',
-  REFRESH_PLAYLIST: 'refreshPlaylist',
-  DATA_BY_UPLOAD: 'dataByUpload'
+  DATA_BY_UPLOAD: 'dataByUpload',
+  SEND_TOKEN: 'sendToken',
+  TRACKS_COUNT: 'tracksCount'
 } as { [key: string]: string };

@@ -49,5 +49,5 @@ export class User {
   updated: Date;
 
   @Column('boolean', { default: false })
-  emailConfirmed: boolean;
+  isEmailConfirmed: boolean;
 }

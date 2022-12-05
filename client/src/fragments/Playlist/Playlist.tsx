@@ -18,19 +18,29 @@ import Img from '../../components/Img/Img';
 import s from './Playlist.scss';
 import { altImageSrc } from '../../store/altrImageSrc';
 import BottomPanel from '../BottomPanel/BottomPanel';
-import { allTraksByUser, refreshState } from './state';
+import { allTracksByUserAtom, allTraksByUser, tracksCount } from './state';
+import { allTracksByUserDB, checkTrackCountDB } from '../../store/queries';
 
 const Playlist = () => {
-  const allTracks = useRecoilValue(allTraksByUser);
+  const [allTracks, setAllTracks] = useRecoilState(allTraksByUser);
   const setOrderTracks = useSetRecoilState(allTraksByUser);
+  const [allTracksCount, setAllTrackCount] = useRecoilState(tracksCount);
   // const trackRefs: any = useRef(allTracks?.map(() => React.createRef()));
   const [generalIndexTrack, setTrackIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
-  const [refreshPage, setRefreshPage] = useRecoilState(refreshState);
 
-  if (refreshPage) {
-    setRefreshPage(!refreshPage);
-  }
+  useEffect(() => {
+    (async () => {
+      const { data } = await checkTrackCountDB();
+      if (data !== allTracksCount) {
+        setAllTrackCount(data);
+        {
+          const { data } = await allTracksByUserDB();
+          setAllTracks(data);
+        }
+      }
+    })();
+  });
 
   const handleClick = useCallback((index: number) => {
     setTrackIndex(index);
@@ -59,34 +69,37 @@ const Playlist = () => {
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {allTracks?.map((track, index) => {
-                const { id, img, artist, name } = track;
-                return (
-                  <Draggable key={id} draggableId={`${id}`} index={index}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        key={`${id}_${index}`}
-                        // ref={trackRefs.current[index]}
-                        className={s.container}
-                        onClick={() => handleClick(index)}
-                      >
-                        <div className={s.container_img}>
-                          <Img src={img} altSrc={altImageSrc} />
-                        </div>
-                        <div className={s.container_track}>
-                          <div className={s.container_track__name}>{name}</div>
-                          <div className={s.container_track__author}>
-                            {artist}
+              {allTracks?.length > 0 &&
+                allTracks.map((track, index) => {
+                  const { id, img, artist, name } = track;
+                  return (
+                    <Draggable key={id} draggableId={`${id}`} index={index}>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          key={`${id}_${index}`}
+                          // ref={trackRefs.current[index]}
+                          className={s.container}
+                          onClick={() => handleClick(index)}
+                        >
+                          <div className={s.container_img}>
+                            <Img src={img} altSrc={altImageSrc} />
+                          </div>
+                          <div className={s.container_track}>
+                            <div className={s.container_track__name}>
+                              {name}
+                            </div>
+                            <div className={s.container_track__author}>
+                              {artist}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </Draggable>
-                );
-              })}
+                      )}
+                    </Draggable>
+                  );
+                })}
               {open && !!allTracks.length && (
                 <PlaylistPopup
                   allTracks={allTracks}

@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import memoryStorage from 'multer';
 import { RolesModule } from './roles/roles.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     ScheduleModule.forRoot(),
     TrackModule,
     UserModule,
-    RolesModule
+    RolesModule,
+    EmailModule
   ]
 })
 export class IndexModule {}

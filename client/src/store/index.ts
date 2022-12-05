@@ -22,12 +22,17 @@ const setRegistrData = atom({
 const responseRegister = selector({
   key: keyState.RESPONSE_REGISTER,
   get: async ({ get }) => {
-    const { nickname, email, password } = get(setRegistrData);
-    if (nickname && email && password) {
-      const response = await registerDataDB({ nickname, email, password });
+    const registerData = get(setRegistrData);
+
+    if (Object.values(registerData).filter(Boolean).length) {
+      const response = await registerDataDB(registerData);
+      console.log({ response });
       const {
         data: { success, message }
       } = response;
+      if (!success) {
+        return { success: false, message };
+      }
       return { success, message };
     }
   }
@@ -66,11 +71,15 @@ const loginQuery = selector({
 const checkAuth = selector({
   key: keyState.CHECK_AUTH,
   get: async () => {
-    const response = await checkAuthDB();
-    const { success } = response?.data;
-    if (success) {
-      return true;
-    } else if (!success) {
+    try {
+      const response = await checkAuthDB();
+      const { success } = response?.data;
+      if (success) {
+        return true;
+      } else if (!success) {
+        return false;
+      }
+    } catch (e) {
       return false;
     }
   }

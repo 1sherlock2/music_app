@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { IDataByQuery } from '../fragments/BrowserPage/MediaResult/DownloadedUrl/DownloadedUrl.interface';
 import { authLocalStorage } from '../utils/localStorage';
 import {
@@ -10,14 +10,14 @@ import {
 } from './queries.interface';
 
 const instanceDB = axios.create({
-  baseURL: 'http://localhost:7000',
+  baseURL: 'http://localhost:7000'
   // baseURL: 'http://192.168.0.100:7000',
   // baseURL: 'http://10.254.1.164:7000',
-  headers: {
-    Authorization: authLocalStorage.getToken()
-  }
 });
-
+instanceDB.interceptors.request.use((config) => {
+  config.headers['Authorization'] = authLocalStorage.getToken();
+  return config;
+});
 export const loginDataDB = async ({
   nickname,
   password
@@ -26,13 +26,20 @@ export const loginDataDB = async ({
 
 export const registerDataDB = async (
   registerData: IRegisterDTO
-): Promise<IRegisterData> =>
-  await instanceDB.post('/user/register', registerData);
+  // ): Promise<IRegisterData> =>
+): Promise<void | AxiosResponse<IRegisterData>> =>
+  await instanceDB
+    .post('/user/register', registerData)
+    .catch((e) => e.response);
 
 export const checkAuthDB = async (): Promise<ICheckLoginQuery> =>
   await instanceDB.get('/user/check');
 
 export const allTracksByUserDB = async () => await instanceDB.get('/track');
+
+export const checkTrackCountDB = async (): Promise<AxiosResponse<number>> =>
+  await instanceDB.get('/track/count');
+
 export const updatePositionTracksDB = async (replacedTrackIds: number[]) =>
   await instanceDB.post('/track/updatePos', { order: replacedTrackIds });
 
@@ -44,3 +51,6 @@ export const dataByLinkDB = async (link: string) =>
 
 export const uploadFileByLinkDB = async (data: IDataByQuery | string) =>
   await instanceDB.post('/track/upload_file', data);
+
+export const sendTokenByConfirmDB = async (token: string) =>
+  await instanceDB.post('/email/confirm', token);

@@ -1,12 +1,21 @@
 import { AxiosResponse } from 'axios';
 import { atom, DefaultValue, selector } from 'recoil';
 import keyState from '../../store/keyState';
-import { allTracksByUserDB, updatePositionTracksDB } from '../../store/queries';
+import {
+  allTracksByUserDB,
+  checkTrackCountDB,
+  updatePositionTracksDB
+} from '../../store/queries';
 import { IallTraksByUser } from './Playlist.interface';
 
 const allTracksByDB = async (): Promise<AxiosResponse<IallTraksByUser[]>> => {
   return await allTracksByUserDB();
 };
+
+const tracksCount = atom({
+  key: keyState.TRACKS_COUNT,
+  default: 0
+});
 
 const allTraksByUser = selector({
   key: keyState.ALL_TRACKS_BY_USER,
@@ -14,14 +23,7 @@ const allTraksByUser = selector({
     const { data } = await allTracksByDB();
     return data;
   },
-  set: ({ set, get }, newValue: IallTraksByUser[] | DefaultValue) => {
-    const availableTracks = get(allTracksByUserAtom);
-    (async () => {
-      const { data } = await allTracksByDB();
-      if (data.length > availableTracks.length) {
-        set(refreshState, true);
-      }
-    })();
+  set: ({ set }, newValue: IallTraksByUser[] | DefaultValue) => {
     const replacedTrackIds: false | number[] =
       Array.isArray(newValue) && newValue.map((el: IallTraksByUser) => el.id);
     if (replacedTrackIds && replacedTrackIds.length) {
@@ -32,11 +34,10 @@ const allTraksByUser = selector({
     }
   }
 });
-const refreshState = atom({ key: keyState.REFRESH_PLAYLIST, default: false });
 
 const allTracksByUserAtom = atom<IallTraksByUser[]>({
   key: keyState.ALL_TRACKS_BY_USER_ATOM,
   default: allTraksByUser || []
 });
 
-export { allTraksByUser, allTracksByUserAtom, refreshState };
+export { allTraksByUser, allTracksByUserAtom, tracksCount };

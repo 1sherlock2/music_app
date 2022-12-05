@@ -8,6 +8,8 @@ import { Navigate } from 'react-router-dom';
 const ProtectedRoute = ({ component: Component }: IProtectedRouteProps) => {
   const isAuth = useRecoilValue(isAuthentication);
   const isCheck = useRecoilValue(checkAuth);
+
+  console.log({ isAuth, isCheck });
   const checkAuthentication = authLocalStorage.getToken() && isCheck;
 
   return isAuth || checkAuthentication ? (

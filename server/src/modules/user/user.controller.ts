@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   HttpStatus,
   Post,
   Request,
@@ -16,7 +17,6 @@ import {
   UserCreateDTO
 } from './dto/user.dto';
 import { IRegistrationStatus } from '../../interfaces/user.register_status.interface';
-import { errorMessage } from '../../utils/httpErrorObject';
 import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../../enums/role.enum';
 import { RolesGuard } from '../roles/roles.guard';
@@ -28,20 +28,13 @@ export class UserController {
   async register(
     @Body() createUserDto: UserCreateDTO
   ): Promise<IRegistrationStatus> {
-    try {
-      return await this.userService.create(createUserDto);
-    } catch (e) {
-      return errorMessage(false, HttpStatus.INTERNAL_SERVER_ERROR, e);
-    }
+    return await this.userService.create(createUserDto);
   }
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   async login(@Body() loginService: LoginDTO) {
-    try {
-      return await this.userService.authenticate(loginService);
-    } catch (e) {
-      return errorMessage(false, HttpStatus.INTERNAL_SERVER_ERROR, e);
-    }
+    return await this.userService.authenticate(loginService);
   }
 
   @Post('change_pass')

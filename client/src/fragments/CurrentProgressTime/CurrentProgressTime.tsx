@@ -89,7 +89,7 @@ const CurrentProgressTime: React.FC<ICurrentProgressTime> = ({
       >
         <div className={s.loaded} style={{ width: `${durationForWidth}%` }} />
         <div className={s.progress} style={{ width: `${progressPercent}%` }} />
-        <div className={s.thumb} style={{ left: `${progressPercent - 5}%` }} />
+        <div className={s.thumb} style={{ left: `${progressPercent}%` }} />
       </div>
     </div>
   );

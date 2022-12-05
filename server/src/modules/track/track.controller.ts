@@ -32,6 +32,11 @@ export class TrackController {
     return this.trackService.getAll({ userId });
   }
 
+  @Get('count')
+  getCount(@UserId() { userId }: IUserId) {
+    return this.trackService.getCount({ userId });
+  }
+
   @Post('add')
   @UseInterceptors(
     FileFieldsInterceptor([

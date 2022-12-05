@@ -3,7 +3,6 @@ import AppRoutes from './hoc/useRouter';
 import s from './App.scss';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallback from './fragments/ErrorFallback/ErrorFallback';
-import { RouterProvider } from 'react-router-dom';
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -12,7 +11,10 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <ErrorBoundary
+      FallbackComponent={ErrorFallback}
+      // onError={(error) => console.log(error)}
+    >
       <Suspense fallback={<div> app loading </div>}>
         <div className={s.app}>
           <AppRoutes />

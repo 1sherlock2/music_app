@@ -1,6 +1,9 @@
 import {
+  BadRequestException,
+  forwardRef,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -32,50 +35,46 @@ export class UserService {
     private readonly orderTraksEntity: Repository<OrderTracks>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    @Inject(forwardRef(() => EmailService))
     private readonly emailService: EmailService
   ) {}
 
   async create(userDTO: UserCreateDTO): Promise<IRegistrationStatus> {
-    try {
-      // TODO удалить создание ролей ( нужно в тестовом формате )
-      const { nickname, password, email, roles } = userDTO;
-      const userHasInDb = await this.userEntity.findOne({
-        where: { nickname }
+    // TODO удалить создание ролей ( нужно в тестовом формате )
+    const { nickname, password, email, roles } = userDTO;
+    const userHasInDb = await this.userEntity.findOne({
+      where: { nickname }
+    });
+    if (userHasInDb) {
+      throw new BadRequestException({
+        success: false,
+        message: httpMessages.userAvailable
       });
-      if (userHasInDb) {
-        throw new HttpException(
-          httpMessages.userAvailable,
-          HttpStatus.BAD_REQUEST
-        );
-      }
-      const userSave: User = await this.userEntity.create({
-        nickname,
-        password,
-        email,
-        roles
-      });
-
-      // верификационная ссылка
-      await this.emailService.sendVerificationLink(email);
-
-      await this.userEntity.save(userSave);
-
-      // Создание взаимосвязи с таблицей порядка треков
-      const identifyTrakIdsSave = await this.orderTraksEntity.create({
-        order: [],
-        user: userSave
-      });
-
-      await this.orderTraksEntity.save(identifyTrakIdsSave);
-      const result = {
-        success: true,
-        message: httpMessages.userWasCreated,
-        status: HttpStatus.OK
-      };
-      return result;
-    } catch (e) {
-      console.log(e);
     }
+    const userSave: User = await this.userEntity.create({
+      nickname,
+      password,
+      email,
+      roles
+    });
+
+    // верификационная ссылка
+    await this.emailService.sendVerificationLink(email);
+
+    await this.userEntity.save(userSave);
+
+    // Создание взаимосвязи с таблицей порядка треков
+    const identifyTrakIdsSave = await this.orderTraksEntity.create({
+      order: [],
+      user: userSave
+    });
+
+    await this.orderTraksEntity.save(identifyTrakIdsSave);
+    const result = {
+      success: true,
+      message: httpMessages.userWasCreated
+    };
+    return result;
   }
   async authenticate(loginDTO: LoginDTO): Promise<ILoginAccess> {
     const { nickname, password } = loginDTO;
@@ -102,6 +101,7 @@ export class UserService {
       if (!findLogin) {
         throw new NotFoundException(httpMessages.userIsNotFind);
       }
+
       const passwordCompare = await compare(old_pass, findLogin.password);
       if (!passwordCompare) {
         throw new UnauthorizedException(
@@ -110,12 +110,10 @@ export class UserService {
       }
       const round = this.configService.get('ROUND');
       const hashPassword = await hash(new_pass, Number(round));
-      // const { acknowledged } = this.userEntity.update({ where: { nickname: nickname} }, { password: hashPassword })
-      const aaa = await this.userEntity
+      await this.userEntity
         .createQueryBuilder()
         .update({ password: hashPassword })
         .where({ nickname });
-      const a = 1;
     } catch (e) {
       throw new InternalServerErrorException(e);
     }
@@ -152,5 +150,13 @@ export class UserService {
 
     await updateQueryForUser(User, { banned: true }, userId);
     return { status: HttpStatus.OK, message: httpMessages.userWasBanned };
+  }
+
+  async getUserEmail(email: string) {
+    return this.userEntity.findOne({ where: { email } });
+  }
+
+  async markEmailConfirm(email: string): Promise<void> {
+    this.userEntity.update({ email }, { isEmailConfirmed: true });
   }
 }

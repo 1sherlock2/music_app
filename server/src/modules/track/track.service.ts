@@ -7,7 +7,7 @@ import {
   NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import {
   IUserId,
   UpdateOrderTracks,
@@ -101,6 +101,9 @@ export class TrackService {
     const tracksOrder = await this.orderTraks.findOne({
       where: { user: userId }
     });
+    if (!tracksOrder?.order.length) {
+      return;
+    }
     let { order } = tracksOrder;
     const collectionIdTrack: number[] = tracks.map((el) => el.id);
     if (!order.length) {
@@ -118,6 +121,13 @@ export class TrackService {
       return acc;
     }, {});
     return order.map((el) => trackObject[el]).filter(Boolean);
+  }
+
+  async getCount({ userId }: IUserId) {
+    const aaa = await this.trackEntity.findAndCount({ where: { userId } });
+    return await this.trackEntity.findAndCount({ where: { userId } });
+    // await getConnection().createQueryBuilder().where('userId = :userId', { userId }).from(this.trackEntity, 'tracks').count()
+    // return await this.trackEntity.count().find({ where: {userId }});
   }
 
   async deleteTrack(id: number, userId: IUserId) {

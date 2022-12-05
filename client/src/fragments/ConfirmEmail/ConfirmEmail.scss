@@ -1,0 +1,47 @@
+@import '~styles/variables.scss';
+
+.container {
+  width: 80%;
+  background-color: $white-100;
+  margin: 10% auto;
+  box-shadow: $neomorphizm_white;
+  padding: #{$size-12} #{$size-12};
+  text-align: center;
+  border-radius: 10px;
+
+  &_title {
+    color: $green-300;
+    font-size: $font-size-32;
+    margin-top: $size-12;
+  }
+
+  &_subTitle {
+    margin-top: $size-12;
+    color: $gray-600;
+    font-size: $font-size-20;
+  }
+
+  &_link {
+    position: relative;
+    margin: #{$size-48} auto;
+    width: 50%;
+    height: 80px;
+    background-color: $pink-200;
+    border-radius: 10px;
+
+    &_text {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      margin-right: -50%;
+      left: 50%;
+      top: 50%;
+      font-weight: 500;
+      cursor: pointer;
+
+      a {
+        color: $white-100;
+        text-decoration-line: none;
+      }
+    }
+  }
+}

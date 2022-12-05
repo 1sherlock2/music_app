@@ -40,10 +40,12 @@ const Registration: React.FC = () => {
     if (responseData) {
       const { success, message } = responseData;
       setLoading(false);
-      if (!success) {
-        setError(message);
+      if (!success && message) {
+        setSuccessMessage('');
+        setError(message || '');
         return;
       }
+      setError('');
       setSuccessMessage(
         'Registration success, please switch select Login tab for sign in'
       );

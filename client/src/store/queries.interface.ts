@@ -17,11 +17,10 @@ export interface IRegisterDTO {
 }
 
 export interface IRegisterData {
-  data: {
-    success: boolean;
-    status: number;
-    message: string;
-  };
+  success: boolean;
+  statusCode?: number;
+  message?: string;
+  error?: string;
 }
 
 export interface ICheckLoginQuery {

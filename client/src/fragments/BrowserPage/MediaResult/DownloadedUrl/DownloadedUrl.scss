@@ -14,5 +14,7 @@
   &__url {
     position: relative;
     min-width: $size-36;
+    display: flex;
+    justify-content: center;
   }
 }

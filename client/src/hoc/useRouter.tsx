@@ -7,6 +7,7 @@ import BrowserPage from '../fragments/BrowserPage/BrowserPage';
 import { Navigate, useRoutes } from 'react-router-dom';
 import ErrorFallback from '../fragments/ErrorFallback/ErrorFallback';
 import Settings from '../fragments/Settings/Settings';
+import ConfirmEmail from '../fragments/ConfirmEmail/ConfirmEmail';
 
 const AppRoutes = () => {
   const routes = [
@@ -29,9 +30,14 @@ const AppRoutes = () => {
           path: 'settings',
           element: <ProtectedRoute component={Settings} />
         },
+        // {
+        //   path: '/',
+        //   element: <Navigate to="/auth" />
+        // },
         {
-          path: '/',
-          element: <Navigate to="/auth" />
+          // path: 'confirm-email/:token',
+          path: 'confirm-email',
+          element: <ProtectedRoute component={ConfirmEmail} />
         }
       ]
     }
