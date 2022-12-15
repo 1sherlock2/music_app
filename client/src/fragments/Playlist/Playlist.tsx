@@ -20,29 +20,31 @@ import { altImageSrc } from '../../store/altrImageSrc';
 import BottomPanel from '../BottomPanel/BottomPanel';
 import { allTracksByUserAtom, allTraksByUser, tracksCount } from './state';
 import { allTracksByUserDB, checkTrackCountDB } from '../../store/queries';
+import OnBoard from '../../components/OnBoard/OnBoard';
+import useCombinedRef from '../../hooks/useCombinedRef';
 
 const Playlist = () => {
-  const [allTracks, setAllTracks] = useRecoilState(allTraksByUser);
+  const [allTracks, setAllTracks] = useRecoilState(allTracksByUserAtom);
   const setOrderTracks = useSetRecoilState(allTraksByUser);
-  const [allTracksCount, setAllTrackCount] = useRecoilState(tracksCount);
+  // const [allTracksCount, setAllTrackCount] = useRecoilState(tracksCount);
+  const [allTracksCount, setAllTrackCount] = useState(allTracks.length);
   // const trackRefs: any = useRef(allTracks?.map(() => React.createRef()));
   const [generalIndexTrack, setTrackIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
-
+  const playlistRef = useRef(null);
   useEffect(() => {
     (async () => {
       const { data } = await checkTrackCountDB();
       if (data !== allTracksCount) {
         setAllTrackCount(data);
-        {
-          const { data } = await allTracksByUserDB();
-          setAllTracks(data);
-        }
+        const result = await allTracksByUserDB();
+        setAllTracks(result.data);
       }
     })();
   });
 
   const handleClick = useCallback((index: number) => {
+    console.log('CLICK');
     setTrackIndex(index);
     setOpen(true);
   }, []);
@@ -67,9 +69,9 @@ const Playlist = () => {
             <div
               className={classnames(s.playList, 'characters')}
               {...provided.droppableProps}
-              ref={provided.innerRef}
+              ref={useCombinedRef(provided.innerRef, playlistRef)}
             >
-              {allTracks?.length > 0 &&
+              {allTracks?.length > 0 ? (
                 allTracks.map((track, index) => {
                   const { id, img, artist, name } = track;
                   return (
@@ -99,7 +101,14 @@ const Playlist = () => {
                       )}
                     </Draggable>
                   );
-                })}
+                })
+              ) : (
+                <OnBoard name="playlist">
+                  <div className={s.empty}>
+                    Download content by going to link on browser
+                  </div>
+                </OnBoard>
+              )}
               {open && !!allTracks.length && (
                 <PlaylistPopup
                   allTracks={allTracks}

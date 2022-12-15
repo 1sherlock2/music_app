@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Inject,
@@ -124,10 +125,14 @@ export class TrackService {
   }
 
   async getCount({ userId }: IUserId) {
-    const aaa = await this.trackEntity.findAndCount({ where: { userId } });
-    return await this.trackEntity.findAndCount({ where: { userId } });
-    // await getConnection().createQueryBuilder().where('userId = :userId', { userId }).from(this.trackEntity, 'tracks').count()
-    // return await this.trackEntity.count().find({ where: {userId }});
+    const result = await this.trackEntity.query(
+      `SELECT COUNT(*) FROM track WHERE "userId"=${userId}`
+    );
+    const { count } = result[0];
+    if (isNaN(Number(count))) {
+      throw new BadRequestException();
+    }
+    return Number(count);
   }
 
   async deleteTrack(id: number, userId: IUserId) {

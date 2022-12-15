@@ -26,7 +26,6 @@ const responseRegister = selector({
 
     if (Object.values(registerData).filter(Boolean).length) {
       const response = await registerDataDB(registerData);
-      console.log({ response });
       const {
         data: { success, message }
       } = response;

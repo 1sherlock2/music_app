@@ -1,4 +1,4 @@
-const localAuth: string = 'userData';
+const localAuth = process.env.LOCAL_AUTH as string;
 
 export const authLocalStorage = {
   setStorage: (token: string | undefined, nickname: string | undefined) =>

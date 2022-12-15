@@ -1,5 +1,5 @@
-import React, { Suspense, useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import React from 'react';
+import { useRecoilValue } from 'recoil';
 import { checkAuth, isAuthentication } from '../store/index';
 import { IProtectedRouteProps } from './ProtectedRoute.interface';
 import { authLocalStorage } from '../utils/localStorage';
@@ -9,7 +9,6 @@ const ProtectedRoute = ({ component: Component }: IProtectedRouteProps) => {
   const isAuth = useRecoilValue(isAuthentication);
   const isCheck = useRecoilValue(checkAuth);
 
-  console.log({ isAuth, isCheck });
   const checkAuthentication = authLocalStorage.getToken() && isCheck;
 
   return isAuth || checkAuthentication ? (

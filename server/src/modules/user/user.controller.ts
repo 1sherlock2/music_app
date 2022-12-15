@@ -45,9 +45,9 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get('check')
   getProfile(@Request() req) {
-    if (!req.user?.id) {
-      return { success: false };
-    }
+    // if (!req.user?.id) {
+    //   return { success: false };
+    // }
     return { success: true, userId: req.user.id };
   }
 

@@ -13,7 +13,7 @@ import { IndexModule } from './modules/index.module';
 import childProcess from 'child_process';
 import path from 'path';
 import findByPort from './utils/findByPort';
-import { HttpExceptionFilter } from './exceptions/http-exception.filter';
+import { AuthExceptionFilter } from './exceptions/auth-exception.filter';
 
 const start = async () => {
   const ports = {
@@ -39,7 +39,7 @@ const start = async () => {
     SwaggerModule.setup('api', app, document);
 
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
-    // app.useGlobalFilters(new HttpExceptionFilter());
+    app.useGlobalFilters(new AuthExceptionFilter());
     app.enableCors();
     await app.init();
     await findByPort(7000);

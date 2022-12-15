@@ -9,6 +9,10 @@
   height: 85%;
   overflow-x: hidden;
 
+  .empty {
+    color: red;
+  }
+
   .container {
     display: flex;
     height: $size-50;

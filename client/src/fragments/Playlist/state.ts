@@ -23,6 +23,9 @@ const allTraksByUser = selector({
     const { data } = await allTracksByDB();
     return data;
   },
+  // get: ({ get }) => {
+  //   return get(allTracksByUserAtom);
+  // },
   set: ({ set }, newValue: IallTraksByUser[] | DefaultValue) => {
     const replacedTrackIds: false | number[] =
       Array.isArray(newValue) && newValue.map((el: IallTraksByUser) => el.id);
@@ -37,7 +40,24 @@ const allTraksByUser = selector({
 
 const allTracksByUserAtom = atom<IallTraksByUser[]>({
   key: keyState.ALL_TRACKS_BY_USER_ATOM,
-  default: allTraksByUser || []
+  default: allTraksByUser || [],
+  // default:
+  //   selector({
+  //     key: keyState.ALL_TRACKS_BY_USER_DEFAULT,
+  //     get: async () => {
+  //       const { data } = await allTracksByDB();
+  //       return data;
+  //     }
+  //   }) || [],
+  effects_UNSTABLE: [
+    ({ setSelf, onSet }) => {
+      onSet((newValue, oldValue) => {
+        if (Array.isArray(oldValue) && newValue.length !== oldValue.length) {
+          setSelf(newValue);
+        }
+      });
+    }
+  ]
 });
 
 export { allTraksByUser, allTracksByUserAtom, tracksCount };

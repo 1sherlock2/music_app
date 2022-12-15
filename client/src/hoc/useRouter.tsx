@@ -30,13 +30,8 @@ const AppRoutes = () => {
           path: 'settings',
           element: <ProtectedRoute component={Settings} />
         },
-        // {
-        //   path: '/',
-        //   element: <Navigate to="/auth" />
-        // },
         {
-          // path: 'confirm-email/:token',
-          path: 'confirm-email',
+          path: 'confirm-email/:token',
           element: <ProtectedRoute component={ConfirmEmail} />
         }
       ]

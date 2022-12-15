@@ -3,7 +3,7 @@ export interface ILoginDTO {
   password: string;
 }
 
-export interface ILoginDataDB {
+export interface ILoginDataDB extends IErrorResponseData {
   data: {
     success: boolean;
     accessToken?: string;
@@ -16,8 +16,11 @@ export interface IRegisterDTO {
   password: string;
 }
 
-export interface IRegisterData {
+export interface IRegisterData extends IErrorResponseData {
   success: boolean;
+}
+
+interface IErrorResponseData {
   statusCode?: number;
   message?: string;
   error?: string;

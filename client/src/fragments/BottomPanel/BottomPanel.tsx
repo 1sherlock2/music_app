@@ -9,24 +9,28 @@ import s from './BottomPanel.scss';
 const panelChild: IBottomPanel[] = [
   {
     icon: <HomeIcon size="30px" color="#333" />,
-    location: '/'
+    location: '/',
+    id: 'home'
     // reload: true
   },
   {
     icon: <BrowserIcon size="30px" color="#333" />,
-    location: '/browser'
+    location: '/browser',
+    id: 'browser'
   },
   {
     icon: <SettingsIcon size="30px" color="#333" />,
-    location: '/settings'
+    location: '/settings',
+    id: 'settings'
   }
 ];
 const BottomPanel: React.FC = () => {
   return (
     <div className={s.container}>
-      {panelChild.map(({ icon, location, reload }, i) => (
+      {panelChild.map(({ icon, location, reload, id }, i) => (
         <Link
           to={location}
+          id={id}
           className={s.container_item}
           key={`${location}_${i}`}
           reloadDocument={reload || false}

@@ -23,6 +23,10 @@ const useHlsLoad = (
             }
             return;
           });
+        } else if (
+          audioRef?.current.canPlayType('application/vnd.apple.mpegurl')
+        ) {
+          audioRef.current.src = urlStream;
         }
       }, [durationFunc, urlStream]);
     },

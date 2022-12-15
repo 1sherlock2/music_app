@@ -1,0 +1,19 @@
+@import '~styles/variables.scss';
+
+.logout {
+  display: flex;
+  justify-content: space-between;
+  background-color: $white-100;
+  box-shadow: $neomorphizm_white;
+  padding: $size-24;
+  border-radius: $size-10;
+  color: $pink-500;
+  transition: all 0.2s;
+  &:active {
+    background-color: $gray-100;
+  }
+
+  svg {
+    fill: $pink-500;
+  }
+}
