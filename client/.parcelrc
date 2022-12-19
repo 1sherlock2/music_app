@@ -17,5 +17,8 @@
   },
   "optimizers": {
     "*.{jpg,jpeg,png}": []
-  }
+  },
+  "reporters": [
+    "parcel-reporter-bundle-manifest"
+  ]
 }

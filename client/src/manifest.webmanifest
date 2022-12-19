@@ -1,11 +1,11 @@
 {
   "name": "music_app",
-  "theme_color": "rgba(232,214,192,0.398)",
-  "background_color": "rgba(232,214,192,0.398)",
+  "theme_color": "#e8d6c0",
+  "background_color": "#e8d6c0",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "/",
-  "start_url": "/",
+  "start_url": "./",
   "icons": [
     {
       "src": "../public/images/icons/64.png",

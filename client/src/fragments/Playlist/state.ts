@@ -23,9 +23,6 @@ const allTraksByUser = selector({
     const { data } = await allTracksByDB();
     return data;
   },
-  // get: ({ get }) => {
-  //   return get(allTracksByUserAtom);
-  // },
   set: ({ set }, newValue: IallTraksByUser[] | DefaultValue) => {
     const replacedTrackIds: false | number[] =
       Array.isArray(newValue) && newValue.map((el: IallTraksByUser) => el.id);
