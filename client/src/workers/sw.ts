@@ -1,11 +1,4 @@
-self.addEventListener('install', (event) => {
-  console.log('install !');
-});
+import { precacheAndRoute } from 'workbox-precaching';
+declare const self: ServiceWorkerGlobalScope;
 
-self.addEventListener('activate', (event) => {
-  console.log('activate !');
-});
-
-self.addEventListener('fetch', (event) => {
-  console.log('url', event);
-});
+precacheAndRoute(self.__WB_MANIFEST);

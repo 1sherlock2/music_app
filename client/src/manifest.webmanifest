@@ -5,27 +5,8 @@
   "display": "standalone",
   "orientation": "portrait",
   "scope": "/",
-  "start_url": "./",
-  "icons": [
-    {
-      "src": "../public/images/icons/64.png",
-      "sizes": "64x64",
-      "type": "image/png"
-    },
-    {
-      "src": "../public/images/icons/128.png",
-      "sizes": "128x128",
-      "type": "image/png"
-    },
-    {
-      "src": "../public/images/icons/256.png",
-      "sizes": "256x256",
-      "type": "image/png"
-    },
-    {
-      "src": "../public/images/icons/512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
+  "start_url": "/",
+  "categories": [
+    "music"
   ]
 }

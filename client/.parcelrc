@@ -13,6 +13,9 @@
     ],
     "*.png": [
       "@parcel/transformer-raw"
+    ],
+    "*.webmanifest": [
+      "@parcel/transformer-webmanifest"
     ]
   },
   "optimizers": {
