@@ -7,7 +7,7 @@ import { RecoilRoot } from 'recoil';
 window.addEventListener('load', async () => {
   if ('serviceWorker' in navigator) {
     await navigator.serviceWorker
-      .register('./workers/sw.ts')
+      .register('./workers/sw.js')
       .then((result) => {
         console.log('service worker', result);
       })
