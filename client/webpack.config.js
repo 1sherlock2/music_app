@@ -1,51 +1,3 @@
- "icons": [
-   {
-     "src": "./workers/manifest_icons/64.png",
-     "sizes": "64x64",
-     "type": "image/png"
-   },
-   {
-     "src": "./workers/manifest_icons/128.png",
-     "sizes": "128x128",
-     "type": "image/png"
-   },
-   {
-     "src": "./workers/manifest_icons/256.png",
-     "sizes": "256x256",
-     "type": "image/png"
-   },
-   {
-     "src": "./workers/manifest_icons/512.png",
-     "sizes": "512x512",
-     "type": "image/png"
-   }
- ]
-
-
-
- {
-  "name": "music_app",
-  "theme": "#e8d6c0",
-  "startURL": "/",
-  "generateIconOptions": {
-    "baseIcon": "./512.png",
-    "sizes": [
-      128,
-      192,
-      512
-    ]
-  }
-}
-
-
-
-
-
-
-
-
-
-
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
@@ -55,6 +7,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import CopyPlugin from 'copy-webpack-plugin';
+import Dotenv from 'dotenv-webpack';
 
 const options = {
   'app-watch': () => ({
@@ -76,26 +29,19 @@ export default {
   output: {
     path: path.resolve(__dirname, './dist'),
     filename: isDev ? '[name].js' : '[name].[contenthash].js',
+    publicPath: '/',
     clean: true
   },
   module: {
     rules: [
-      // {
-      //   test: /\.html$/,
-      //   use: { loader: 'html-loader' }
-      // },
       {
         test: /\.(tsx|ts)$/,
         exclude: /node_modules/,
         use: [
+          'thread-loader',
           {
             loader: 'babel-loader'
-          },
-          // {
-          //   loader: 'ts-loader',
-          //   options: { transpileOnly: true }
-          // },
-          'thread-loader'
+          }
         ]
       },
       {
@@ -123,11 +69,11 @@ export default {
     open: true,
     historyApiFallback: true,
     compress: true,
-    hot: true
-    // static: {
-    //   directory: path.resolve(__dirname, 'public'),
-    //   publicPath: '/'
-    // }
+    hot: true,
+    static: {
+      directory: path.resolve(__dirname, 'public'),
+      publicPath: './'
+    }
   },
   plugins: [
     new CleanWebpackPlugin(),
@@ -135,7 +81,9 @@ export default {
       template: path.resolve(__dirname, './src/index.html'),
       favicon: path.resolve(__dirname, './src/images/favicon.ico'),
       filename: 'index.html',
-      inject: true
+      inject: 'body',
+      publicPath: './'
+      // scriptLoading: 'module'
     }),
     new CopyPlugin({
       patterns: [{ from: 'src', to: 'public' }]
@@ -146,7 +94,8 @@ export default {
           configFile: './tsconfig.json'
         }
       }),
-    !isDev && new MiniCssExtractPlugin()
+    !isDev && new MiniCssExtractPlugin(),
+    new Dotenv()
     // new BundleAnalyzerPlugin()
   ].filter(Boolean)
 };

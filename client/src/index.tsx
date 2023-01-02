@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { RecoilRoot } from 'recoil';
 
+console.log('!!!!!!!!!!!!');
 window.addEventListener('load', async () => {
   if ('serviceWorker' in navigator) {
     await navigator.serviceWorker

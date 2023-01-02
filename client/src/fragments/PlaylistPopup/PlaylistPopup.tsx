@@ -1,9 +1,6 @@
 import React, {
-  ChangeEventHandler,
-  DOMElement,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState
@@ -11,8 +8,8 @@ import React, {
 import { createPortal } from 'react-dom';
 import { useRecoilValue } from 'recoil';
 import { Lazy } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/react/swiper-react';
-import 'swiper/swiper.scss';
+import { Swiper, SwiperSlide } from 'swiper/react';
+// import 'swiper/swiper.scss';
 import useClickOutside from '../../hooks/useClickOutside';
 import useHlsLoad from '../../hooks/useHlsLoad';
 import { getUrlTrackStream } from '../../store';

@@ -1,5 +1,5 @@
 export default (f, ms?: number) => {
-  let timer:  = null;
+  let timer = null;
   let savedArgs;
 
   const wrapper = (...args) => {
