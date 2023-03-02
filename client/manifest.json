@@ -6,6 +6,28 @@
   "orientation": "portrait",
   "scope": "/",
   "start_url": "/",
+  "icons": [
+    {
+      "src": "./manifest_icons/64.png",
+      "type": "image/png",
+      "size": "64x64"
+    },
+    {
+      "src": "./manifest_icons/128.png",
+      "type": "image/png",
+      "size": "128x128"
+    },
+    {
+      "src": "./manifest_icons/256.png",
+      "type": "image/png",
+      "size": "256x256"
+    },
+    {
+      "src": "./manifest_icons/512.png",
+      "type": "image/png",
+      "size": "512x6512"
+    }
+  ],
   "categories": [
     "music"
   ]

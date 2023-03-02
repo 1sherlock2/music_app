@@ -41,11 +41,14 @@ const start = async () => {
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     app.useGlobalFilters(new AuthExceptionFilter());
     app.enableCors();
-    await app.init();
-    await findByPort(7000);
-    http.createServer(server).listen(ports.http, () => {
-      console.log(`http server was started on ${ports.http}`);
-    });
+    // await app.init();
+    await app.listen(ports.http, () =>
+      console.log(`http server was started on ${ports.http}`)
+    );
+    // await findByPort(7000);
+    // http.createServer(server).listen(ports.http, () => {
+    //   console.log(`http server was started on ${ports.http}`);
+    // });
     // console.log(server);
     // https
     //   .createServer(httpsOptions, () => server)

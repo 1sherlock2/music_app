@@ -8,6 +8,11 @@ import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import CopyPlugin from 'copy-webpack-plugin';
 import Dotenv from 'dotenv-webpack';
+import { GenerateSW, InjectManifest } from 'workbox-webpack-plugin';
+// import { workboxConfig } from './workbox-config';
+import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
+import TerserWebpackPlugin from 'terser-webpack-plugin';
+// const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
 
 const options = {
   'app-watch': () => ({
@@ -19,7 +24,10 @@ const options = {
   })
 };
 const isCheckType = process.env.npm_lifecycle_event === 'app-watch-types';
-const isDev = process.env.npm_lifecycle_event === 'app-watch';
+const isDev =
+  process.env.npm_lifecycle_event === 'app-watch' ||
+  process.env.npm_lifecycle_event === 'dev';
+console.log({ isDev });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -47,10 +55,17 @@ export default {
       {
         test: /\.s?css$/,
         use: [
-          isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
+          isDev ? MiniCssExtractPlugin.loader : 'style-loader',
           {
             loader: 'css-loader',
-            options: { modules: true, sourceMap: isDev }
+            options: {
+              modules: {
+                localIdentName: isDev
+                  ? '[name]_[local]_[hash:base64:3]'
+                  : '[hash:base64:5]'
+              },
+              sourceMap: isDev
+            }
           },
           { loader: 'sass-loader', options: { sourceMap: isDev } }
         ]
@@ -65,7 +80,7 @@ export default {
     }
   },
   devServer: {
-    port: 5001,
+    port: 5000,
     open: true,
     historyApiFallback: true,
     compress: true,
@@ -86,7 +101,14 @@ export default {
       // scriptLoading: 'module'
     }),
     new CopyPlugin({
-      patterns: [{ from: 'src', to: 'public' }]
+      patterns: [
+        { from: 'src', to: 'public' },
+        { from: './manifest_icons/64.png', to: '' },
+        { from: './manifest_icons/128.png', to: '' },
+        { from: './manifest_icons/256.png', to: '' },
+        { from: './manifest_icons/512.png', to: '' },
+        { from: './manifest.json', to: '' }
+      ]
     }),
     isCheckType &&
       new ForkTsCheckerWebpackPlugin({
@@ -94,8 +116,39 @@ export default {
           configFile: './tsconfig.json'
         }
       }),
-    !isDev && new MiniCssExtractPlugin(),
-    new Dotenv()
+    isDev && new MiniCssExtractPlugin(),
+    new Dotenv(),
+    !isDev &&
+      new FaviconsWebpackPlugin({
+        logo: './manifest_icons/128.png',
+        manifest: './manifest.json',
+        persistentCache: true,
+        inject: true,
+        icons: {
+          android: true,
+          appleIcon: true,
+          appleStartup: true,
+          coast: false,
+          favicons: true,
+          firefox: true,
+          opengraph: false,
+          twitter: false,
+          yandex: false,
+          windows: false
+        }
+      }),
+    !isDev &&
+      new InjectManifest({
+        swSrc: './src/workers/sw.js',
+        swDest: 'sw.js',
+        maximumFileSizeToCacheInBytes: 12 * 1024 * 1024
+      })
     // new BundleAnalyzerPlugin()
-  ].filter(Boolean)
+  ].filter(Boolean),
+  optimization: {
+    minimizer: [
+      !isDev && new TerserWebpackPlugin()
+      // new OptimizeCssAssetsWebpackPlugin()
+    ].filter(Boolean)
+  }
 };

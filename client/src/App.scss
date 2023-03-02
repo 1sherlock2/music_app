@@ -1,7 +1,7 @@
 @import '~styles/variables.scss';
 @import '~styles/swiper.scss';
 
-.app {
+.body {
   font-size: $font-size-24;
   margin: 0;
   background-color: rgba(232, 214, 192, 0.398);
@@ -9,4 +9,9 @@
     sans-serif;
   overflow: hidden;
   height: 100vh;
+}
+
+.app {
+  overflow: hidden;
+  z-index: 1;
 }

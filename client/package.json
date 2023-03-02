@@ -4,8 +4,6 @@
   "description": "",
   "main": "index.js",
   "type": "module",
-  "root": "./src",
-  "source": "./src/index.html",
   "targets": {
     "default": {
       "distDir": "./dist",
@@ -13,14 +11,11 @@
     }
   },
   "scripts": {
-    "build-manifest": "parcel build --no-content-hash --target ./src/workers/sw.ts && workbox injectManifest",
-    "app-watch": "webpack serve --mode development --config ./webpack.config.js && env-cmd -f",
-    "app-build": "webpack build && env-cmd -f",
+    "app-watch": "webpack serve --mode=development --config ./webpack.config.js && env-cmd -f",
+    "app-build": "NODE_ENV=production webpack --mode=production",
     "start-server": "npm --prefix ../server run start:debug",
-    "dev": "concurrently --kill-others \"npm run start-server\" \"npm run app-watch\"",
-    "dev-build": "concurrently --kill-others \"npm run start-server\" \"npm run app-build-watch\"",
-    "build": "parcel build -d dist/ ./public/index.html --detailed-report --log-level info && workbox injectManifest",
-    "start": "npm run build && node ./server/server.js"
+    "build": "npm run app-build && serve -s dist",
+    "dev": "concurrently --kill-others \"npm run start-server\" \"npm run app-watch\""
   },
   "author": "",
   "license": "ISC",
@@ -56,6 +51,7 @@
     "eslint": "^7.32.0",
     "eslint-plugin-react": "^7.31.1",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "favicons-webpack-plugin": "^6.0.0",
     "fork-ts-checker-webpack-plugin": "^7.2.14",
     "html-loader": "^4.2.0",
     "html-webpack-plugin": "^5.5.0",
@@ -66,7 +62,9 @@
     "postcss-modules": "^3.2.2",
     "sass": "^1.34.0",
     "sass-loader": "^13.2.0",
+    "serve": "^14.2.0",
     "style-loader": "^3.3.1",
+    "terser-webpack-plugin": "^5.3.6",
     "thread-loader": "^3.0.4",
     "ts-loader": "^9.4.2",
     "ts-node": "^10.9.1",
@@ -78,11 +76,9 @@
     "webpack-dev-server": "^4.11.1",
     "workbox-build": "^6.5.4",
     "workbox-cli": "^6.5.4",
-    "workbox-precaching": "^6.5.4",
-    "workbox-routing": "^6.5.4"
+    "workbox-webpack-plugin": "^6.5.4"
   },
   "dependencies": {
-    "add": "^2.0.6",
     "axios": "^0.21.4",
     "classnames": "^2.3.1",
     "hls.js": "^1.1.2-0.canary.8096",
@@ -95,7 +91,13 @@
     "react-router-dom": "^6.4.0",
     "recoil": "^0.4.1",
     "swiper": "^8.2.6",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "workbox-core": "^6.5.4",
+    "workbox-expiration": "^6.5.4",
+    "workbox-precaching": "^6.5.4",
+    "workbox-routing": "^6.5.4",
+    "workbox-strategies": "^6.5.4",
+    "workbox-window": "^6.5.4"
   },
   "alias": {
     "styles": "./src/styles"

@@ -22,7 +22,7 @@ export class CloudinaryService {
         return { success: false };
       }
 
-      const response = await v2.uploader.upload(filePath, {
+      const response: UploadApiResponse = await v2.uploader.upload(filePath, {
         folder: `${folder}/${isAudioFormat ? 'audio' : 'img'}`,
         overwrite: true,
         eager: isAudioFormat && streamProfile,

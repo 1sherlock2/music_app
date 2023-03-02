@@ -19,7 +19,7 @@ export default class TypeOrmConfig {
       password: configService.get('DB_PASSWORD'),
       database: configService.get('DB_NAME'),
       entities: entities,
-      synchronize: true, // false for migrations
+      synchronize: process.env.NODE_ENV !== 'production', // false for migrations
       logging: true,
       migrationsRun: true,
       migrations: [__dirname + '/migrations/*{.ts,.js}'],

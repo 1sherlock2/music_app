@@ -190,7 +190,9 @@ export class TrackService {
         throw new NotFoundException(httpMessages.contentIsNotFound);
       }
 
-      const modifyUrls = url.filter((item) => !!item.audio);
+      const modifyUrls = url.filter(
+        (item) => !!item.audio && item.ext === 'm4a'
+      );
       return { id, title, thumbnail, duration, url: modifyUrls };
     } catch (e) {
       throw new InternalServerErrorException(e);

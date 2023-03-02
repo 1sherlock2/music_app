@@ -7,7 +7,7 @@ import ErrorFallback from './fragments/ErrorFallback/ErrorFallback';
 const App: React.FC = () => {
   useEffect(() => {
     const body = document.getElementsByTagName('body')[0];
-    body.classList.add(s.app);
+    body.classList.add(s.body);
   }, []);
 
   return (
