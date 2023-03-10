@@ -1,45 +1,51 @@
 version: '3.8'
-
 services:
   postgres:
-    image: 'postgres:14-alpine'
+    image: 'postgres:14-bullseye'
     container_name: postgres
     restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: password
     ports:
       - '5432:5432'
-    environment:
-      - POSTGRES_DB=music_app
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=34896GAZ
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - data:/var/lib/postgresql/data
     networks:
       - nestjs-network
 
   server:
     build: server/
-    env_file:
-      - ./server/.env
+    restart: always
     container_name: server
     ports:
       - '7000:7000'
-    links:
-      - postgres
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - nestjs-network
-
-  client:
-    build: client/
-    container_name: client
-    ports:
-      - '4000:4000'
-    depends_on:
-      - server
-
 volumes:
   data:
 
 networks:
   nestjs-network:
-    external: false
-    name: nestjs-network
+    driver: bridge
+
+  # client:
+  #   build: client/
+  #   container_name: client
+  #   ports:
+  #     - '4000:4000'
+  #   depends_on:
+  #     - server
+# environment:
+# DB_HOST: 172.26.0.2
+# DB_PORT: 5432
+# DB_USERNAME: postgres
+# DB_PASSWORD: 34896GAZ
+# DB_NAME: music_app

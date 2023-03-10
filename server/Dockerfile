@@ -1,8 +1,7 @@
-FROM node:16.10.0-alpine
+FROM node:16-bullseye
 
 ENV MODE=production
 
-# RUN mkdir -p /server
 WORKDIR /app/server
 
 COPY . .
@@ -10,4 +9,6 @@ COPY . .
 RUN npm install
 RUN npm run build
 
-CMD ["npm", "start"]
+# CMD ["tail", "-f", "/dev/null"]
+CMD ["npm", "run", "start:prod"]
+
