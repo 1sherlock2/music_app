@@ -27,7 +27,7 @@ export class CloudinaryService {
         overwrite: true,
         eager: isAudioFormat && streamProfile,
         eager_async: true,
-        resource_type: isAudioFormat && 'video'
+        resource_type: isAudioFormat ? 'video' : 'image'
       });
 
       fs.unlinkSync(filePath);
