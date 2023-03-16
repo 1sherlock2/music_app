@@ -8,7 +8,7 @@ import {
   NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
   IUserId,
   UpdateOrderTracks,
@@ -22,12 +22,12 @@ import {
   ITrackCreate,
   ITrackCreateStatus
 } from './interfaces/track.interface';
-import { OrderTracks } from '../../db/entity/orderTracks.entity';
-import { Track } from '../../db/entity/track.entity';
+import { OrderTracksEntity } from '../../db/entity/orderTracks.entity';
+import { TrackEntity } from '../../db/entity/track.entity';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { FilePathService } from '../../filePath/filePath.service';
 import httpMessages from '../../utils/httpMessages';
-import { User } from '../../db/entity/user.entity';
+import { UserEntity } from '../../db/entity/user.entity';
 import optionsDownload from './utils/optionsDownload';
 import nodeFetch from 'node-fetch';
 import objectResultCloud from '../../utils/objectResultCloud';
@@ -35,12 +35,12 @@ import { WorkerPool } from '../../workerPool';
 @Injectable()
 export class TrackService {
   constructor(
-    @InjectRepository(Track)
-    private readonly trackEntity: Repository<Track>,
-    @InjectRepository(OrderTracks)
-    private readonly orderTraks: Repository<OrderTracks>,
-    @InjectRepository(User)
-    private readonly userEntity: Repository<User>,
+    @InjectRepository(TrackEntity)
+    private readonly trackEntity: Repository<TrackEntity>,
+    @InjectRepository(OrderTracksEntity)
+    private readonly orderTraks: Repository<OrderTracksEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userEntity: Repository<UserEntity>,
     private readonly cloudinaryService: CloudinaryService,
     private readonly filePathService: FilePathService,
     // @Inject(new WorkerPool('./utils/downloadByUrl.ts'))
@@ -70,7 +70,7 @@ export class TrackService {
         HttpStatus.BAD_GATEWAY
       );
     }
-    const user = await this.userEntity.findOne(userId);
+    const user = await this.userEntity.findOne({ where: { id: userId } });
 
     const trackSave = await this.trackEntity.create({
       name,
@@ -86,10 +86,12 @@ export class TrackService {
       where: { audio: cloudinaryAudio }
     });
     const { order } = await this.orderTraks.findOne({
-      where: { user: userId }
+      where: { user: { id: userId } },
+      relations: { user: true }
     });
     const modifyOrder = [id, ...order];
-    await updateQueryForOrder(OrderTracks, modifyOrder, userId);
+    // this.orderTraks.update()
+    await updateQueryForOrder(OrderTracksEntity, modifyOrder, userId);
     return {
       success: true,
       message: httpMessages.trackWasCreated,
@@ -98,9 +100,13 @@ export class TrackService {
   }
 
   async getAll({ userId }: IUserId) {
-    const tracks = await this.trackEntity.find({ where: { user: userId } });
+    const tracks = await this.trackEntity.find({
+      where: { user: { id: userId } },
+      relations: { user: true }
+    });
     const tracksOrder = await this.orderTraks.findOne({
-      where: { user: userId }
+      where: { user: { id: userId } },
+      relations: { user: true }
     });
     if (!tracksOrder?.order.length) {
       return;
@@ -108,7 +114,7 @@ export class TrackService {
     let { order } = tracksOrder;
     const collectionIdTrack: number[] = tracks.map((el) => el.id);
     if (!order.length) {
-      await updateQueryForOrder(OrderTracks, collectionIdTrack, userId);
+      await updateQueryForOrder(OrderTracksEntity, collectionIdTrack, userId);
     }
     const excludeTracksId = collectionIdTrack.filter(
       (orderId) => !order.includes(orderId)
@@ -137,7 +143,8 @@ export class TrackService {
 
   async deleteTrack(id: number, userId: IUserId) {
     const track = await this.trackEntity.findOne({
-      where: { id, userId }
+      where: { id, user: { id: userId } },
+      relations: { user: true }
     });
     if (!track) {
       return new HttpException(
@@ -154,7 +161,7 @@ export class TrackService {
   }
   async getUrlStream(id) {
     try {
-      const { audio } = await this.trackEntity.findOne({ id });
+      const { audio } = await this.trackEntity.findOne({ where: { id } });
       return await this.cloudinaryService.urlStream(audio);
     } catch (e) {
       console.log(e);
@@ -164,7 +171,7 @@ export class TrackService {
   async updateOrderTracks({ order, userId }: UpdateOrderTracks) {
     try {
       if (order.length) {
-        await updateQueryForOrder(OrderTracks, order, userId.userId);
+        await updateQueryForOrder(OrderTracksEntity, order, userId.userId);
       }
     } catch (e) {
       console.log(e);
@@ -226,7 +233,7 @@ export class TrackService {
     const resUploadFiles = await Promise.all(multipleUpload);
     const objectResult = objectResultCloud(resUploadFiles);
     const { cloudinaryImg, cloudinaryAudio } = objectResult;
-    const user = await this.userEntity.findOne(userId);
+    const user = await this.userEntity.findOne({ where: { id: userId } });
     const trackSave = await this.trackEntity.create({
       name,
       artist,
@@ -241,10 +248,11 @@ export class TrackService {
       where: { audio: cloudinaryAudio }
     });
     const { order } = await this.orderTraks.findOne({
-      where: { user: userId }
+      where: { user: { id: userId } },
+      relations: { user: true }
     });
     const modifyOrder = [id, ...order];
-    await updateQueryForOrder(OrderTracks, modifyOrder, userId);
+    await updateQueryForOrder(OrderTracksEntity, modifyOrder, userId);
 
     return {
       success: true,

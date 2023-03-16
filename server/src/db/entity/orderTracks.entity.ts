@@ -6,17 +6,17 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn
 } from 'typeorm';
-import { User } from './user.entity';
+import { UserEntity } from './user.entity';
 
 @Entity()
-export class OrderTracks {
+export class OrderTracksEntity {
   @PrimaryGeneratedColumn()
-  id: object | string | Buffer;
+  id: object | string | Buffer | number;
 
   @Column('jsonb', { nullable: true })
   order: number[];
 
-  @OneToOne(() => User, (user) => user.orderTracks)
+  @OneToOne(() => UserEntity, (user) => user.orderTracks)
   @JoinColumn()
-  user: User;
+  user: UserEntity;
 }

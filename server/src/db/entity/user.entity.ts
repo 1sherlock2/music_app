@@ -8,24 +8,24 @@ import {
   OneToOne
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Track } from './track.entity';
-import { OrderTracks } from './orderTracks.entity';
+import { TrackEntity } from './track.entity';
+import { OrderTracksEntity } from './orderTracks.entity';
 
 @Entity()
-export class User {
+export class UserEntity {
   @PrimaryGeneratedColumn()
-  id: object | string | Buffer;
+  id: object | string | Buffer | number;
 
   @BeforeInsert()
   async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10);
   }
 
-  @OneToOne(() => OrderTracks, (orderTraks) => orderTraks.user)
-  orderTracks: OrderTracks;
+  @OneToOne(() => OrderTracksEntity, (orderTraks) => orderTraks.user)
+  orderTracks: OrderTracksEntity;
 
-  @OneToMany(() => Track, (track) => track.user)
-  tracks: Track[];
+  @OneToMany(() => TrackEntity, (track) => track.user)
+  tracks: TrackEntity[];
 
   @Column({ unique: true })
   nickname: string;

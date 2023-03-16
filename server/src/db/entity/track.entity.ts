@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { User } from './user.entity';
+import { UserEntity } from './user.entity';
 
 @Entity()
-export class Track {
+export class TrackEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -18,6 +18,6 @@ export class Track {
   @Column()
   audio: string;
 
-  @ManyToOne(() => User, (user) => user.tracks)
-  user: User;
+  @ManyToOne(() => UserEntity, (user) => user.tracks)
+  user: UserEntity;
 }

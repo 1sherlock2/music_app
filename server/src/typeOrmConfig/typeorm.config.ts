@@ -3,47 +3,43 @@ import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions
 } from '@nestjs/typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import * as dotenv from 'dotenv';
 
+dotenv.config();
 const isDev = process.env.NODE_ENV === 'development';
 const entities: string[] = isDev
   ? ['./dist/**/*.entity.js']
-  : ['./**/*.entity.js'];
+  : ['./**/entity/*.entity.js'];
 
-export default class TypeOrmConfig {
-  static getOrmConfig(configService: ConfigService): TypeOrmModuleOptions {
-    console.log(
-      'DB_HOST',
-      configService.get(isDev ? 'DB_HOST' : 'DB_HOST_PROD')
-    );
-    return {
-      type: 'postgres',
-      host: configService.get(isDev ? 'DB_HOST' : 'DB_HOST_PROD'),
-      port: Number(configService.get('DB_PORT')),
-      username: configService.get('DB_USERNAME'),
-      password: String(
-        configService.get(isDev ? 'DB_PASSWORD' : 'DB_PASSWORD_PROD')
-      ),
-      database: configService.get('DB_NAME'),
-      entities: entities,
-      synchronize: isDev, // false for migrations
-      autoLoadEntities: true,
-      verboseRetryLog: true,
-      logging: true,
-      migrationsRun: true,
-      // connectTimeoutMS: 2000,
-      migrations: [__dirname + '/migrations/*{.ts,.js}'],
-      cli: {
-        migrationsDir: './migrations'
-      }
-    };
-  }
+console.log('HOST', process.env[isDev ? 'DB_HOST' : 'DB_HOST_PROD']);
+console.log(
+  'PASSWORD',
+  process.env[isDev ? 'DB_PASSWORD' : 'DB_PASSWORD_PROD']
+);
+const isMigration = process.env.NODE_ENV === 'migration';
+console.log({ isMigration });
+export const dbConnection: DataSourceOptions = {
+  type: 'postgres',
+  host: process.env[isDev ? 'DB_HOST' : 'DB_HOST_PROD'],
+  port: Number(process.env.DB_PORT),
+  username: process.env.DB_USERNAME,
+  password: String(process.env[isDev ? 'DB_PASSWORD' : 'DB_PASSWORD_PROD']),
+  database: process.env.DB_NAME,
+  logging: true,
+  entities: ['src/**/*.entity{.ts,.js}'],
+  migrations: ['migrations/*.ts}'],
+  synchronize: !isMigration,
+  migrationsRun: true
+};
+
+const AppDataSource = new DataSource(dbConnection);
+if (isMigration) {
+  AppDataSource.initialize()
+    .then(() => console.log('Data Source has been initialized!'))
+    .catch((err) => {
+      console.error('Error during Data Source initialization', err);
+    });
 }
 
-export const typeOrmConfigAsync: TypeOrmModuleAsyncOptions = {
-  imports: [ConfigModule],
-  useFactory: async (
-    configService: ConfigService
-  ): Promise<TypeOrmModuleOptions> =>
-    await TypeOrmConfig.getOrmConfig(configService),
-  inject: [ConfigService]
-};
+export default AppDataSource;

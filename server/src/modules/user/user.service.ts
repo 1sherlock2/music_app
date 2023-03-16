@@ -13,9 +13,9 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
-import { getConnection, Repository } from 'typeorm';
-import { OrderTracks } from '../../db/entity/orderTracks.entity';
-import { User } from '../../db/entity/user.entity';
+import { Repository } from 'typeorm';
+import { OrderTracksEntity } from '../../db/entity/orderTracks.entity';
+import { UserEntity } from '../../db/entity/user.entity';
 import { RoleEnum } from '../../enums/role.enum';
 import {
   ILoginAccess,
@@ -29,10 +29,10 @@ import updateQueryForUser from './utils/updateQueryForUser';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private readonly userEntity: Repository<User>,
-    @InjectRepository(OrderTracks)
-    private readonly orderTraksEntity: Repository<OrderTracks>,
+    @InjectRepository(UserEntity)
+    private readonly userEntity: Repository<UserEntity>,
+    @InjectRepository(OrderTracksEntity)
+    private readonly orderTraksEntity: Repository<OrderTracksEntity>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     @Inject(forwardRef(() => EmailService))
@@ -51,7 +51,7 @@ export class UserService {
         message: httpMessages.userAvailable
       });
     }
-    const userSave: User = await this.userEntity.create({
+    const userSave: UserEntity = await this.userEntity.create({
       nickname,
       password,
       email,
@@ -78,7 +78,9 @@ export class UserService {
   }
   async authenticate(loginDTO: LoginDTO): Promise<ILoginAccess> {
     const { nickname, password } = loginDTO;
-    const user: User = await this.userEntity.findOne({ where: { nickname } });
+    const user: UserEntity = await this.userEntity.findOne({
+      where: { nickname }
+    });
     if (!user) {
       throw new UnauthorizedException(httpMessages.userOrPasswordIsNotCorrect);
     }
@@ -120,7 +122,7 @@ export class UserService {
   }
 
   async addRole({ userId, role }) {
-    const user = await this.userEntity.findOne(userId);
+    const user = await this.userEntity.findOneBy({ id: userId });
     if (!user) {
       throw new UnauthorizedException(httpMessages.userNotFound);
     }
@@ -134,12 +136,12 @@ export class UserService {
       );
     }
     const modifyRoles = Array.isArray(role) ? role : [role];
-    await updateQueryForUser(User, { roles: modifyRoles }, userId);
+    await updateQueryForUser(UserEntity, { roles: modifyRoles }, userId);
     return { status: HttpStatus.OK, message: httpMessages.rolesUpdated };
   }
 
   async ban(userId) {
-    const user = await this.userEntity.findOne(userId);
+    const user = await this.userEntity.findOneBy({ id: userId });
     const userIsAdmin = user.roles.includes(RoleEnum.Admin);
     if (!user) {
       throw new UnauthorizedException(httpMessages.userNotFound);
@@ -148,7 +150,7 @@ export class UserService {
       throw new HttpException(httpMessages.userIsAdmin, HttpStatus.BAD_REQUEST);
     }
 
-    await updateQueryForUser(User, { banned: true }, userId);
+    await updateQueryForUser(UserEntity, { banned: true }, userId);
     return { status: HttpStatus.OK, message: httpMessages.userWasBanned };
   }
 

@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Role } from '../../db/entity/roles/roles.entity';
+import { RoleEntity } from '../../db/entity/roles/roles.entity';
 import httpMessages from '../../utils/httpMessages';
 
 @Injectable()
 export class RolesService {
   constructor(
-    @InjectRepository(Role)
-    private readonly rolesEntity: Repository<Role>
+    @InjectRepository(RoleEntity)
+    private readonly rolesEntity: Repository<RoleEntity>
   ) {}
   async createRole(dto) {
     try {
