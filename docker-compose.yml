@@ -8,7 +8,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_DB: music_app
-      PGDATA: /data/postgres
     ports:
       - '5432:5432'
     healthcheck:
@@ -16,8 +15,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    volumes:
-      - data:/data/postgres
     networks:
       - nestjs-network
 
