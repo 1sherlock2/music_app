@@ -131,14 +131,16 @@ export class TrackService {
   }
 
   async getCount({ userId }: IUserId) {
-    const result = await this.trackEntity.query(
-      `SELECT COUNT(*) FROM track WHERE "userId"=${userId}`
-    );
-    const { count } = result[0];
-    if (isNaN(Number(count))) {
+    const countTracks = await this.trackEntity.count({
+      where: { user: { id: userId } }
+    });
+    // const result = await this.trackEntity.query(
+    //   `SELECT COUNT(*) FROM track WHERE "userId"=${userId}`
+    // );
+    if (isNaN(Number(countTracks))) {
       throw new BadRequestException();
     }
-    return Number(count);
+    return Number(countTracks);
   }
 
   async deleteTrack(id: number, userId: IUserId) {
