@@ -26,13 +26,15 @@ const responseRegister = selector({
 
     if (Object.values(registerData).filter(Boolean).length) {
       const response = await registerDataDB(registerData);
-      const {
-        data: { success, message }
-      } = response;
-      if (!success) {
-        return { success: false, message };
+      if (response?.data) {
+        const {
+          data: { success, message }
+        } = response;
+        if (!success) {
+          return { success: false, message };
+        }
+        return { success, message };
       }
-      return { success, message };
     }
   }
 });
@@ -51,19 +53,21 @@ const loginQuery = selector({
     }
 
     const response = await loginDataDB({ nickname, password });
-    const {
-      success,
-      accessToken: token,
-      nickname: responseNick
-    } = response.data;
-    if (!success) {
-      return {
+    if (response) {
+      const {
         success,
-        message: responseMessages.loginError
-      };
+        accessToken: token,
+        nickname: responseNick
+      } = response?.data;
+      if (!success) {
+        return {
+          success,
+          message: responseMessages.loginError
+        };
+      }
+      authLocalStorage.setStorage(token, responseNick);
+      return { success, message: 'OK' };
     }
-    authLocalStorage.setStorage(token, responseNick);
-    return { success, message: 'OK' };
   }
 });
 
