@@ -72,9 +72,12 @@ export class FilePathService {
           const fileName = `${name || ''}_${uuid.v4()}.${
             isAudioFormat ? ext : 'jpg'
           }`;
+          const assetsPath = path.resolve(__dirname, '../..', 'assets');
+          if (!fs.existsSync(assetsPath)) fs.mkdirSync(assetsPath);
+
           const filePath = path.resolve(__dirname, '../..', 'assets', fileName);
           passStream.on('data', (chunk) => {
-            fs.appendFileSync(filePath, chunk);
+            fs.appendFileSync(filePath, chunk, { encoding: 'latin1' });
             console.log(`Received ${chunk.length} bytes of data.`);
           });
           passStream.on('end', () => {
