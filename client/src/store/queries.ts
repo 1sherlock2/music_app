@@ -10,7 +10,8 @@ import {
 } from './queries.interface';
 
 const instanceDB = axios.create({
-  baseURL: 'http://localhost:7000'
+  baseURL: 'http://194.28.224.185:7000'
+  // baseURL: 'http://localhost:7000'
   // baseURL: 'http://192.168.0.100:7000'
   // baseURL: 'http://10.254.1.164:7000',
 });

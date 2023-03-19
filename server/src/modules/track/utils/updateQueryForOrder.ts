@@ -1,7 +1,5 @@
-import { getConnection } from 'typeorm';
-
 export default async (entity, order, userId) =>
-  await getConnection()
+  await entity
     .createQueryBuilder()
     .update(entity)
     .set({ order })

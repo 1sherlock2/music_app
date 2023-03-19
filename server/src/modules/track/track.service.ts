@@ -38,7 +38,7 @@ export class TrackService {
     @InjectRepository(TrackEntity)
     private readonly trackEntity: Repository<TrackEntity>,
     @InjectRepository(OrderTracksEntity)
-    private readonly orderTraks: Repository<OrderTracksEntity>,
+    private readonly orderTraksEntity: Repository<OrderTracksEntity>,
     @InjectRepository(UserEntity)
     private readonly userEntity: Repository<UserEntity>,
     private readonly cloudinaryService: CloudinaryService,
@@ -85,13 +85,13 @@ export class TrackService {
     const { id } = await this.trackEntity.findOne({
       where: { audio: cloudinaryAudio }
     });
-    const { order } = await this.orderTraks.findOne({
+    const { order } = await this.orderTraksEntity.findOne({
       where: { user: { id: userId } },
       relations: { user: true }
     });
     const modifyOrder = [id, ...order];
-    // this.orderTraks.update()
-    await updateQueryForOrder(OrderTracksEntity, modifyOrder, userId);
+    // this.orderTraksEntity.update()
+    await updateQueryForOrder(this.orderTraksEntity, modifyOrder, userId);
     return {
       success: true,
       message: httpMessages.trackWasCreated,
@@ -104,7 +104,7 @@ export class TrackService {
       where: { user: { id: userId } },
       relations: { user: true }
     });
-    const tracksOrder = await this.orderTraks.findOne({
+    const tracksOrder = await this.orderTraksEntity.findOne({
       where: { user: { id: userId } },
       relations: { user: true }
     });
@@ -114,7 +114,11 @@ export class TrackService {
     let { order } = tracksOrder;
     const collectionIdTrack: number[] = tracks.map((el) => el.id);
     if (!order.length) {
-      await updateQueryForOrder(OrderTracksEntity, collectionIdTrack, userId);
+      await updateQueryForOrder(
+        this.orderTraksEntity,
+        collectionIdTrack,
+        userId
+      );
     }
     const excludeTracksId = collectionIdTrack.filter(
       (orderId) => !order.includes(orderId)
@@ -173,7 +177,7 @@ export class TrackService {
   async updateOrderTracks({ order, userId }: UpdateOrderTracks) {
     try {
       if (order.length) {
-        await updateQueryForOrder(OrderTracksEntity, order, userId.userId);
+        await updateQueryForOrder(this.orderTraksEntity, order, userId.userId);
       }
     } catch (e) {
       console.log(e);
@@ -249,12 +253,13 @@ export class TrackService {
     const { id } = await this.trackEntity.findOne({
       where: { audio: cloudinaryAudio }
     });
-    const { order } = await this.orderTraks.findOne({
+    const { order } = await this.orderTraksEntity.findOne({
       where: { user: { id: userId } },
       relations: { user: true }
     });
     const modifyOrder = [id, ...order];
-    await updateQueryForOrder(OrderTracksEntity, modifyOrder, userId);
+    // await this.orderTraksEntity.update({where: }, partialEntity);
+    await updateQueryForOrder(this.orderTraksEntity, modifyOrder, userId);
 
     return {
       success: true,

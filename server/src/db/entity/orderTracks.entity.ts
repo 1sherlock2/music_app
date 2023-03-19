@@ -13,7 +13,7 @@ export class OrderTracksEntity {
   @PrimaryGeneratedColumn()
   id: object | string | Buffer | number;
 
-  @Column('jsonb', { nullable: true })
+  @Column('jsonb', { nullable: true, default: [] })
   order: number[];
 
   @OneToOne(() => UserEntity, (user) => user.orderTracks)
