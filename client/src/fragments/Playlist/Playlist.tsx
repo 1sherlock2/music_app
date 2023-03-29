@@ -41,10 +41,9 @@ const Playlist = () => {
         setAllTracks(result.data);
       }
     })();
-  });
+  }, [allTracksCount]);
 
   const handleClick = useCallback((index: number) => {
-    console.log('CLICK');
     setTrackIndex(index);
     setOpen(true);
   }, []);
@@ -103,11 +102,12 @@ const Playlist = () => {
                   );
                 })
               ) : (
-                <OnBoard name="playlist">
-                  <div className={s.empty}>
-                    Download content by going to link on browser
-                  </div>
-                </OnBoard>
+                <div>aaa</div>
+                // <OnBoard name="playlist">
+                //   <div className={s.empty}>
+                //     Download content by going to link on browser
+                //   </div>
+                // </OnBoard>
               )}
               {open && !!allTracks.length && (
                 <PlaylistPopup

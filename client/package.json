@@ -12,10 +12,10 @@
   },
   "scripts": {
     "app-watch": "webpack serve --mode=development --config ./webpack.config.js && env-cmd -f",
-    "app-build": "NODE_ENV=production webpack --mode=production",
     "start-server": "npm --prefix ../server run start:debug",
-    "build": "npm run app-build && serve -s dist",
-    "dev": "concurrently --kill-others \"npm run start-server\" \"npm run app-watch\""
+    "dev": "concurrently --kill-others \"npm run start-server\" \"npm run app-watch\"",
+    "app-build": "NODE_ENV=production webpack --mode=production",
+    "build": "npm run app-build && serve -s dist"
   },
   "author": "",
   "license": "ISC",
@@ -90,7 +90,7 @@
     "react-error-boundary": "^3.1.4",
     "react-router-dom": "^6.4.0",
     "recoil": "^0.4.1",
-    "swiper": "^8.2.6",
+    "swiper": "^8.4.7",
     "typescript": "^4.3.5",
     "workbox-core": "^6.5.4",
     "workbox-expiration": "^6.5.4",

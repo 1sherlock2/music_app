@@ -116,7 +116,6 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     setRepeat(repeatValue[repeat]);
   }, [repeat]);
 
-  // useEffects
   useEffect(() => {
     const rootEl = document.getElementById('root');
     const firstChild = rootEl?.firstElementChild;
@@ -124,6 +123,10 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
 
     const { height } = containerRef.current?.getBoundingClientRect() as DOMRect;
     setFullHeight(height);
+
+    const sliderWrapper = document.querySelector('.swiper-wrapper');
+    console.log({ sliderWrapper });
+    sliderWrapper?.classList.add(s['swiper-wrapper']);
   }, []);
 
   // Установка длительности трека
@@ -172,10 +175,7 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
 
   return createPortal(
     <div className={s.outside}>
-      <div
-        ref={useCombinedRef(containerOutRef, containerRef)}
-        className={s.container}
-      >
+      <div ref={containerRef} className={s.container}>
         <Swiper
           style={{
             top: `${topPosition}%`,
@@ -186,34 +186,38 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
           initialSlide={trackIndex}
           loop={loopMode}
           lazy
-          modules={[Lazy]}
+          watchSlidesProgress
           onSlideChange={changeTrackSwipe}
           onTouchMove={(swiper) => (swiper.allowTouchMove = !blockSwipe)}
           onTouchEnd={(swiper) => (swiper.allowTouchMove = !blockSwipe)}
         >
           {allTracks?.map((track, index) => (
-            <SwiperSlide key={`${track.name}-${index}`}>
-              <AudioPayload
-                isPlaying={isPlaying}
-                setIsPlaying={setIsPlaying}
-                hlsLoad={hlsLoad}
-                trackProgress={trackProgress}
-                setBlockSwipe={setBlockSwipe}
-                duration={duration}
-                goToNextTrack={goToNextTrack}
-                goToPreviousTrack={goToPreviousTrack}
-                currentTrack={currentTrack}
-                handleClickRep={handleClickRep}
-                volume={volume}
-                setVolume={setVolume}
-                repeat={repeat}
-                changeCurrentTime={changeCurrentTime}
-                defaultTopPosition={defaultTopPosition}
-                setTopPosition={setTopPosition}
-                setTransformByCloseY={setTransformByCloseY}
-                fullHeight={fullHeight}
-              />
-            </SwiperSlide>
+            <div key={`${track.name}-${index}`}>
+              <SwiperSlide>
+                <div ref={containerOutRef}>
+                  <AudioPayload
+                    isPlaying={isPlaying}
+                    setIsPlaying={setIsPlaying}
+                    hlsLoad={hlsLoad}
+                    trackProgress={trackProgress}
+                    setBlockSwipe={setBlockSwipe}
+                    duration={duration}
+                    goToNextTrack={goToNextTrack}
+                    goToPreviousTrack={goToPreviousTrack}
+                    currentTrack={currentTrack}
+                    handleClickRep={handleClickRep}
+                    volume={volume}
+                    setVolume={setVolume}
+                    repeat={repeat}
+                    changeCurrentTime={changeCurrentTime}
+                    defaultTopPosition={defaultTopPosition}
+                    setTopPosition={setTopPosition}
+                    setTransformByCloseY={setTransformByCloseY}
+                    fullHeight={fullHeight}
+                  />
+                </div>
+              </SwiperSlide>
+            </div>
           ))}
         </Swiper>
       </div>

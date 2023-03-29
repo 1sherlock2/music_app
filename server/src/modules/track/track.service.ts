@@ -206,6 +206,7 @@ export class TrackService {
       const modifyUrls = url.filter(
         (item) => !!item.audio && item.ext === 'm4a'
       );
+
       return { id, title, thumbnail, duration, url: modifyUrls };
     } catch (e) {
       throw new InternalServerErrorException(e);
@@ -253,12 +254,15 @@ export class TrackService {
     const { id } = await this.trackEntity.findOne({
       where: { audio: cloudinaryAudio }
     });
-    const { order } = await this.orderTraksEntity.findOne({
+    const orderResult = await this.orderTraksEntity.findOne({
       where: { user: { id: userId } },
       relations: { user: true }
     });
-    const modifyOrder = [id, ...order];
-    // await this.orderTraksEntity.update({where: }, partialEntity);
+    if (!orderResult?.order) {
+      const createNewOrder = await this.orderTraksEntity.create({ user: user });
+      await this.orderTraksEntity.save(createNewOrder);
+    }
+    const modifyOrder = [id, ...(orderResult?.order || [])];
     await updateQueryForOrder(this.orderTraksEntity, modifyOrder, userId);
 
     return {

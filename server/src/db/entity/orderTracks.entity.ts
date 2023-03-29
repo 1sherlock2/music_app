@@ -1,4 +1,6 @@
 import {
+  AfterLoad,
+  BeforeUpdate,
   Column,
   Entity,
   JoinColumn,
@@ -13,7 +15,10 @@ export class OrderTracksEntity {
   @PrimaryGeneratedColumn()
   id: object | string | Buffer | number;
 
-  @Column('jsonb', { nullable: true, default: [] })
+  @Column('jsonb', {
+    nullable: true,
+    default: {}
+  })
   order: number[];
 
   @OneToOne(() => UserEntity, (user) => user.orderTracks)

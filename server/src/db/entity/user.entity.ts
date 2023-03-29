@@ -5,7 +5,8 @@ import {
   CreateDateColumn,
   BeforeInsert,
   OneToMany,
-  OneToOne
+  OneToOne,
+  AfterLoad
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { TrackEntity } from './track.entity';

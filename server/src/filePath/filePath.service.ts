@@ -10,7 +10,9 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as fileFormats from 'file-formats';
 import nodeFetch from 'node-fetch';
-
+import * as stream from 'node:stream';
+import { PassThrough, Readable, Writable } from 'stream';
+import request from 'request';
 @Injectable()
 export class FilePathService {
   create(file: Express.Multer.File, name?: string) {
@@ -46,6 +48,10 @@ export class FilePathService {
   }
 
   downloadByUrl(url: string | undefined, name?: string, ext?: string) {
+    const pass = stream.PassThrough;
+    // pass.setMaxListeners(5);
+    // pass._writableState.highWaterMark = 222222;
+
     return new Promise((resolve, reject) => {
       if (!url) {
         reject(new Error('Url path is not found'));
@@ -54,6 +60,15 @@ export class FilePathService {
       const audioExtentions = fileFormats.list();
       audioExtentions.push('.m4a');
       const isAudioFormat = audioExtentions.some((el) => el === `.${ext}`);
+      // request(
+      //   { method: 'GET', uri: url, gzip: true, highWaterMark: 1024 },
+      //   (err, response, body) => {
+      //     console.log({ body });
+      //   }
+      // ).on('data', (chunk) => {
+      //   console.log({ chunk });
+      // });
+
       nodeFetch(url)
         .then((responseFile) => {
           if (!responseFile.ok) {
@@ -76,10 +91,32 @@ export class FilePathService {
           if (!fs.existsSync(assetsPath)) fs.mkdirSync(assetsPath);
 
           const filePath = path.resolve(__dirname, '../..', 'assets', fileName);
-          passStream.on('data', (chunk) => {
+          // -------------------------------------------------
+          // const newStream = new Readable({ highWaterMark: 6048 });
+          // newStream.pipe(passStream._readableState);
+          // console.log('newStream', newStream.readableHighWaterMark);
+          // newStream.on('data', (chunk) => {
+          //   console.log(`2 _ Received ${chunk.length} bytes of data.`);
+          // });
+          // console.log(passStream.writableHighWaterMark);
+          // ---------------------------------------------------
+          // passStream._readableState.highWaterMark = 1 * 1024 * 1024;
+          const newStream = new PassThrough({ highWaterMark: 2048 });
+
+          console.log({ newStream });
+          console.log('readable', passStream.readable);
+          passStream.pipe(newStream).on('data', (chunk) => {
+            console.log(passStream.readableHighWaterMark);
+
             fs.appendFileSync(filePath, chunk, { encoding: 'latin1' });
+
             console.log(`Received ${chunk.length} bytes of data.`);
           });
+          // newStream.readableHighWaterMark
+          // passStream.on('data', (chunk) => {
+          //   // fs.appendFileSync(filePath, chunk, { encoding: 'latin1' });
+          //   console.log(`Received ${chunk.length} bytes of data.`);
+          // });
           passStream.on('end', () => {
             console.log('END');
             resolve(filePath);
