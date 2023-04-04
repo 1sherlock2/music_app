@@ -53,7 +53,7 @@ const loginQuery = selector({
     }
 
     const response = await loginDataDB({ nickname, password });
-    if (response) {
+    if (response && response?.data) {
       const {
         success,
         accessToken: token,

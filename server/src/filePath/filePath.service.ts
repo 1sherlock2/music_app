@@ -60,14 +60,6 @@ export class FilePathService {
       const audioExtentions = fileFormats.list();
       audioExtentions.push('.m4a');
       const isAudioFormat = audioExtentions.some((el) => el === `.${ext}`);
-      // request(
-      //   { method: 'GET', uri: url, gzip: true, highWaterMark: 1024 },
-      //   (err, response, body) => {
-      //     console.log({ body });
-      //   }
-      // ).on('data', (chunk) => {
-      //   console.log({ chunk });
-      // });
 
       nodeFetch(url)
         .then((responseFile) => {
@@ -91,23 +83,6 @@ export class FilePathService {
           if (!fs.existsSync(assetsPath)) fs.mkdirSync(assetsPath);
 
           const filePath = path.resolve(__dirname, '../..', 'assets', fileName);
-          // -------------------------------------------------
-          // const newStream = new Readable({ highWaterMark: 6048 });
-          // newStream.pipe(passStream._readableState);
-          // console.log('newStream', newStream.readableHighWaterMark);
-          // newStream.on('data', (chunk) => {
-          //   console.log(`2 _ Received ${chunk.length} bytes of data.`);
-          // });
-          // console.log(passStream.writableHighWaterMark);
-          // ---------------------------------------------------
-          // passStream._readableState.highWaterMark = 1 * 1024 * 1024;
-          // const newStream_1 = new PassThrough({ highWaterMark: 2048 });
-
-          // const newStream = fs.createReadStream(url, {
-          //   highWaterMark: 100 * 1024
-          // });
-
-          // console.log({ newStream });
 
           passStream.on('data', (chunk) => {
             // console.log(passStream.readableHighWaterMark);
@@ -116,11 +91,7 @@ export class FilePathService {
 
             console.log(`Received ${chunk.length} bytes of data.`);
           });
-          // newStream.readableHighWaterMark
-          // passStream.on('data', (chunk) => {
-          //   // fs.appendFileSync(filePath, chunk, { encoding: 'latin1' });
-          //   console.log(`Received ${chunk.length} bytes of data.`);
-          // });
+
           passStream.on('end', () => {
             console.log('END');
             resolve(filePath);

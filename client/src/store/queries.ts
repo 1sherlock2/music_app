@@ -9,15 +9,13 @@ import {
   IRegisterDTO
 } from './queries.interface';
 
+console.log('NODE_ENV', process.env.ENV_NODE);
+
 const instanceDB = axios.create({
   baseURL:
     process.env.ENV_NODE === 'production'
       ? 'http://194.28.224.185:7000'
       : 'http://localhost:7000'
-  // baseURL: 'http://194.28.224.185:7000'
-  // baseURL: 'http://localhost:7000'
-  // baseURL: 'http://192.168.0.100:7000'
-  // baseURL: 'http://10.254.1.164:7000',
 });
 instanceDB.interceptors.request.use((config) => {
   config.headers['Authorization'] = authLocalStorage.getToken();
