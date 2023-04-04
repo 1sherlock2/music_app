@@ -11,7 +11,7 @@ import * as fs from 'fs';
 import * as fileFormats from 'file-formats';
 import nodeFetch from 'node-fetch';
 import * as stream from 'node:stream';
-import { PassThrough, Readable, Writable } from 'stream';
+import { Duplex, PassThrough, Readable, Writable } from 'stream';
 import request from 'request';
 @Injectable()
 export class FilePathService {
@@ -101,12 +101,16 @@ export class FilePathService {
           // console.log(passStream.writableHighWaterMark);
           // ---------------------------------------------------
           // passStream._readableState.highWaterMark = 1 * 1024 * 1024;
-          const newStream = new PassThrough({ highWaterMark: 2048 });
+          // const newStream_1 = new PassThrough({ highWaterMark: 2048 });
 
-          console.log({ newStream });
-          console.log('readable', passStream.readable);
-          passStream.pipe(newStream).on('data', (chunk) => {
-            console.log(passStream.readableHighWaterMark);
+          // const newStream = fs.createReadStream(url, {
+          //   highWaterMark: 100 * 1024
+          // });
+
+          // console.log({ newStream });
+
+          passStream.on('data', (chunk) => {
+            // console.log(passStream.readableHighWaterMark);
 
             fs.appendFileSync(filePath, chunk, { encoding: 'latin1' });
 

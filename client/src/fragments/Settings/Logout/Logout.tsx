@@ -5,8 +5,10 @@ import LogoutIcon from '../../../components/Icons/Logout';
 import { isAuthentication } from '../../../store';
 import { authLocalStorage } from '../../../utils/localStorage';
 import s from './Logout.scss';
+import { useTranslation } from 'react-i18next';
 
 const Logout = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const setIsAuthentication = useSetRecoilState(isAuthentication);
   const logoutHandle = () => {
@@ -17,7 +19,7 @@ const Logout = () => {
 
   return (
     <div onClick={logoutHandle} className={s.logout}>
-      <div>Logout</div>
+      <div>{t('logout')}</div>
       <LogoutIcon size="24px" />
     </div>
   );

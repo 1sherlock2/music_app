@@ -1,0 +1,76 @@
+@import '~styles/variables.scss';
+
+.positioner {
+  position: absolute;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  padding: $size-16 0;
+}
+
+.onboarding {
+  position: relative;
+  border-radius: 8px;
+  display: flex;
+  // box-shadow: $shadow-8;
+  font-family: $font-family;
+  padding: $size-16;
+
+  @media screen and (max-width: 767px) {
+    padding: $size-12;
+  }
+
+  .arrow {
+    position: absolute;
+    left: calc(50% - 0.625rem);
+    z-index: 0;
+    width: $size-20;
+    height: 100px;
+    pointer-events: none;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.top .arrow {
+  bottom: -60px;
+  transform: rotate(180deg);
+}
+
+.bottom .arrow {
+  top: -60px;
+}
+
+.closeButton {
+  position: absolute;
+  right: -50px;
+  bottom: 75px;
+  .close {
+    align-self: baseline;
+    margin-left: $size-4;
+
+    background-color: inherit;
+    border: none !important;
+  }
+}
+
+.icon {
+  min-width: $size-24;
+  height: $size-24;
+  margin-right: $size-12;
+
+  @media screen and (max-width: 767px) {
+    margin-right: $size-8;
+  }
+}
+
+.onboardingInner {
+  width: 100%;
+}
+
+.content {
+  margin-top: $size-8;
+}

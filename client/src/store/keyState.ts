@@ -13,5 +13,6 @@ export default {
   UPLOAD_FILE: 'uploadFile',
   DATA_BY_UPLOAD: 'dataByUpload',
   SEND_TOKEN: 'sendToken',
-  TRACKS_COUNT: 'tracksCount'
+  TRACKS_COUNT: 'tracksCount',
+  CHANGE_LANG: 'changeLang'
 } as { [key: string]: string };

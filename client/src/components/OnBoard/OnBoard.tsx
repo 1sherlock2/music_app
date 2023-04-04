@@ -1,8 +1,29 @@
+import classNames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import useCalculatePosFromTrigger from '../../hooks/useCalculatePosFromTrigger';
 import throttle from '../../utils/throttle';
+import cssVariables from '../../styles/variables.scss';
+import s from './OnBoard.scss';
+import useCreateMountNode from '../../utils/useCreateMounNode';
+import TopRightTipIcon from '../Icons/Tooltip';
+import Button from '../Button/Button';
+import Close from '../Icons/Close';
 
-const OnBoard = ({ name, triggerRef, maxWidth = 300, onClose, children }) => {
+const mountId = 'uiHelperComponents';
+
+const OnBoard = ({
+  name,
+  triggerRef,
+  maxWidth = 300,
+  onClose,
+  content,
+  backgroundColor = 'pink-200',
+  closeIcon,
+  panelId
+}) => {
+  useCreateMountNode(mountId);
+
   const [show, setShow] = useState(false);
   const tooltipRef = useRef(null);
 
@@ -11,10 +32,9 @@ const OnBoard = ({ name, triggerRef, maxWidth = 300, onClose, children }) => {
     tooltipRef,
     maxWidth
   });
-  console.log({ style });
-  console.log({ posClass });
+
   const setInLocalStorage = useCallback(
-    (): void => localStorage.setItem(name, Date.now()),
+    (): void => localStorage.setItem(name, String(Date.now())),
     [name]
   );
 
@@ -23,18 +43,20 @@ const OnBoard = ({ name, triggerRef, maxWidth = 300, onClose, children }) => {
     setInLocalStorage();
     onClose?.();
   };
-
+  const isPanelUsed = localStorage.getItem(panelId);
   useEffect(() => {
-    setShow(true);
+    if (!isPanelUsed) {
+      setShow(true);
+    }
   }, []);
 
   useEffect(() => {
     show && updatePos();
   }, [show, updatePos]);
-
+  console.log({ show });
   useEffect(() => {
     if (!show) {
-      return undefined;
+      return;
     }
 
     const throttleUpdatePos = throttle(updatePos);
@@ -57,7 +79,55 @@ const OnBoard = ({ name, triggerRef, maxWidth = 300, onClose, children }) => {
     };
   }, [show, updatePos]);
 
-  return children;
+  return (
+    <>
+      {show &&
+        content &&
+        createPortal(
+          <div
+            style={{
+              ...style.element,
+              ...{ maxWidth: `${maxWidth}px` }
+            }}
+            className={s.positioner}
+            ref={tooltipRef}
+            area-describedby={name}
+          >
+            <div
+              style={{
+                backgroundColor:
+                  cssVariables[backgroundColor] || backgroundColor
+              }}
+              className={classNames(s.onboarding, s[posClass])}
+            >
+              <TopRightTipIcon
+                className={s.arrow}
+                style={{
+                  ...style.arrow,
+                  color: cssVariables[backgroundColor] || backgroundColor
+                }}
+              />
+              <div className={s.onboardingInner}>
+                {closeIcon && (
+                  <div className={s.closeButton}>
+                    <Button
+                      variant="pink"
+                      size="s"
+                      onClick={onClickClose}
+                      className={s.close}
+                    >
+                      <Close size="30px" />
+                    </Button>
+                  </div>
+                )}
+                <div className={s.content}>{content}</div>
+              </div>
+            </div>
+          </div>,
+          document.getElementById(mountId)
+        )}
+    </>
+  );
 };
 
 export default OnBoard;

@@ -1,7 +1,7 @@
 import { SetStateAction } from 'react';
 
 export type IInput = {
-  placeholder?: string;
+  placeholder: string;
   type?: string;
   closeSize?: boolean;
   onChange?: (value: string) => void;

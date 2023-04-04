@@ -3,4 +3,7 @@ export type IBottomPanel = {
   location: string;
   reload?: boolean;
   id: string;
+  onboard?: {
+    content: any;
+  };
 };

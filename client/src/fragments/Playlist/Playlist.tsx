@@ -20,8 +20,8 @@ import { altImageSrc } from '../../store/altrImageSrc';
 import BottomPanel from '../BottomPanel/BottomPanel';
 import { allTracksByUserAtom, allTraksByUser, tracksCount } from './state';
 import { allTracksByUserDB, checkTrackCountDB } from '../../store/queries';
-import OnBoard from '../../components/OnBoard/OnBoard';
 import useCombinedRef from '../../hooks/useCombinedRef';
+import OnBoarding from '../../components/OnBoard/onBoarding';
 
 const Playlist = () => {
   const [allTracks, setAllTracks] = useRecoilState(allTracksByUserAtom);
@@ -70,7 +70,7 @@ const Playlist = () => {
               {...provided.droppableProps}
               ref={useCombinedRef(provided.innerRef, playlistRef)}
             >
-              {allTracks?.length > 0 ? (
+              {allTracks?.length > 0 &&
                 allTracks.map((track, index) => {
                   const { id, img, artist, name } = track;
                   return (
@@ -100,15 +100,7 @@ const Playlist = () => {
                       )}
                     </Draggable>
                   );
-                })
-              ) : (
-                <div>aaa</div>
-                // <OnBoard name="playlist">
-                //   <div className={s.empty}>
-                //     Download content by going to link on browser
-                //   </div>
-                // </OnBoard>
-              )}
+                })}
               {open && !!allTracks.length && (
                 <PlaylistPopup
                   allTracks={allTracks}

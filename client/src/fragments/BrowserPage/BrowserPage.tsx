@@ -8,9 +8,12 @@ import BottomPanel from '../BottomPanel/BottomPanel';
 import s from './BrowserPage.scss';
 import MediaResult from './MediaResult/MediaResult';
 import { dataByUploadClick, linkText } from './state';
+import { useTranslation } from 'react-i18next';
 
 const BrowserPage = () => {
   const [linkValue, setLinkValue] = useState<string>('');
+  const { t } = useTranslation();
+
   const handleClick = useRecoilCallback(({ set, reset }) => () => {
     reset(dataByUploadClick);
     set(linkText, linkValue);
@@ -23,7 +26,7 @@ const BrowserPage = () => {
           onChange={setLinkValue}
           closeSize
           size="l"
-          placeholder="Paste the link"
+          placeholder={t('pasteLink')}
         />
         <Button onClick={handleClick} className={s.search_button} type="submit">
           <Search size="30px" color="#fff" />{' '}

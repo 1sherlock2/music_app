@@ -34,7 +34,7 @@ export default ({ trigger, helper, maxWidth, fixed, paddingFromViewport }) => {
     style.elClass = 'bottom';
     delete style.bottom;
   } else {
-    style.bottom = document.documentElement.clientHeight - triggerPosY;
+    style.bottom = document.documentElement.clientHeight - triggerPosY + 20;
     delete style.top;
     style.elClass = 'top';
   }

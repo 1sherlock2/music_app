@@ -125,7 +125,6 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
     setFullHeight(height);
 
     const sliderWrapper = document.querySelector('.swiper-wrapper');
-    console.log({ sliderWrapper });
     sliderWrapper?.classList.add(s['swiper-wrapper']);
   }, []);
 

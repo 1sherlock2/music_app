@@ -79,6 +79,12 @@ $gray-800: #333;
 
 $white-100: #fff;
 
+:export {
+  pink-100: $pink-100;
+  pink-200: $pink-200;
+  pink-400: $pink-500;
+}
+
 @mixin font($size, $line-height: false, $color: false) {
   @if ($color) {
     color: $color;
