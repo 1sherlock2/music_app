@@ -28,7 +28,7 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
 }) => {
   const defaultTopPosition = 10;
   const [trackIndex, setTrackIndex] = useState<number>(generalIndexTrack || 0);
-  const [repeat, setRepeat] = useState<keyof IRepeat>(repeatValue.allLoop);
+  const [repeat, setRepeat] = useState<keyof IRepeat>(repeatValue.oneLoop);
   const [trackProgress, setTrackProgress] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
@@ -37,6 +37,13 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
   const [topPosition, setTopPosition] = useState<number>(defaultTopPosition);
   const [transformByCloseY, setTransformByCloseY] = useState<boolean>(false);
   const [fullHeight, setFullHeight] = useState<number>(0);
+  const lastIndexTrack = allTracks.findIndex(
+    (el) => el.id === allTracks[allTracks.length - 1].id
+  );
+
+  if (trackIndex > lastIndexTrack && repeat === repeatValue.allLoop) {
+    return null;
+  }
 
   const currentTrack = useMemo(
     () => allTracks[trackIndex],
@@ -66,7 +73,13 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Следующий трек
-  const goToNextTrack = useCallback(() => setTrackIndex((prev) => ++prev), []);
+  const goToNextTrack = useCallback(() => {
+    if (lastIndexTrack === trackIndex) {
+      setOpen(false);
+      return;
+    }
+    setTrackIndex((prev) => ++prev);
+  }, []);
 
   // Предыдущий трек
   const goToPreviousTrack = useCallback(
@@ -192,7 +205,7 @@ const PlaylistPopup: React.FC<IPlaylistPopup> = ({
         >
           {allTracks?.map((track, index) => (
             <div key={`${track.name}-${index}`}>
-              <SwiperSlide>
+              <SwiperSlide key={`${track.name}-${index}`}>
                 <div ref={containerOutRef}>
                   <AudioPayload
                     isPlaying={isPlaying}
