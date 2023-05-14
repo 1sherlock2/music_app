@@ -22,6 +22,7 @@ import { allTracksByUserAtom, allTraksByUser, tracksCount } from './state';
 import { allTracksByUserDB, checkTrackCountDB } from '../../store/queries';
 import useCombinedRef from '../../hooks/useCombinedRef';
 import OnBoarding from '../../components/OnBoard/onBoarding';
+import TripleLineIcon from '../../components/Icons/TripleLine';
 
 const Playlist = () => {
   const [allTracks, setAllTracks] = useRecoilState(allTracksByUserAtom);
@@ -32,6 +33,9 @@ const Playlist = () => {
   const [generalIndexTrack, setTrackIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
   const playlistRef = useRef(null);
+  const [disableDrug, setDisableDrug] = useState(false);
+  // const disableDrug = useRef<boolean>(false);
+
   useEffect(() => {
     (async () => {
       const { data } = await checkTrackCountDB();
@@ -59,11 +63,20 @@ const Playlist = () => {
   useEffect(() => {
     setOrderTracks(allTracks);
   }, []);
+  console.log('disable', disableDrug);
+
+  const handleClickStart = () => {
+    setDisableDrug(true);
+  };
+
+  const handleClickStop = () => {
+    setDisableDrug(false);
+  };
 
   return (
     <>
       <DragDropContext onDragEnd={handleOnDragEnd}>
-        <Droppable droppableId="characters">
+        <Droppable droppableId="characters" isDropDisabled={disableDrug}>
           {(provided) => (
             <div
               className={classnames(s.playList, 'characters')}
@@ -95,6 +108,13 @@ const Playlist = () => {
                             <div className={s.container_track__author}>
                               {artist}
                             </div>
+                          </div>
+                          <div
+                            className={s.container_setting}
+                            onTouchMove={handleClickStart}
+                            onTouchEnd={handleClickStop}
+                          >
+                            <TripleLineIcon size="30px" />
                           </div>
                         </div>
                       )}

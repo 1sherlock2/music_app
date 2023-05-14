@@ -1,5 +1,6 @@
 export default {
-  debug: true,
+  // debug: true,
+  debug: false,
   enableWorker: true,
   lowLatencyMode: true,
   backBufferLength: Infinity,

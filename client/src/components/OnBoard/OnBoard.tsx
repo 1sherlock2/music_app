@@ -53,7 +53,6 @@ const OnBoard = ({
   useEffect(() => {
     show && updatePos();
   }, [show, updatePos]);
-  console.log({ show });
   useEffect(() => {
     if (!show) {
       return;

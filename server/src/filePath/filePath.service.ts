@@ -10,9 +10,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as fileFormats from 'file-formats';
 import nodeFetch from 'node-fetch';
-import * as stream from 'node:stream';
-import { Duplex, PassThrough, Readable, Writable } from 'stream';
-import request from 'request';
+
 @Injectable()
 export class FilePathService {
   create(file: Express.Multer.File, name?: string) {
@@ -48,10 +46,6 @@ export class FilePathService {
   }
 
   downloadByUrl(url: string | undefined, name?: string, ext?: string) {
-    const pass = stream.PassThrough;
-    // pass.setMaxListeners(5);
-    // pass._writableState.highWaterMark = 222222;
-
     return new Promise((resolve, reject) => {
       if (!url) {
         reject(new Error('Url path is not found'));
@@ -85,10 +79,7 @@ export class FilePathService {
           const filePath = path.resolve(__dirname, '../..', 'assets', fileName);
 
           passStream.on('data', (chunk) => {
-            // console.log(passStream.readableHighWaterMark);
-
             fs.appendFileSync(filePath, chunk, { encoding: 'latin1' });
-
             console.log(`Received ${chunk.length} bytes of data.`);
           });
 

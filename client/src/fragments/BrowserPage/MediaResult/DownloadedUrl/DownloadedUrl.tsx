@@ -46,7 +46,6 @@ const DownloadedUrl: React.FC<IDownloadedUrl> = ({
     }
   }, [audioUrl]);
 
-  console.log({ uploadStatus });
   return (
     <div className={s.links_item} key={`${ext}_${id}`}>
       <div className={s.links_item__quality}>{`${quality} kb/s`}</div>

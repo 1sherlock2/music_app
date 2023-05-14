@@ -7,7 +7,6 @@ import s from './ConfirmEmail.scss';
 const ConfirmEmail: React.FC = () => {
   const { token } = useParams();
   const statusConfirmToken = useRecoilValue(sendToken(token));
-  console.log({ statusConfirmToken });
   return (
     <div className={s.container}>
       <div className={s.container_title}>Email was confirmed</div>

@@ -25,7 +25,6 @@ const ImageAndVolume: React.FC<IImageAndVolumeProps> = ({
   const changeVolume = (event: React.TouchEvent<HTMLDivElement>) => {
     const { clientY } = event.touches[0];
     const percentThumb = percentByVolume(clientY);
-    console.log({ percentThumb });
     setTopPosition(percentThumb);
     setVolume(modifyPercentVolume(percentThumb));
   };

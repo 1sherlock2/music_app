@@ -25,7 +25,6 @@ const Settings = () => {
         <div className={s.langPopup}>
           <div className={s.langPopup_container} ref={containerRef}>
             {langs.map((lang, i) => {
-              console.log({ lang });
               const langName = getLangName(lang);
               const modifyLangName = langName
                 ? langName[0].toUpperCase() + langName.slice(1)

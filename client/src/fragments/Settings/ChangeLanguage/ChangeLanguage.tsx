@@ -9,7 +9,6 @@ import { getLangName } from './utils';
 const ChangeLanguage = () => {
   const { t, i18n } = useTranslation();
   const setLangPopup = useSetRecoilState(changeLang);
-  console.log('aaaa', i18n.resolvedLanguage);
 
   const language = getLangName(i18n.language);
   const handleClick = () => setLangPopup(true);

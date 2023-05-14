@@ -18,19 +18,10 @@ services:
     networks:
       - nestjs-network
 
-  # test:
-  #   build: test/
-  #   container_name: test
-  #   ports:
-  #     - '4001:4001'
-  #   depends_on:
-  #     - postgres
-  #   networks:
-  #     - nestjs-network
-
   server:
     build: server/
-    restart: always
+    image: music_app-server:${TAG:-latest}
+    restart: unless-stopper
     container_name: server
     ports:
       - '7000:7000'
@@ -41,30 +32,10 @@ services:
     networks:
       - nestjs-network
 
-  # pgadmin:
-  #   container_name: pgadmin_container
-  #   image: dpage/pgadmin4
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: 'sherlockstark00@gmail.com'
-  #     PGADMIN_DEFAULT_PASSWORD: '34896GAZ'
-  #     PGADMIN_CONFIG_SERVER_MODE: 'False'
-  #   command: mkdir /var/lib/pgadmin/sessions
-  #   volumes:
-  #     - data:/var/lib/pgadmin
-  #     - data:/var/lib/pgadmin/sessions
-  #   ports:
-  #     - '6050:80'
-  #   restart: unless-stopped
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: '0.5'
-  #         memory: 1G
-  #   networks:
-  #     - nestjs-network
-
   client:
     build: client/
+    image: music_app-client:${TAG:-latest}
+    restart: unless-stopper
     container_name: client
     ports:
       - '4000:4000'
