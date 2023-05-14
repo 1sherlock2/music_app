@@ -22,23 +22,23 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+      - name: Build and push client
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./client/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/music_app-client:latest
 
-      - name: Test
-        run: echo "${{ toJSON(secrets) }}"
-      # - name: Build and push client
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: .
-      #     file: ./client/Dockerfile
-      #     push: true
-      #     tags: ${{ secrets.DOCKERHUB_USERNAME }}/music_app-client:latest
-
-      # - name: Build and push server
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: .
-      #     file: ./server/Dockerfile
-      #     push: true
-      #     tags: ${{ secrets.DOCKERHUB_USERNAME }}/music_app-server:latest
+      - name: Build and push server
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./server/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/music_app-server:latest
 #     - name: Build the Docker image
 #       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+
+# - name: Test
+#   run: echo "${{ toJSON(secrets) }}"
